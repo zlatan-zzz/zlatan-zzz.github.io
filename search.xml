@@ -582,6 +582,107 @@
       </tags>
   </entry>
   <entry>
+    <title>JAVA_SE_1</title>
+    <url>/2024/11/04/JAVA-SE/</url>
+    <content><![CDATA[<h1>JAVA_SE_1</h1>
+<p><a href="https://www.bilibili.com/video/BV1Cv411372m">https://www.bilibili.com/video/BV1Cv411372m</a></p>
+<h2 id="1-Java入门">1. Java入门</h2>
+<h3 id="1-1-java基础知识">1.1 java基础知识</h3>
+<blockquote>
+<p><strong>javac.exe</strong>：编译工具</p>
+<p><strong>java.exe</strong>：执行工具</p>
+</blockquote>
+<p>过程：1.编写代码 2.编译代码（javac) 3.运行代码(java)</p>
+<p>文件名称必须与代码的类名称一致。、</p>
+<blockquote>
+<p>javac HelloWorld.java(生成HelloWorld.class)</p>
+<p>java HelloWorld</p>
+</blockquote>
+<h3 id="1-2-JDK的组成">1.2 JDK的组成</h3>
+<ul>
+<li>JVM：Java虚拟机，运行Java程序的地方。</li>
+<li>核心类库：Java类。</li>
+<li>JRE：Java的运行环境。（JVM+核心类库）</li>
+<li>开发工具：Java、Javac</li>
+</ul>
+<h3 id="1-3-IDEA">1.3 IDEA</h3>
+<p><strong>project的构成：</strong></p>
+<ul>
+<li>project（项目、工程）</li>
+<li>module（模块）</li>
+<li>package（包）</li>
+<li>class（类）</li>
+</ul>
+<h2 id="2-Java语法">2. Java语法</h2>
+<h3 id="2-1-char类型ASCII码（leetcode用）">2.1 char类型ASCII码（leetcode用）</h3>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="string">&#x27;a&#x27;</span>+<span class="number">10</span>);<span class="comment">//107</span></span><br><span class="line">System.out.println(<span class="string">&#x27;A&#x27;</span>+<span class="number">10</span>);<span class="comment">//75</span></span><br><span class="line">System.out.println(<span class="string">&#x27;C&#x27;</span>-<span class="string">&#x27;A&#x27;</span>);<span class="comment">//2</span></span><br><span class="line">System.out.println((<span class="type">char</span>)(<span class="string">&#x27;c&#x27;</span>-<span class="number">1</span>));<span class="comment">//b</span></span><br></pre></td></tr></table></figure>
+<p>Java支持二进制、八进制、十六进制的数据，分别需要以0b、0、0X或者0x开头。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="number">0B01100001</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="number">0141</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="number">0XFA</span>;</span><br><span class="line">System.out.println(a1+<span class="string">&quot;  &quot;</span>+a2+<span class="string">&quot;   &quot;</span>+a3);<span class="comment">//97  97  250</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-2-变量类型转换">2.2 变量类型转换</h3>
+<ul>
+<li>
+<p>自动类型转换</p>
+<ul>
+<li>byte→short→int→long→float→double</li>
+<li>char→int</li>
+</ul>
+</li>
+<li>
+<p>表达式的自动类型转换</p>
+<ul>
+<li>表达式的最终结果由表达式的最高类型决定。</li>
+<li>表达式在，byte、short、char是转换为int参与运算。</li>
+</ul>
+</li>
+<li>
+<p>强制类型转换</p>
+<ul>
+<li>byte b = (byte)a   (快捷键：ALT+ENTER)</li>
+<li>可能会造成精度丢失。</li>
+<li>小数转为整数是直接阶段小数保留整数。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">System.out.println(i/j);<span class="comment">//2</span></span><br><span class="line">System.out.println(<span class="number">1.0</span>*i/j);<span class="comment">//2.5</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-运算符">2.3 运算符</h3>
+<ul>
+<li>自增/自减</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">rs</span> <span class="operator">=</span> ++a;<span class="comment">//11</span></span><br><span class="line">a=<span class="number">10</span>;</span><br><span class="line">rs =a++;<span class="comment">//10</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span><span class="number">3</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> ++m - --m + m++ - ++n + n-- +<span class="number">3</span>; <span class="comment">//6-5+5-4+4+3=9</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>扩展的赋值运算符+=、-=自带强制类型转换。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>, b = <span class="number">5</span>;</span><br><span class="line">System.out.println(a = b);<span class="comment">//5,先赋值给a</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>逻辑与：&amp;；逻辑或：|；逻辑非：！；逻辑异或：^；</p>
+</li>
+<li>
+<p>&amp;&amp;短路与；||短路或；<strong>一边已经确定，另一边就不执行</strong>。</p>
+</li>
+<li>
+<p>三元运算符：条件表达式？值1：值2</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">score</span> <span class="operator">=</span> <span class="number">61</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> score &gt;= <span class="number">60</span> ? <span class="string">&quot;及格&quot;</span> : <span class="string">&quot;不及格&quot;</span></span><br><span class="line">System.out.println(rs);<span class="comment">//及格</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>运算符优先级 &amp;&amp; &gt; ||(加个括号就好了)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">10</span> &gt; <span class="number">3</span> || <span class="number">10</span> &gt; <span class="number">3</span> &amp;&amp; <span class="number">10</span> &lt; <span class="number">3</span>);<span class="comment">//(true || false)=true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用Scanner接收键盘输入</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> sc.nextInt();<span class="comment">//等待输入整数，直到输入回车键</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> sc.next();<span class="comment">//等待输入字符串</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JavaSE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>categories</title>
     <url>/categories/index.html</url>
     <content><![CDATA[]]></content>
