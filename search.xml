@@ -171,29 +171,152 @@
       </tags>
   </entry>
   <entry>
-    <title>LeetCode每日一题</title>
-    <url>/2024/11/02/LeetCode/</url>
-    <content><![CDATA[<h1>力扣每日一题</h1>
-<h2 id="2024-11">2024.11</h2>
+    <title>JAVASE基础</title>
+    <url>/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1>JAVASE基础</h1>
+<p><a href="https://www.bilibili.com/video/BV1Cv411372m">https://www.bilibili.com/video/BV1Cv411372m</a></p>
+<h2 id="1-Java入门">1. Java入门</h2>
+<h3 id="1-1-java基础知识">1.1 java基础知识</h3>
+<blockquote>
+<p><strong>javac.exe</strong>：编译工具</p>
+<p><strong>java.exe</strong>：执行工具</p>
+</blockquote>
+<p>过程：1.编写代码 2.编译代码（javac) 3.运行代码(java)</p>
+<p>文件名称必须与代码的类名称一致。、</p>
+<blockquote>
+<p>javac HelloWorld.java(生成HelloWorld.class)</p>
+<p>java HelloWorld</p>
+</blockquote>
+<h3 id="1-2-JDK的组成">1.2 JDK的组成</h3>
+<ul>
+<li>JVM：Java虚拟机，运行Java程序的地方。</li>
+<li>核心类库：Java类。</li>
+<li>JRE：Java的运行环境。（JVM+核心类库）</li>
+<li>开发工具：Java、Javac</li>
+</ul>
+<h3 id="1-3-IDEA">1.3 IDEA</h3>
+<p><strong>project的构成：</strong></p>
+<ul>
+<li>project（项目、工程）</li>
+<li>module（模块）</li>
+<li>package（包）</li>
+<li>class（类）</li>
+</ul>
+<h2 id="2-Java语法">2. Java语法</h2>
+<h3 id="2-1-char类型ASCII码（leetcode用）">2.1 char类型ASCII码（leetcode用）</h3>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="string">&#x27;a&#x27;</span>+<span class="number">10</span>);<span class="comment">//107</span></span><br><span class="line">System.out.println(<span class="string">&#x27;A&#x27;</span>+<span class="number">10</span>);<span class="comment">//75</span></span><br><span class="line">System.out.println(<span class="string">&#x27;C&#x27;</span>-<span class="string">&#x27;A&#x27;</span>);<span class="comment">//2</span></span><br><span class="line">System.out.println((<span class="type">char</span>)(<span class="string">&#x27;c&#x27;</span>-<span class="number">1</span>));<span class="comment">//b</span></span><br></pre></td></tr></table></figure>
+<p>Java支持二进制、八进制、十六进制的数据，分别需要以0b、0、0X或者0x开头。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="number">0B01100001</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="number">0141</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="number">0XFA</span>;</span><br><span class="line">System.out.println(a1+<span class="string">&quot;  &quot;</span>+a2+<span class="string">&quot;   &quot;</span>+a3);<span class="comment">//97  97  250</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-2-变量类型转换">2.2 变量类型转换</h3>
+<ul>
+<li>
+<p>自动类型转换</p>
+<ul>
+<li>byte→short→int→long→float→double</li>
+<li>char→int</li>
+</ul>
+</li>
+<li>
+<p>表达式的自动类型转换</p>
+<ul>
+<li>表达式的最终结果由表达式的最高类型决定。</li>
+<li>表达式在，byte、short、char是转换为int参与运算。</li>
+</ul>
+</li>
+<li>
+<p>强制类型转换</p>
+<ul>
+<li>byte b = (byte)a   (快捷键：ALT+ENTER)</li>
+<li>可能会造成精度丢失。</li>
+<li>小数转为整数是直接阶段小数保留整数。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">System.out.println(i/j);<span class="comment">//2</span></span><br><span class="line">System.out.println(<span class="number">1.0</span>*i/j);<span class="comment">//2.5</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-运算符">2.3 运算符</h3>
+<ul>
+<li>自增/自减</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">rs</span> <span class="operator">=</span> ++a;<span class="comment">//11</span></span><br><span class="line">a=<span class="number">10</span>;</span><br><span class="line">rs =a++;<span class="comment">//10</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span><span class="number">3</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> ++m - --m + m++ - ++n + n-- +<span class="number">3</span>; <span class="comment">//6-5+5-4+4+3=9</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>扩展的赋值运算符+=、-=自带强制类型转换。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>, b = <span class="number">5</span>;</span><br><span class="line">System.out.println(a = b);<span class="comment">//5,先赋值给a</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>逻辑与：&amp;；逻辑或：|；逻辑非：！；逻辑异或：^；</p>
+</li>
+<li>
+<p>&amp;&amp;短路与；||短路或；<strong>一边已经确定，另一边就不执行</strong>。</p>
+</li>
+<li>
+<p>三元运算符：条件表达式？值1：值2</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">score</span> <span class="operator">=</span> <span class="number">61</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> score &gt;= <span class="number">60</span> ? <span class="string">&quot;及格&quot;</span> : <span class="string">&quot;不及格&quot;</span></span><br><span class="line">System.out.println(rs);<span class="comment">//及格</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>运算符优先级 &amp;&amp; &gt; ||(加个括号就好了)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">10</span> &gt; <span class="number">3</span> || <span class="number">10</span> &gt; <span class="number">3</span> &amp;&amp; <span class="number">10</span> &lt; <span class="number">3</span>);<span class="comment">//(true || false)=true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用Scanner接收键盘输入</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> sc.nextInt();<span class="comment">//等待输入整数，直到输入回车键</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> sc.next();<span class="comment">//等待输入字符串</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-流程控制">3. 流程控制</h2>
+<ul>
+<li>
+<p>switch表达式要求只能是byte、short、int、char、string。</p>
+</li>
+<li>
+<p>do-while先执行后判断，while先判断后循环。</p>
+</li>
+<li>
+<p>Random的使用</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="comment">// 1.导包</span></span><br><span class="line"><span class="comment">// 2.创建一个Random对象</span></span><br><span class="line"><span class="comment">// 3.调用Random提供的功能：nextInt得到随机数</span></span><br><span class="line"><span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"><span class="type">int</span> <span class="variable">data</span> <span class="operator">=</span> r.nextInt(bound:<span class="number">10</span>);<span class="comment">//生成0-9</span></span><br></pre></td></tr></table></figure>
+<h2 id="4-数组">4. 数组</h2>
+<ul>
+<li>数组初始化</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span>[] ages = &#123;<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>,<span class="number">50</span>&#125;;<span class="comment">//静态初始化</span></span><br><span class="line"><span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">3</span>];<span class="comment">//&#123;0,0,0&#125;；动态初始化</span></span><br><span class="line"><span class="type">boolean</span>[] arr = <span class="keyword">new</span> <span class="title class_">boolean</span>[<span class="number">3</span>];<span class="comment">//&#123;false,false,false&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>数组存储</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span>[] arr1 = &#123;<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>&#125;;</span><br><span class="line"><span class="type">int</span>[] arr2 =arr1;<span class="comment">//两个数组指向同一片内存区域</span></span><br><span class="line">arr[<span class="number">1</span>] = <span class="number">99</span>;</span><br><span class="line">System.out.println(arr1[<span class="number">1</span>]);<span class="comment">//99</span></span><br><span class="line">arr2 = <span class="literal">null</span>;</span><br><span class="line">System.out.println(arr2);<span class="comment">//null</span></span><br><span class="line">System.out.println(arr2.length);<span class="comment">//空指针异常</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>debug工具使用
+<ul>
+<li>打断点</li>
+<li>使用Debug方式启动程序</li>
+<li>控制代码一行一行执行</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-方法（函数）">5. 方法（函数）</h2>
+<ul>
+<li>
+<p>方法在计算机的执行：栈。</p>
+</li>
+<li>
+<p>参数传递机制：值传递，传输的是实参的值的副本。</p>
+<ul>
+<li>实参：在方法内部定义的变量。</li>
+<li>形参：以方法为例，是方法定义时的变量。</li>
+</ul>
+</li>
+<li>
+<p>基本类型的参数传输的是参数的数据值，<strong>引用类型的参数传输存储的地址值。</strong></p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(<span class="type">int</span>[] arrs)</span>&#123;<span class="type">int</span>[] arrs = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;</span><br><span class="line">    &#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>&#125;;</span><br><span class="line">	change(arrs);</span><br><span class="line">	System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//222</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(<span class="type">int</span>[] arrs)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//20</span></span><br><span class="line">    arrs[<span class="number">1</span>] = <span class="number">222</span>;</span><br><span class="line">    System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//222</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Technique</category>
       </categories>
       <tags>
         <tag>Java</tag>
-        <tag>LeetCode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试_第一篇文章</title>
-    <url>/2024/11/02/test/</url>
-    <content><![CDATA[<p>this is my first article</p>
-]]></content>
-      <categories>
-        <category>Others</category>
-      </categories>
-      <tags>
-        <tag>测试</tag>
+        <tag>JavaSE</tag>
       </tags>
   </entry>
   <entry>
@@ -421,6 +544,32 @@
       </tags>
   </entry>
   <entry>
+    <title>测试_第一篇文章</title>
+    <url>/2024/11/02/test/</url>
+    <content><![CDATA[<p>this is my first article</p>
+]]></content>
+      <categories>
+        <category>Others</category>
+      </categories>
+      <tags>
+        <tag>测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode每日一题</title>
+    <url>/2024/11/02/LeetCode/</url>
+    <content><![CDATA[<h1>力扣每日一题</h1>
+<h2 id="2024-11">2024.11</h2>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>LeetCode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MMGaitFormer</title>
     <url>/2024/10/31/MMGaitFormer/</url>
     <content><![CDATA[<h1>Multi-Modal Gait Recognition via Effective Spatial-Temporal Feature Fusion</h1>
@@ -582,112 +731,6 @@
       </tags>
   </entry>
   <entry>
-    <title>JAVA_SE_1</title>
-    <url>/2024/11/04/JAVA-SE/</url>
-    <content><![CDATA[<h1>JAVA_SE_1</h1>
-<p><a href="https://www.bilibili.com/video/BV1Cv411372m">https://www.bilibili.com/video/BV1Cv411372m</a></p>
-<h2 id="1-Java入门">1. Java入门</h2>
-<h3 id="1-1-java基础知识">1.1 java基础知识</h3>
-<blockquote>
-<p><strong>javac.exe</strong>：编译工具</p>
-<p><strong>java.exe</strong>：执行工具</p>
-</blockquote>
-<p>过程：1.编写代码 2.编译代码（javac) 3.运行代码(java)</p>
-<p>文件名称必须与代码的类名称一致。、</p>
-<blockquote>
-<p>javac HelloWorld.java(生成HelloWorld.class)</p>
-<p>java HelloWorld</p>
-</blockquote>
-<h3 id="1-2-JDK的组成">1.2 JDK的组成</h3>
-<ul>
-<li>JVM：Java虚拟机，运行Java程序的地方。</li>
-<li>核心类库：Java类。</li>
-<li>JRE：Java的运行环境。（JVM+核心类库）</li>
-<li>开发工具：Java、Javac</li>
-</ul>
-<h3 id="1-3-IDEA">1.3 IDEA</h3>
-<p><strong>project的构成：</strong></p>
-<ul>
-<li>project（项目、工程）</li>
-<li>module（模块）</li>
-<li>package（包）</li>
-<li>class（类）</li>
-</ul>
-<h2 id="2-Java语法">2. Java语法</h2>
-<h3 id="2-1-char类型ASCII码（leetcode用）">2.1 char类型ASCII码（leetcode用）</h3>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="string">&#x27;a&#x27;</span>+<span class="number">10</span>);<span class="comment">//107</span></span><br><span class="line">System.out.println(<span class="string">&#x27;A&#x27;</span>+<span class="number">10</span>);<span class="comment">//75</span></span><br><span class="line">System.out.println(<span class="string">&#x27;C&#x27;</span>-<span class="string">&#x27;A&#x27;</span>);<span class="comment">//2</span></span><br><span class="line">System.out.println((<span class="type">char</span>)(<span class="string">&#x27;c&#x27;</span>-<span class="number">1</span>));<span class="comment">//b</span></span><br></pre></td></tr></table></figure>
-<p>Java支持二进制、八进制、十六进制的数据，分别需要以0b、0、0X或者0x开头。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="number">0B01100001</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="number">0141</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="number">0XFA</span>;</span><br><span class="line">System.out.println(a1+<span class="string">&quot;  &quot;</span>+a2+<span class="string">&quot;   &quot;</span>+a3);<span class="comment">//97  97  250</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-2-变量类型转换">2.2 变量类型转换</h3>
-<ul>
-<li>
-<p>自动类型转换</p>
-<ul>
-<li>byte→short→int→long→float→double</li>
-<li>char→int</li>
-</ul>
-</li>
-<li>
-<p>表达式的自动类型转换</p>
-<ul>
-<li>表达式的最终结果由表达式的最高类型决定。</li>
-<li>表达式在，byte、short、char是转换为int参与运算。</li>
-</ul>
-</li>
-<li>
-<p>强制类型转换</p>
-<ul>
-<li>byte b = (byte)a   (快捷键：ALT+ENTER)</li>
-<li>可能会造成精度丢失。</li>
-<li>小数转为整数是直接阶段小数保留整数。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">System.out.println(i/j);<span class="comment">//2</span></span><br><span class="line">System.out.println(<span class="number">1.0</span>*i/j);<span class="comment">//2.5</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-3-运算符">2.3 运算符</h3>
-<ul>
-<li>自增/自减</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">rs</span> <span class="operator">=</span> ++a;<span class="comment">//11</span></span><br><span class="line">a=<span class="number">10</span>;</span><br><span class="line">rs =a++;<span class="comment">//10</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span><span class="number">3</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> ++m - --m + m++ - ++n + n-- +<span class="number">3</span>; <span class="comment">//6-5+5-4+4+3=9</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>扩展的赋值运算符+=、-=自带强制类型转换。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>, b = <span class="number">5</span>;</span><br><span class="line">System.out.println(a = b);<span class="comment">//5,先赋值给a</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>
-<p>逻辑与：&amp;；逻辑或：|；逻辑非：！；逻辑异或：^；</p>
-</li>
-<li>
-<p>&amp;&amp;短路与；||短路或；<strong>一边已经确定，另一边就不执行</strong>。</p>
-</li>
-<li>
-<p>三元运算符：条件表达式？值1：值2</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">score</span> <span class="operator">=</span> <span class="number">61</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> score &gt;= <span class="number">60</span> ? <span class="string">&quot;及格&quot;</span> : <span class="string">&quot;不及格&quot;</span></span><br><span class="line">System.out.println(rs);<span class="comment">//及格</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>运算符优先级 &amp;&amp; &gt; ||(加个括号就好了)</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">10</span> &gt; <span class="number">3</span> || <span class="number">10</span> &gt; <span class="number">3</span> &amp;&amp; <span class="number">10</span> &lt; <span class="number">3</span>);<span class="comment">//(true || false)=true</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>使用Scanner接收键盘输入</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> sc.nextInt();<span class="comment">//等待输入整数，直到输入回车键</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> sc.next();<span class="comment">//等待输入字符串</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>JavaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>关于</title>
     <url>/about/index.html</url>
     <content><![CDATA[<h1>Github贡献图</h1>
@@ -696,6 +739,11 @@
 <div id="posts-calendar" class="js-pjax"></div>
 <h1>标签统计图</h1>
 <div id="tags-chart" data-length="8" class="js-pjax"></div>]]></content>
+  </entry>
+  <entry>
+    <title>categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title></title>
@@ -786,8 +834,109 @@
   </entry>
   <entry>
     <title></title>
-    <url>/js/runtime.js</url>
-    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
+    <url>/css/custom.css</url>
+    <content><![CDATA[/* 页脚与头图透明 */
+#footer {
+  background: transparent !important;
+}
+#page-header {
+  background: transparent !important;
+}
+
+/* 白天模式遮罩透明 */
+#footer::before {
+  background: transparent !important;
+}
+#page-header::before {
+  background: transparent !important;
+}
+
+/* 夜间模式遮罩透明 */
+[data-theme="dark"] #footer::before {
+  background: transparent !important;
+}
+[data-theme="dark"] #page-header::before {
+  background: transparent !important;
+}
+
+/* 背景宇宙星光  */
+#universe{
+  display: block;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* 这个是调置顶的优先级的，-1在文章页下面，背景上面，个人推荐这种 */
+  z-index: -1;
+}
+
+/* 侧边栏个人信息卡片动态渐变色 */
+#aside-content > .card-widget.card-info {
+  background: linear-gradient(
+    -45deg,
+    #e8d8b9,
+    #eccec5,
+    #a3e9eb,
+    #bdbdf0,
+    #eec1ea
+  );
+  box-shadow: 0 0 5px rgb(66, 68, 68);
+  position: relative;
+  background-size: 400% 400%;
+  -webkit-animation: Gradient 10s ease infinite;
+  -moz-animation: Gradient 10s ease infinite;
+  animation: Gradient 10s ease infinite !important;
+}
+@-webkit-keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 黑夜模式适配 */
+[data-theme="dark"] #aside-content > .card-widget.card-info {
+  background: #191919ee;
+}
+
+/* 个人信息Follow me按钮 */
+#aside-content > .card-widget.card-info > #card-info-btn {
+  background-color: #3eb8be;
+  border-radius: 8px;
+}]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1118,109 +1267,8 @@
   </entry>
   <entry>
     <title></title>
-    <url>/css/custom.css</url>
-    <content><![CDATA[/* 页脚与头图透明 */
-#footer {
-  background: transparent !important;
-}
-#page-header {
-  background: transparent !important;
-}
-
-/* 白天模式遮罩透明 */
-#footer::before {
-  background: transparent !important;
-}
-#page-header::before {
-  background: transparent !important;
-}
-
-/* 夜间模式遮罩透明 */
-[data-theme="dark"] #footer::before {
-  background: transparent !important;
-}
-[data-theme="dark"] #page-header::before {
-  background: transparent !important;
-}
-
-/* 背景宇宙星光  */
-#universe{
-  display: block;
-  position: fixed;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  /* 这个是调置顶的优先级的，-1在文章页下面，背景上面，个人推荐这种 */
-  z-index: -1;
-}
-
-/* 侧边栏个人信息卡片动态渐变色 */
-#aside-content > .card-widget.card-info {
-  background: linear-gradient(
-    -45deg,
-    #e8d8b9,
-    #eccec5,
-    #a3e9eb,
-    #bdbdf0,
-    #eec1ea
-  );
-  box-shadow: 0 0 5px rgb(66, 68, 68);
-  position: relative;
-  background-size: 400% 400%;
-  -webkit-animation: Gradient 10s ease infinite;
-  -moz-animation: Gradient 10s ease infinite;
-  animation: Gradient 10s ease infinite !important;
-}
-@-webkit-keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@-moz-keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* 黑夜模式适配 */
-[data-theme="dark"] #aside-content > .card-widget.card-info {
-  background: #191919ee;
-}
-
-/* 个人信息Follow me按钮 */
-#aside-content > .card-widget.card-info > #card-info-btn {
-  background-color: #3eb8be;
-  border-radius: 8px;
-}]]></content>
+    <url>/js/runtime.js</url>
+    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
   </entry>
   <entry>
     <title></title>
