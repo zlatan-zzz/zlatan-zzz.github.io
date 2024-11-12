@@ -5,6 +5,14 @@
     <url>/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1>JAVASE基础</h1>
 <p><a href="https://www.bilibili.com/video/BV1Cv411372m">https://www.bilibili.com/video/BV1Cv411372m</a></p>
+<h2 id="0-IntelliJ-IDEA实用快捷键">0.IntelliJ IDEA实用快捷键</h2>
+<ul>
+<li>CTRL + / :为代码注释</li>
+<li>CTRL+SHIFT+/:整段注释</li>
+<li>CTRL+D：复制到下一行</li>
+<li>CTRL+ALT+T：环绕代码（for\while等）</li>
+<li>右键-生成：快速为类生成set、get、构造函数</li>
+</ul>
 <h2 id="1-Java入门">1. Java入门</h2>
 <h3 id="1-1-java基础知识">1.1 java基础知识</h3>
 <blockquote>
@@ -154,7 +162,7 @@
     <url>/2024/11/10/JAVASE%E9%AB%98%E7%BA%A7/</url>
     <content><![CDATA[<h1>JAVASE高级</h1>
 <h2 id="1-面向对象编程">1. 面向对象编程</h2>
-<h3 id="1-1-对象的概念">1.1 对象的概念</h3>
+<h3 id="1-1-面向对象基础">1.1 面向对象基础</h3>
 <p>在班里有多个学生，每个学生可以看作一个对象，属性包括姓名、成绩等。</p>
 <ul>
 <li>开发对象，调用对象对数据处理。</li>
@@ -163,6 +171,58 @@
 <li>对象怎么设计：class也是类，也被称为对象的设计图（模板）。</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> class 类名&#123;</span><br><span class="line">    <span class="number">1.</span>变量，对象的数据。;</span><br><span class="line">    <span class="number">2.</span>方法，描述对象的功能。;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//创建对象：</span></span><br><span class="line">类名 对象名 = <span class="keyword">new</span> 类名();<span class="comment">//Student s1 = new Student();</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>多个变量指向一个对象，地址赋值（类似于浅拷贝）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Student</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line">s1.name = <span class="string">&quot;alex&quot;</span>;</span><br><span class="line"><span class="type">Student</span> <span class="variable">s2</span> <span class="operator">=</span> s1;</span><br><span class="line">s2.name = <span class="string">&quot;bob&quot;</span>;</span><br><span class="line">System.out.println(s1.name);<span class="comment">//&quot;bob&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-2-面向对象内容">1.2 面向对象内容</h3>
+<ul>
+<li>
+<p><strong>this变量</strong>：this是一个变量，可以用在方法里，来拿到当前对象。</p>
+</li>
+<li>
+<p><strong>构造器</strong>：创建对象时，对象会调用构造器。如果不写构造器，java会创建一个无参构造器。一旦定义了有参构造器，系统不会自动生成无参构造器。</p>
+</li>
+<li>
+<p>面向对象的三大特征：<strong>封装、继承和多态</strong>。</p>
+</li>
+<li>
+<p><strong>封装</strong>：就是用类设计对象处理某一个事物的数据时，应该把要处理的数据，以及处理这些数据的方法设计到一个对象中去。公共：public，私有：private。</p>
+</li>
+<li>
+<p><strong>JavaBean实体类</strong>：特殊形式的类。</p>
+<ul>
+<li>满足：类中成员变量要私有，要有对外提供的set、get方法。类中必须要有一个公共无参的构造器。</li>
+<li>实体类的应用场景：实体类只负责数据存取，而数据的处理交给其他类来完成，以实现数据和数据处理业务分离。</li>
+</ul>
+</li>
+</ul>
+<p><img src="img/JAVASE%E9%AB%98%E7%BA%A7/image-20241111172717546.png" alt="image-20241111172717546"></p>
+<h2 id="2-Java-API">2. Java API</h2>
+<p>包上用来分门别类地管理不同程序，有利于程序的管理和维护</p>
+<h3 id="2-1-String">2.1 String</h3>
+<p><img src="img/JAVASE%E9%AB%98%E7%BA%A7/image-20241111185416810.png" alt="image-20241111185416810"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span><span class="string">&quot;absaaa&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;Absaaa&quot;</span>;</span><br><span class="line"><span class="type">char</span>[] chars = s.toCharArray();</span><br><span class="line">s1.equals(s2);<span class="comment">//false</span></span><br><span class="line">s1.equalsIgnoreCase(s2);<span class="comment">//true</span></span><br><span class="line">System.out.println(s1.substring(<span class="number">3</span>));<span class="comment">//包前不包后,(aaa)</span></span><br><span class="line"><span class="type">String</span> <span class="variable">info</span> <span class="operator">=</span> <span class="string">&quot;这个电影简直是个垃圾，垃圾电影！&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">res</span> <span class="operator">=</span> info.replace(<span class="string">&quot;垃圾&quot;</span>,<span class="string">&quot;**&quot;</span>);</span><br><span class="line">System.out.println(info.contains(<span class="string">&quot;垃圾&quot;</span>));<span class="comment">//true</span></span><br><span class="line">System.out.println(info.startsWith(<span class="string">&quot;这个&quot;</span>));<span class="comment">//true</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;zz,zhw&quot;</span>;</span><br><span class="line">String[] names = name.split(<span class="string">&#x27;,&#x27;</span>);<span class="comment">//[zz,zhw]</span></span><br></pre></td></tr></table></figure>
+<p>String注意事项：</p>
+<ul>
+<li>
+<p>String的对象是不可变的，改变会指向新的地址。</p>
+</li>
+<li>
+<p>只要是以双引号给出的字符串对象，存储在常量池中，而且内容只会存储一份。</p>
+</li>
+<li>
+<p>new String创建字符串对象，每次new出来都是一个新对象，放在堆内存。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;aaaa&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;aaaa&quot;</span>;</span><br><span class="line">Syste.out.println(s1 == s2);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="2-2-ArrayList">2.2 ArrayList</h3>
+<ul>
+<li>集合：集合是一种容器，用来装数据，类似于数组。</li>
+<li>相对于数组，集合大小可变，开发中用的更多。</li>
+</ul>
+<p><img src="img/JAVASE%E9%AB%98%E7%BA%A7/image-20241111195655502.png" alt="image-20241111195655502"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ArrayList</span> <span class="variable">list</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>();</span><br><span class="line">ArrayList&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();<span class="comment">//推荐</span></span><br><span class="line">list.add(<span class="string">&quot;你好&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;666&quot;</span>);</span><br><span class="line">System.out.println(list);<span class="comment">//[&quot;你好&quot;,666];</span></span><br><span class="line">list.add(<span class="number">1</span>,<span class="string">&quot;MYSQL&quot;</span>);</span><br><span class="line">System.out.println(list);<span class="comment">//[&quot;你好&quot;,MYSQL];</span></span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> list.get(<span class="number">1</span>);</span><br><span class="line">System.out.println(list.size());<span class="comment">//2</span></span><br><span class="line"><span class="type">String</span> <span class="variable">remove</span> <span class="operator">=</span> list.remove(<span class="number">1</span>);<span class="comment">//remove = MYSQL</span></span><br><span class="line">System.out.println(list);<span class="comment">//[&quot;你好&quot;];</span></span><br><span class="line">System.out.println(list.remove(<span class="string">&quot;你好&quot;</span>));<span class="comment">//[];默认删除第一次遇见的数据</span></span><br><span class="line">list.add(<span class="string">&quot;你好&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;666&quot;</span>);</span><br><span class="line">System.out.println(list.set(<span class="number">1</span>,<span class="string">&quot;你好&quot;</span>));<span class="comment">//[&quot;你好&quot;,&quot;你好&quot;];</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Technique</category>
@@ -567,6 +627,35 @@
       </tags>
   </entry>
   <entry>
+    <title>LeetCode每日一题</title>
+    <url>/2024/11/02/LeetCode/</url>
+    <content><![CDATA[<h1>力扣每日一题</h1>
+<h3 id="动态规划">动态规划</h3>
+<p><strong>链接</strong>：</p>
+<p><a href="https://leetcode.cn/problems/minimum-cost-to-cut-a-stick/description/">1547. 切棍子的最小成本 - 力扣（LeetCode）</a></p>
+<p><a href="https://leetcode.cn/problems/shopping-offers/submissions/579662475/">638. 大礼包 - 力扣（LeetCode）</a></p>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>LeetCode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试_第一篇文章</title>
+    <url>/2024/11/02/test/</url>
+    <content><![CDATA[<p>this is my first article</p>
+]]></content>
+      <categories>
+        <category>Others</category>
+      </categories>
+      <tags>
+        <tag>测试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MMGaitFormer</title>
     <url>/2024/10/31/MMGaitFormer/</url>
     <content><![CDATA[<h1>Multi-Modal Gait Recognition via Effective Spatial-Temporal Feature Fusion</h1>
@@ -728,40 +817,6 @@
       </tags>
   </entry>
   <entry>
-    <title>LeetCode每日一题</title>
-    <url>/2024/11/02/LeetCode/</url>
-    <content><![CDATA[<h1>力扣每日一题</h1>
-<h3 id="动态规划">动态规划</h3>
-<p><strong>链接</strong>：</p>
-<p><a href="https://leetcode.cn/problems/minimum-cost-to-cut-a-stick/description/">1547. 切棍子的最小成本 - 力扣（LeetCode）</a></p>
-<p><a href="https://leetcode.cn/problems/shopping-offers/submissions/579662475/">638. 大礼包 - 力扣（LeetCode）</a></p>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>LeetCode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试_第一篇文章</title>
-    <url>/2024/11/02/test/</url>
-    <content><![CDATA[<p>this is my first article</p>
-]]></content>
-      <categories>
-        <category>Others</category>
-      </categories>
-      <tags>
-        <tag>测试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>关于</title>
     <url>/about/index.html</url>
     <content><![CDATA[<h1>Github贡献图</h1>
@@ -770,215 +825,6 @@
 <div id="posts-calendar" class="js-pjax"></div>
 <h1>标签统计图</h1>
 <div id="tags-chart" data-length="8" class="js-pjax"></div>]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/css/cate_bottom.css</url>
-    <content><![CDATA[#categoryBar {
-    width: 100% !important;
-  }
-  ul.categoryBar-list {
-    margin: 5px 5px 0 5px !important;
-    padding: 0 !important;
-  }
-  li.categoryBar-list-item {
-    font-weight: bold;
-    display: inline-block;
-    height: 180px !important;
-    margin: 5px 0.5% 0 0.5% !important;
-    background-image: linear-gradient(rgba(0,0,0,0.4) 25%, rgba(16,16,16,0) 100%);
-    border-radius: 10px;
-    padding: 25px 0 25px 25px !important;
-    box-shadow: rgba(50,50,50,0.3) 50px 50px 50px 50px inset;
-    overflow: hidden;
-    background-size: 100% !important;
-    background-position: center !important;
-  }
-  li.categoryBar-list-item:hover {
-    background-size: 110% !important;
-    box-shadow: inset 500px 50px 50px 50px rgba(50,50,50,0.6);
-  }
-  li.categoryBar-list-item:hover span.categoryBar-list-descr {
-    transition: all 0.5s;
-    transform: translate(-100%, 0);
-  }
-  a.categoryBar-list-link {
-    color: #fff !important;
-    font-size: 20px !important;
-  }
-  a.categoryBar-list-link::before {
-    content: '|' !important;
-    color: #fff !important;
-    font-size: 20px !important;
-  }
-  a.categoryBar-list-link:after {
-    content: '';
-    position: relative;
-    width: 0;
-    bottom: 0;
-    display: block;
-    height: 3px;
-    border-radius: 3px;
-    background-color: #fff;
-  }
-  a.categoryBar-list-link:hover:after {
-    width: 90%;
-    left: 1%;
-    transition: all 0.5s;
-  }
-  span.categoryBar-list-count {
-    display: block !important;
-    color: #fff !important;
-    font-size: 20px !important;
-  }
-  span.categoryBar-list-count::before {
-    content: '\f02d' !important;
-    padding-right: 15px !important;
-    display: inline-block;
-    font-weight: 600;
-    font-style: normal;
-    font-variant: normal;
-    font-family: 'Font Awesome 6 Free';
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-  }
-  span.categoryBar-list-descr {
-    padding: 5px;
-    display: block !important;
-    color: #fff !important;
-    font-size: 20px !important;
-    position: relative;
-    right: -100%;
-  }
-  @media screen and (max-width: 650px) {
-    li.categoryBar-list-item {
-      width: 48% !important;
-      height: 150px !important;
-      margin: 5px 1% 0 1% !important;
-    }
-  }]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/css/custom.css</url>
-    <content><![CDATA[/* 页脚与头图透明 */
-#footer {
-  background: transparent !important;
-}
-#page-header {
-  background: transparent !important;
-}
-
-/* 白天模式遮罩透明 */
-#footer::before {
-  background: transparent !important;
-}
-#page-header::before {
-  background: transparent !important;
-}
-
-/* 夜间模式遮罩透明 */
-[data-theme="dark"] #footer::before {
-  background: transparent !important;
-}
-[data-theme="dark"] #page-header::before {
-  background: transparent !important;
-}
-
-/* 背景宇宙星光  */
-#universe{
-  display: block;
-  position: fixed;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  /* 这个是调置顶的优先级的，-1在文章页下面，背景上面，个人推荐这种 */
-  z-index: -1;
-}
-
-/* 侧边栏个人信息卡片动态渐变色 */
-#aside-content > .card-widget.card-info {
-  background: linear-gradient(
-    -45deg,
-    #e8d8b9,
-    #eccec5,
-    #a3e9eb,
-    #bdbdf0,
-    #eec1ea
-  );
-  box-shadow: 0 0 5px rgb(66, 68, 68);
-  position: relative;
-  background-size: 400% 400%;
-  -webkit-animation: Gradient 10s ease infinite;
-  -moz-animation: Gradient 10s ease infinite;
-  animation: Gradient 10s ease infinite !important;
-}
-@-webkit-keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@-moz-keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@keyframes Gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* 黑夜模式适配 */
-[data-theme="dark"] #aside-content > .card-widget.card-info {
-  background: #191919ee;
-}
-
-/* 个人信息Follow me按钮 */
-#aside-content > .card-widget.card-info > #card-info-btn {
-  background-color: #3eb8be;
-  border-radius: 8px;
-}]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/js/universe.js</url>
-    <content><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};
-dark()]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/js/runtime.js</url>
-    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
-  </entry>
-  <entry>
-    <title>tags</title>
-    <url>/tags/index.html</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1306,5 +1152,219 @@ dark()]]></content>
       git_canlendar(git_user, git_gitapiurl, git_color)
     }
   }]]></content>
+  </entry>
+  <entry>
+    <title>categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/js/runtime.js</url>
+    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/css/cate_bottom.css</url>
+    <content><![CDATA[#categoryBar {
+    width: 100% !important;
+  }
+  ul.categoryBar-list {
+    margin: 5px 5px 0 5px !important;
+    padding: 0 !important;
+  }
+  li.categoryBar-list-item {
+    font-weight: bold;
+    display: inline-block;
+    height: 180px !important;
+    margin: 5px 0.5% 0 0.5% !important;
+    background-image: linear-gradient(rgba(0,0,0,0.4) 25%, rgba(16,16,16,0) 100%);
+    border-radius: 10px;
+    padding: 25px 0 25px 25px !important;
+    box-shadow: rgba(50,50,50,0.3) 50px 50px 50px 50px inset;
+    overflow: hidden;
+    background-size: 100% !important;
+    background-position: center !important;
+  }
+  li.categoryBar-list-item:hover {
+    background-size: 110% !important;
+    box-shadow: inset 500px 50px 50px 50px rgba(50,50,50,0.6);
+  }
+  li.categoryBar-list-item:hover span.categoryBar-list-descr {
+    transition: all 0.5s;
+    transform: translate(-100%, 0);
+  }
+  a.categoryBar-list-link {
+    color: #fff !important;
+    font-size: 20px !important;
+  }
+  a.categoryBar-list-link::before {
+    content: '|' !important;
+    color: #fff !important;
+    font-size: 20px !important;
+  }
+  a.categoryBar-list-link:after {
+    content: '';
+    position: relative;
+    width: 0;
+    bottom: 0;
+    display: block;
+    height: 3px;
+    border-radius: 3px;
+    background-color: #fff;
+  }
+  a.categoryBar-list-link:hover:after {
+    width: 90%;
+    left: 1%;
+    transition: all 0.5s;
+  }
+  span.categoryBar-list-count {
+    display: block !important;
+    color: #fff !important;
+    font-size: 20px !important;
+  }
+  span.categoryBar-list-count::before {
+    content: '\f02d' !important;
+    padding-right: 15px !important;
+    display: inline-block;
+    font-weight: 600;
+    font-style: normal;
+    font-variant: normal;
+    font-family: 'Font Awesome 6 Free';
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  span.categoryBar-list-descr {
+    padding: 5px;
+    display: block !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    position: relative;
+    right: -100%;
+  }
+  @media screen and (max-width: 650px) {
+    li.categoryBar-list-item {
+      width: 48% !important;
+      height: 150px !important;
+      margin: 5px 1% 0 1% !important;
+    }
+  }]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/css/custom.css</url>
+    <content><![CDATA[/* 页脚与头图透明 */
+#footer {
+  background: transparent !important;
+}
+#page-header {
+  background: transparent !important;
+}
+
+/* 白天模式遮罩透明 */
+#footer::before {
+  background: transparent !important;
+}
+#page-header::before {
+  background: transparent !important;
+}
+
+/* 夜间模式遮罩透明 */
+[data-theme="dark"] #footer::before {
+  background: transparent !important;
+}
+[data-theme="dark"] #page-header::before {
+  background: transparent !important;
+}
+
+/* 背景宇宙星光  */
+#universe{
+  display: block;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* 这个是调置顶的优先级的，-1在文章页下面，背景上面，个人推荐这种 */
+  z-index: -1;
+}
+
+/* 侧边栏个人信息卡片动态渐变色 */
+#aside-content > .card-widget.card-info {
+  background: linear-gradient(
+    -45deg,
+    #e8d8b9,
+    #eccec5,
+    #a3e9eb,
+    #bdbdf0,
+    #eec1ea
+  );
+  box-shadow: 0 0 5px rgb(66, 68, 68);
+  position: relative;
+  background-size: 400% 400%;
+  -webkit-animation: Gradient 10s ease infinite;
+  -moz-animation: Gradient 10s ease infinite;
+  animation: Gradient 10s ease infinite !important;
+}
+@-webkit-keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 黑夜模式适配 */
+[data-theme="dark"] #aside-content > .card-widget.card-info {
+  background: #191919ee;
+}
+
+/* 个人信息Follow me按钮 */
+#aside-content > .card-widget.card-info > #card-info-btn {
+  background-color: #3eb8be;
+  border-radius: 8px;
+}]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/js/universe.js</url>
+    <content><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};
+dark()]]></content>
+  </entry>
+  <entry>
+    <title>tags</title>
+    <url>/tags/index.html</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>
