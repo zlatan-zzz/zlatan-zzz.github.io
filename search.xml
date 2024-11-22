@@ -1,179 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Holmes-VAD</title>
-    <url>/2024/10/31/Holmes-VAD/</url>
-    <content><![CDATA[<h1>Holmes-VAD</h1>
-<h2 id="Abstract">Abstract</h2>
-<p>为了应对开放式的视频异常检测（VAD），现有方法在面对具有挑战性或未见过的事件时，往往表现出偏向性，并且缺乏可解释性。为了解决这些问题，本文提出了Holmes-VAD，一个新颖的框架，通过精确的时间定位和丰富的多模态指令，实现了准确的异常定位和全面的解释性。首先，针对无偏且可解释的VAD系统，我们构建了第一个<strong>大规模的多模态VAD指令微调基准</strong>，即VAD-Instruct50k。这个数据集使用精心设计的半自动标注范式创建，采用<strong>高效的单帧注释应用于收集的未裁剪视频</strong>，然后利用强大的现成视频字幕生成器和大规模语言模型（LLM）将其合成为高质量的异常和正常视频片段分析。在VAD-Instruct50k数据集的基础上，我们开发了一种定制化的可解释视频异常检测解决方案。我们训练了一个轻量级的时间采样器，用于选择高异常响应的帧，并微调一个多模态的大语言模型生成解释性内容。大量实验结果验证了Holmes-VAD的通用性和可解释性，确立了其作为真实世界视频异常分析的新型可解释技术。</p>
-<h2 id="1-Introduction-介绍">1. Introduction(介绍)</h2>
-<h3 id="1-1-VAD的背景">1.1 VAD的背景</h3>
-<p>同LAVAD。</p>
-<p>视频异常检测旨在识别视频中不寻常或异常的事件，近年来在公共安全和视频内容理解等领域得到了广泛研究。</p>
-<p>现有的VAD方法可以分为三类：无监督、弱监督和全监督方法。</p>
-<ul>
-<li><strong>无监督方法</strong>：只在正常视频上进行训练或使用未标注的正常/异常视频，但由于没有可靠的异常帧监督，这些方法在面对未见过的正常数据时往往表现不佳。</li>
-<li><strong>弱监督方法</strong>：使用视频级标签（即标注整个视频是否异常）进行训练，但难以在视频级别监督下选择合适的片段用于训练。</li>
-<li><strong>全监督方法</strong>：需要逐帧标注，这非常耗时且成本高昂，因此很少得到应用。</li>
-</ul>
-<p>最近，受在海量数据上预先训练的多模态大型语言模型（MLLMs）的强大代表性及其在许多下游视觉任务中令人印象深刻的进步的启发，许多人开始将多模态知识整合到 VAD 系统中，从而实现更精确的异常检测。</p>
-<h3 id="1-2现有方法的挑战：">1.2现有方法的挑战：</h3>
-<ul>
-<li><strong>偏向性问题</strong>：由于缺乏可靠的帧级异常监督，现有的无监督和弱监督方法在面对未见过的正常场景时容易产生偏差，无法准确地检测异常。</li>
-<li><strong>缺乏可解释性</strong>：大多数现有的VAD方法在检测异常时，无法提供“异常是什么”以及“为什么是异常”的解释，限制了系统的透明度和用户的理解。</li>
-</ul>
-<p><img src="/img/Holmes-VAD.assets/image-20241031153044614.png" alt="image-20241031153044614"></p>
-<blockquote>
-<p><strong>图一：</strong> **实现无偏和可解释的 VAD。**与主要专注于识别异常的主流 VAD 方法（a）相比，我们的方法（b）通过构建一个大规模的 VAD  数据集，其中包含未剪辑视频的单帧注释和剪辑视频的可解释指令数据，不仅有助于无偏见地（即减少对容易融合或未见常态的误报）预测异常分数，还有助于解释检测到的异常。</p>
-</blockquote>
-<h3 id="1-3-解决方法与技术创新">1.3 解决方法与技术创新</h3>
-<p>为了实现无偏且可解释的异常检测，Holmes-VAD框架提出了以下几项创新：</p>
-<ul>
-<li>
-<p><strong>单帧标注（Single-frame annotation）</strong>：现有的监督方法由于逐帧标注的高昂成本，很难大规模应用。为此，作者提出了一种更高效的标注方法，即单帧标注。通过在异常事件中仅标注一个关键帧，可以显著降低标注的时间成本。这种单帧标注的方式在视频异常检测中有助于减少对全面标注的依赖，同时仍然能提供有效的监督信号。</p>
-</li>
-<li>
-<p><strong>VAD-Instruct50k数据集</strong>：为了解决数据稀缺问题，作者构建了一个大规模的多模态视频异常检测数据集，称为<strong>VAD-Instruct50k</strong>。该数据集通过半自动标注生成，包含了大量的单帧注释视频以及异常事件的文本描述。具体过程如下：</p>
-<ol>
-<li><strong>数据收集</strong>：从现有的VAD数据集中收集未剪辑的视频（如UCF-Crime和XD-Violence）。</li>
-<li><strong>事件标注</strong>：通过人类和现有的自动化工具对异常视频中的关键帧进行单帧标注。</li>
-<li><strong>指令构建</strong>：使用大语言模型（LLM）为异常事件生成详细的文本解释，通过与视频内容结合，生成关于“什么是异常”和“为什么是异常”的指令对话数据。</li>
-</ol>
-</li>
-<li>
-<p><strong>模型的设计与训练</strong>：基于VAD-Instruct50k数据集，作者开发并训练了Holmes-VAD模型。该模型包含三个主要组件：</p>
-</li>
-</ul>
-<ol>
-<li><strong>视频编码器（Video Encoder）</strong>：用于对输入的视频进行编码，提取视频特征。</li>
-<li><strong>时间采样器（Temporal Sampler）</strong>：预测视频帧的异常分数，并采样高响应部分作为多模态LLM的输入，具有轻量级和高效推理的特点。</li>
-<li><strong>多模态大语言模型（Multi-modal LLM）</strong>：在结合视频特征的基础上，生成关于检测到的异常事件的文本解释。</li>
-</ol>
-<p>作者还通过实验验证了Holmes-VAD的有效性和可解释性，结果表明该方法在异常检测任务中性能优越，并能够提供详细的解释内容。</p>
-<h2 id="2-相关工作">2. 相关工作</h2>
-<h3 id="2-1-视频异常检测相关工作">2.1. 视频异常检测相关工作</h3>
-<ul>
-<li>讨论了现有的视频异常检测方法，特别是无监督、弱监督和全监督方法的现状与挑战。无监督方法通常在正常视频上进行训练，弱监督方法使用视频级别标签，而全监督方法由于逐帧标注的高成本应用较少。</li>
-<li>进一步分析了近年来VAD领域的研究进展，包括基于深度学习的方法和如何提升异常检测的精度和效率。</li>
-</ul>
-<h3 id="2-2-多模态大语言模型（MLLM）">2.2. 多模态大语言模型（MLLM）</h3>
-<ul>
-<li>多模态大语言模型最近的进展，例如CLIP等模型，在视觉和语言的结合上取得了显著进展。该部分讨论了如何利用MLLM来增强异常检测系统的解释性。</li>
-<li>涉及到的模型可能包括ChatGPT、LLaMA等，它们在文本生成和视觉理解上的表现，为多模态数据处理提供了基础。</li>
-</ul>
-<h3 id="2-3-多模态VAD">2.3 多模态VAD</h3>
-<p>多模态视频异常检测。大规模的视觉语言预训练模型如CLIP [ 42 ]充当了视觉和文本模态之间的桥梁。最近在视频异常检测领域的一些工作[  41、17、57、61]利用文本信息作为提示来增强模型的异常表示。基于此，[ 56 ]首先提出了开放词汇VAD任务。此外，文献[ 65  ]使用字幕模型从视频帧中提取字幕，并为LLMs设计提示以提供异常评分。然而，这些方法主要关注生成异常分数，缺乏在大规模特定领域指令数据集上的微调，导致其性能高度依赖于基LLM。</p>
-<h2 id="3-VAD-Instruct50k构建">3. VAD-Instruct50k构建</h2>
-<p><img src="/img/Holmes-VAD.assets/image-20241031153101330.png" alt="image-20241031153101330"></p>
-<blockquote>
-<p>**图二：**针对本文提出的VAD -  Instruct50k的数据引擎。我们从现有的数据集中收集了大量的异常/正常视频，然后进行了一系列的标注增强，包括时间单帧标注，事件片段生成和事件片段描述。然后，我们通过使用增强的注释来提示功能强大的LLM来构造指令数据。在整个管道中，人工作业和大型基础模型相互协调，以确保施工的效率和质量。</p>
-</blockquote>
-<h3 id="3-1-数据集生成过程：">3.1 数据集生成过程：</h3>
-<ul>
-<li><strong>数据收集</strong>：VAD-Instruct50k 的数据主要来自两个现有的弱监督视频异常检测数据集：UCF-Crime 和 XD-Violence。UCF-Crime包含来自监控摄像头的异常视频，涵盖了13类现实世界异常事件。XD-Violence则包含6种异常类型，如车祸、爆炸和斗殴等。经过筛选，最终收集了5547段未经修剪的长视频，其中包括异常视频和正常视频。</li>
-</ul>
-<h3 id="3-2-注释增强">3.2 注释增强</h3>
-<ul>
-<li>
-<p><strong>单帧标注：<strong>由于这些视频只有粗粒度的、视频级别的异常标签，作者通过</strong>单帧标注</strong>来提升注释的准确性。具体方法是在每个异常事件的视频中仅标注一帧代表异常的关键帧。这种方法在保持标注成本较低的同时，能够有效提高异常检测模型的训练效果。通过这个过程，我们平均每个视频收集了2.35个单帧标注。</p>
-</li>
-<li>
-<p><strong>事件片段生成</strong>：基于单帧标注，作者设计了一个<strong>伪标签生成方法</strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">\phi_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，并使用它来训练VAD网络。通过该方法，能够生成与注释帧周围相应的异常事件片段。这一过程包含以下步骤：</p>
-<ul>
-<li><strong>异常事件提议生成</strong>：对于每个有单帧标注的异常视频（记为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>g</mi><mi>i</mi></msub><msubsup><mo stretchy="false">}</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>g</mi></msub></msubsup></mrow><annotation encoding="application/x-tex">G = \{g_i\}_{i=1}^{N_g}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2973em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0205em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2421em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2819em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>g</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">g_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>个注释帧），作者使用训练好的VAD网络估计每帧的异常得分，并围绕注释帧生成多个异常事件提议（proposals）。每个提议由起始时间<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span>和结束时间 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>组成。</li>
-<li><strong>正常事件提议生成</strong>：为了让模型学习正常行为，作者还从正常视频中随机提取了一些正常事件提议（即正常视频中的一些时间段）。这一过程生成的提议用于训练模型区分正常和异常行为。</li>
-</ul>
-<p>最后，所有的已修剪事件片段都被标注为异常类别（例如“Explosion”）或“Normal”。整个数据表示为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>s</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>e</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>i</mi></msub><msubsup><mo stretchy="false">}</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>e</mi></msub></msubsup></mrow><annotation encoding="application/x-tex">\xi = \{s_i, e_i, y_i\}_{i=1}^{N_e}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.04601em;">ξ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2001em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9232em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为视频事件片段的标签，异常片段为对应的异常类别，正常片段则标注为“Normal”。</p>
-</li>
-<li>
-<p><strong>事件片段描述</strong>：为了从这些事件片段中提取更丰富的语义信息，作者使用了一个<strong>基于视频的多模态大语言模型（MLLM）</strong>，为每个事件片段生成详细的文字描述。为了确保描述的准确性，作者也使用了<strong>SurveillanceVision</strong>数据集中的一些手工标注的事件描述，这些描述主要来自UCF-Crime中的片段。</p>
-<ul>
-<li><strong>数据表示</strong>：最终，每个事件片段都被标注了异常标签，并通过多模态大模型生成了详细的文字描述。数据集包含的事件片段表示为：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>s</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>e</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>c</mi><mi>i</mi></msub><msubsup><mo stretchy="false">}</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>e</mi></msub></msubsup></mrow><annotation encoding="application/x-tex">\xi = \{s_i, e_i, y_i, c_i\}_{i=1}^{N_e}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.04601em;">ξ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2001em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9232em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">c_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为事件片段的文字描述。</li>
-</ul>
-</li>
-</ul>
-<p><img src="/img/Holmes-VAD.assets/image-20241031153117763.png" alt="image-20241031153117763"></p>
-<blockquote>
-<p>**图三：**Holmes - VAD将未修剪的视频和用户提示作为输入，将异常评分和对检测到的异常的解释输出。时序采样器将帧的类别标记作为输入并估计异常分数，密集的视觉标记在进入projector之前根据其异常分数进行重采样。</p>
-</blockquote>
-<h3 id="3-3-指令微调数据集的构建">3.3 指令微调数据集的构建</h3>
-<p><strong>注释增强</strong>过程有效地填补了原始视频级注释信息的不足，但仍然缺乏关于异常事件的解释性说明，例如“异常是什么”和“为什么是异常”。为了弥补这一缺陷，作者利用了具有丰富开放领域知识的大语言模型（LLM），进一步生成指令微调数据集。</p>
-<p>在技术上，对于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi></mrow><annotation encoding="application/x-tex">\xi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.04601em;">ξ</span></span></span></span> 中的每个事件片段，我们结合可参考的异常上下文，即异常标签 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 和细节描述 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">c_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，设计了一个任务提示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">P_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 。然后将组合提示输入到LLM <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>中，对视频片段中的异常进行判断并给出解释。生成的响应与相应的异常感知查询 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">P_d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 配对，产生一个指令项：</p>
-<p><img src="/img/Holmes-VAD.assets/image-20241031153137650.png" alt="image-20241031153137650"></p>
-<p>我们使用Llama3 - Instruct - 70B 作为这里的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>，因为它的开源可用性和与GPT4相当的性能。我们设计了多个Pd来保证指令数据的多样性，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">P_d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>的一个典型提示是：’ &lt;video&gt;\ n视频片段中是否有意外或不寻常的事件? '。</p>
-<h2 id="4-Holmes-VAD">4. Holmes-VAD</h2>
-<p>利用提出的VAD - Intruct50k数据集进行训练，我们开发了一个可解释视频异常检测的定制解决方案，即Holmes -  VAD，它有3个关键组件：<strong>视频编码器( Video Encoder )</strong>、<strong>时间采样器( Temporal Sampler )<strong>和带有</strong>可调LoRA 模块的多模态LLM</strong>。</p>
-<h3 id="4-1-模型架构">4.1 模型架构</h3>
-<h4 id="4-1-1-视频编码器（visual-encoder）">4.1.1 视频编码器（visual encoder）</h4>
-<p><strong>视频编码器</strong>的作用是对输入视频进行编码，将其转化为适合后续处理的特征表示。Holmes-VAD使用了<strong>LanguageBind</strong>模型中的冻结视频编码器，继承了来自<strong>CLIP</strong>（ViT-L/14架构）的视频编码能力。不同于原始的ViT结构，这个编码器在时间维度上增加了自注意力层，用于建模帧间的时间关系。</p>
-<p>具体来说，给定一个视频帧序列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>N</mi><mo>×</mo><mi>H</mi><mo>×</mo><mi>W</mi><mo>×</mo><mi>C</mi></mrow></msup></mrow><annotation encoding="application/x-tex">V \in \mathbb{R}^{N \times H \times W \times C}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">W</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span></span></span></span></span></span></span></span></span>，每帧的输出特征表示为：</p>
-<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>F</mi><mi>i</mi><mi>d</mi></msubsup><mo>=</mo><mo stretchy="false">{</mo><msubsup><mi>f</mi><mi>i</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo separator="true">,</mo><msubsup><mi>f</mi><mi>i</mi><mn>1</mn></msubsup><mo separator="true">,</mo><msubsup><mi>f</mi><mi>i</mi><mn>2</mn></msubsup><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msubsup><mi>f</mi><mi>i</mi><mrow><mi>N</mi><mi>p</mi></mrow></msubsup><mo stretchy="false">}</mo><mo>=</mo><msub><mi>ϕ</mi><mi>v</mi></msub><mo stretchy="false">(</mo><msub><mi>V</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>i</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>N</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">F_i^d=\{f_i^{cls},f_i^1,f_i^2,…,f_i^{Np}\}=ϕ_v(V_i),i∈\{1,2,…,N\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1078em;vertical-align:-0.2587em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2361em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9592em;"><span style="top:-2.4231em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.1809em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">Np</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">}</span></span></span></span></p>
-<p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>i</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">f^{cls}_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1078em;vertical-align:-0.2587em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span></span></span></span> 表示第<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>帧的类别标记特征，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>i</mi><mi>j</mi></msubsup></mrow><annotation encoding="application/x-tex">f^j_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2194em;vertical-align:-0.2769em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9426em;"><span style="top:-2.4231em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.1809em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span> 表示该帧的每个patch的视觉嵌入，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">N_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 是每帧的patch数。</p>
-<h4 id="4-1-2-时间采样器（Temporal-Sampler）">4.1.2 时间采样器（Temporal Sampler）</h4>
-<ul>
-<li>
-<p><strong>时间采样器</strong>用于估计每帧的异常分数，并选择高响应的帧作为多模态 LLM 的输入。这一模块的设计重点是减少计算开销，同时确保高效检测长视频中的异常事件。</p>
-</li>
-<li>
-<p>在处理长视频时，逐帧处理会导致大量冗余计算。因此，Holmes-VAD首先将密集的帧输入视频编码器，然后使用预先训练好的 VAD 网络计算每帧的类别标记特征（class token），并输出异常分数<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>s</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>s</mi><mi>N</mi></msub></mrow><annotation encoding="application/x-tex">s_1, s_2, \dots, s_N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>：</p>
-</li>
-</ul>
-<p><strong>cls token 的目的</strong>是作为全局图像特征的汇聚点。ViT模型通过一系列自注意力（self-attention）机制来交换补丁之间的信息，而cls令牌通过这些交互，逐步积累了整个图像的全局语义信息。最终，cls_token被用作图像的全局表示，用于分类任务。具体的做法是在ViT的最后一层，从cls令牌中提取全局特征进行分类或其他下游任务。</p>
-<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><msub><mi>s</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>s</mi><mn>2</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>s</mi><mi>N</mi></msub><mo stretchy="false">}</mo><mo>=</mo><msub><mi>ϕ</mi><mi>s</mi></msub><mo stretchy="false">(</mo><mo stretchy="false">{</mo><msubsup><mi>f</mi><mn>1</mn><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo separator="true">,</mo><msubsup><mi>f</mi><mn>2</mn><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msubsup><mi>f</mi><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo stretchy="false">}</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\{s_1,s_2,...,s_N\}=\phi_s(\{f_1^{cls},f_2^{cls},...,f_N^{cls}\})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1244em;vertical-align:-0.2753em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">({</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4519em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4519em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4247em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2753em;"><span></span></span></span></span></span></span><span class="mclose">})</span></span></span></span></p>
-<p>其中，$\phi_s $是训练好的 VAD 网络。</p>
-<p>然后，我们根据异常分数对视频令牌进行采样。具体来说，只有来自异常分数sk高于设定阈值<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">θ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>的帧的令牌<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">f_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>才会被输入到后续的网络中：</p>
-<h4 id="4-1-3-Projector-和-MLLM">4.1.3 Projector 和 MLLM</h4>
-<p>为了使LLM能够理解视觉编码器输出的特征，在它们之间设计了一个由两层MLP组成的投影仪<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mrow><mi>p</mi><mi>r</mi><mi>o</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\phi_{proj}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">ro</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>，之后，特征维度与LLM的输入维度对齐。我们利用 Vicuna [7] 作为我们的LLM,经过微调可以生成与视频内容相关的文本响应。</p>
-<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mi>L</mi><mi>L</mi><mi>M</mi><mo stretchy="false">(</mo><mo stretchy="false">[</mo><msub><mi>ϕ</mi><mrow><mi>p</mi><mi>r</mi><mi>o</mi><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msup><mi>F</mi><mi>s</mi></msup><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>ϕ</mi><mi>T</mi></msub><mo stretchy="false">(</mo><msub><mi>T</mi><mrow><mn>0</mn><mo>:</mo><mi>i</mi></mrow></msub><mo stretchy="false">)</mo><mo stretchy="false">]</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">T_{i+1}=LLM([ϕ_{proj}(F^s),ϕ_T(T_{0:i})])</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord mathnormal">LL</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mopen">([</span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">ro</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)])</span></span></span></span></p>
-<p>其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mn>0</mn><mo>:</mo><mi>i</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{0:i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示输入的文本标记(text token)，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">T_{i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> 表示预测的下一个标记(token)。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mtext>proj</mtext></msub></mrow><annotation encoding="application/x-tex">\phi_{\text{proj}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">proj</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">\phi_T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 分别表示projector和文本编码器。</p>
-<h3 id="4-2-模型训练">4.2 模型训练</h3>
-<h4 id="1-时间采样器的训练（Training-of-the-Temporal-Sampler）">1. 时间采样器的训练（Training of the Temporal Sampler）</h4>
-<ul>
-<li>
-<p>该阶段中，使用单帧标注进行训练，采用了一种伪标签监督策略。伪标签由单帧标注初始化，并在训练过程中在线更新。这一过程通过使用生成的伪标签来监督预测的异常分数，从而减少时间采样器对正常行为的偏差。</p>
-<p>时间采样器的训练目标是通过二元交叉熵损失函数（BCE）来优化异常得分，公式为：</p>
-<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>a</mi><mi>b</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>B</mi><mi>C</mi><mi>E</mi><mo stretchy="false">(</mo><mi>S</mi><mo separator="true">,</mo><mover accent="true"><mi>S</mi><mo>~</mo></mover><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L_{abn}=BCE(S,\tilde{S})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">abn</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1702em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">BCE</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9202em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span><span style="top:-3.6023em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">~</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
-<p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">{S}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span></span> 是预测的异常得分，$\tilde{S} $是生成的伪帧级标签。</p>
-</li>
-</ul>
-<h4 id="2-指令微调（Instruction-Tuning）">2. 指令微调（Instruction Tuning）</h4>
-<ul>
-<li>在指令微调阶段，模型接收的是修剪过的事件片段输入，因此不需要使用时间采样器。此时，投影器和多模态 LLM 被训练，以生成解释性文本。</li>
-<li>投影器使用两层 MLP 进行优化，并通过 LoRA 方法微调多模态 LLM。该阶段的训练目标是最大化生成正确响应的可能性，即基于输入特征生成连贯且准确的响应。</li>
-</ul>
-<h2 id="5-Experiments">5. Experiments</h2>
-<h3 id="5-1-实验设置">5.1 实验设置</h3>
-<ul>
-<li><strong>视频编码器</strong>：Holmes-VAD 使用 <strong>LanguageBind</strong> 模型中的 ViT（Vision Transformer）作为视频编码器。ViT 继承了 CLIP 模型的 ViT-L/14 结构，并在时间维度上增加了自注意力层，用于捕捉视频帧之间的时间关系。</li>
-<li><strong>多模态大语言模型（Multi-modal LLM）</strong>：模型初始化使用了 <strong>Video-LLaVA</strong> 作为多模态语言模型的基础，并在 VAD-Instruct50k 数据集上进行指令微调。微调过程中使用了 LoRA 技术来降低训练复杂度。</li>
-<li><strong>时间采样器（Temporal Sampler）</strong>：时间采样器的基础结构使用了 <strong>UR-DMU</strong>。在训练时间采样器时，随机采样每 16 帧中的一帧，使用 Adam 优化器，学习率设置为 1e-4。</li>
-<li><strong>训练细节</strong>：指令微调过程中，使用的批量大小为 128，训练 1 个 epoch。采用 AdamW 优化器，学习率逐渐递减。投影器的学习率设为 2e-5，LoRA 的参数设定为：秩 r=64、学习率为 2e-4。</li>
-<li><strong>推理过程中异常阈值</strong>：在推理阶段，异常得分的阈值 θ 设为 0.8。</li>
-</ul>
-<h3 id="5-2-主要结果">5.2 主要结果</h3>
-<p><img src="/img/Holmes-VAD.assets/image-20241014172032201.png" alt="image-20241014172032201"></p>
-<h3 id="5-3-分析结果">5.3 分析结果</h3>
-<p><img src="/img/Holmes-VAD.assets/image-20241014171959401.png" alt="image-20241014171959401"></p>
-<p><img src="/img/Holmes-VAD.assets/image-20241014172206457.png" alt="image-20241014172206457"></p>
-<h2 id="6-Conclusion">6. Conclusion</h2>
-<p>在本文中，我们介绍了一种称为 Holmes-VAD  的视频异常检测系统，以解决现有异常检测方法中的偏差和缺乏可解释性。通过引入更高效的标记范式并构建大规模多模态视频异常检测数据集  VAD-Instruct50k，我们验证了 Holmes-VAD 的通用性和可解释性。通过大量的实验，我们将 Holmes-VAD  定位为现实世界应用的有价值的工具。</p>
-<p>**限制和未来的工作。**尽管在构建 VAD-Instruct50k  数据集期间人类努力过滤噪声指令数据，但依赖现成的视频字幕模型来生成视频描述可能并不总是能够捕获细微差别和特定于上下文的信息。这是我们在标注成本和效率之间做出的权衡，我们认为数据质量与数据数量同等重要，未来我们计划在可接受的人力成本范围内进一步提升数据质量和数量。此外，虽然我们通过Temporal Sampler控制输入到Multi-modal LLM的视频长度并准确分析修剪后的视频片段中的异常内容，但Multimodal  LLM仍然缺乏理解长期视频异常的有效解决方案而不损害其图像级感知能力。我们把这些留给我们未来的探索。</p>
-]]></content>
-      <categories>
-        <category>Research</category>
-      </categories>
-      <tags>
-        <tag>大模型</tag>
-        <tag>视频异常检测</tag>
-        <tag>CVPR</tag>
-        <tag>计算机视觉</tag>
-        <tag>多模态</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JAVASE高级</title>
+    <title>JAVASE高级（一）</title>
     <url>/2024/11/10/JAVASE%E9%AB%98%E7%BA%A7/</url>
-    <content><![CDATA[<h1>JAVASE高级</h1>
+    <content><![CDATA[<h1>JAVASE高级（一）</h1>
 <h2 id="1-面向对象编程">1. 面向对象编程</h2>
 <h3 id="1-1-面向对象基础">1.1 面向对象基础</h3>
 <p>在班里有多个学生，每个学生可以看作一个对象，属性包括姓名、成绩等。</p>
@@ -550,6 +380,276 @@
       </tags>
   </entry>
   <entry>
+    <title>Holmes-VAD</title>
+    <url>/2024/10/31/Holmes-VAD/</url>
+    <content><![CDATA[<h1>Holmes-VAD</h1>
+<h2 id="Abstract">Abstract</h2>
+<p>为了应对开放式的视频异常检测（VAD），现有方法在面对具有挑战性或未见过的事件时，往往表现出偏向性，并且缺乏可解释性。为了解决这些问题，本文提出了Holmes-VAD，一个新颖的框架，通过精确的时间定位和丰富的多模态指令，实现了准确的异常定位和全面的解释性。首先，针对无偏且可解释的VAD系统，我们构建了第一个<strong>大规模的多模态VAD指令微调基准</strong>，即VAD-Instruct50k。这个数据集使用精心设计的半自动标注范式创建，采用<strong>高效的单帧注释应用于收集的未裁剪视频</strong>，然后利用强大的现成视频字幕生成器和大规模语言模型（LLM）将其合成为高质量的异常和正常视频片段分析。在VAD-Instruct50k数据集的基础上，我们开发了一种定制化的可解释视频异常检测解决方案。我们训练了一个轻量级的时间采样器，用于选择高异常响应的帧，并微调一个多模态的大语言模型生成解释性内容。大量实验结果验证了Holmes-VAD的通用性和可解释性，确立了其作为真实世界视频异常分析的新型可解释技术。</p>
+<h2 id="1-Introduction-介绍">1. Introduction(介绍)</h2>
+<h3 id="1-1-VAD的背景">1.1 VAD的背景</h3>
+<p>同LAVAD。</p>
+<p>视频异常检测旨在识别视频中不寻常或异常的事件，近年来在公共安全和视频内容理解等领域得到了广泛研究。</p>
+<p>现有的VAD方法可以分为三类：无监督、弱监督和全监督方法。</p>
+<ul>
+<li><strong>无监督方法</strong>：只在正常视频上进行训练或使用未标注的正常/异常视频，但由于没有可靠的异常帧监督，这些方法在面对未见过的正常数据时往往表现不佳。</li>
+<li><strong>弱监督方法</strong>：使用视频级标签（即标注整个视频是否异常）进行训练，但难以在视频级别监督下选择合适的片段用于训练。</li>
+<li><strong>全监督方法</strong>：需要逐帧标注，这非常耗时且成本高昂，因此很少得到应用。</li>
+</ul>
+<p>最近，受在海量数据上预先训练的多模态大型语言模型（MLLMs）的强大代表性及其在许多下游视觉任务中令人印象深刻的进步的启发，许多人开始将多模态知识整合到 VAD 系统中，从而实现更精确的异常检测。</p>
+<h3 id="1-2现有方法的挑战：">1.2现有方法的挑战：</h3>
+<ul>
+<li><strong>偏向性问题</strong>：由于缺乏可靠的帧级异常监督，现有的无监督和弱监督方法在面对未见过的正常场景时容易产生偏差，无法准确地检测异常。</li>
+<li><strong>缺乏可解释性</strong>：大多数现有的VAD方法在检测异常时，无法提供“异常是什么”以及“为什么是异常”的解释，限制了系统的透明度和用户的理解。</li>
+</ul>
+<p><img src="/img/Holmes-VAD.assets/image-20241031153044614.png" alt="image-20241031153044614"></p>
+<blockquote>
+<p><strong>图一：</strong> **实现无偏和可解释的 VAD。**与主要专注于识别异常的主流 VAD 方法（a）相比，我们的方法（b）通过构建一个大规模的 VAD  数据集，其中包含未剪辑视频的单帧注释和剪辑视频的可解释指令数据，不仅有助于无偏见地（即减少对容易融合或未见常态的误报）预测异常分数，还有助于解释检测到的异常。</p>
+</blockquote>
+<h3 id="1-3-解决方法与技术创新">1.3 解决方法与技术创新</h3>
+<p>为了实现无偏且可解释的异常检测，Holmes-VAD框架提出了以下几项创新：</p>
+<ul>
+<li>
+<p><strong>单帧标注（Single-frame annotation）</strong>：现有的监督方法由于逐帧标注的高昂成本，很难大规模应用。为此，作者提出了一种更高效的标注方法，即单帧标注。通过在异常事件中仅标注一个关键帧，可以显著降低标注的时间成本。这种单帧标注的方式在视频异常检测中有助于减少对全面标注的依赖，同时仍然能提供有效的监督信号。</p>
+</li>
+<li>
+<p><strong>VAD-Instruct50k数据集</strong>：为了解决数据稀缺问题，作者构建了一个大规模的多模态视频异常检测数据集，称为<strong>VAD-Instruct50k</strong>。该数据集通过半自动标注生成，包含了大量的单帧注释视频以及异常事件的文本描述。具体过程如下：</p>
+<ol>
+<li><strong>数据收集</strong>：从现有的VAD数据集中收集未剪辑的视频（如UCF-Crime和XD-Violence）。</li>
+<li><strong>事件标注</strong>：通过人类和现有的自动化工具对异常视频中的关键帧进行单帧标注。</li>
+<li><strong>指令构建</strong>：使用大语言模型（LLM）为异常事件生成详细的文本解释，通过与视频内容结合，生成关于“什么是异常”和“为什么是异常”的指令对话数据。</li>
+</ol>
+</li>
+<li>
+<p><strong>模型的设计与训练</strong>：基于VAD-Instruct50k数据集，作者开发并训练了Holmes-VAD模型。该模型包含三个主要组件：</p>
+</li>
+</ul>
+<ol>
+<li><strong>视频编码器（Video Encoder）</strong>：用于对输入的视频进行编码，提取视频特征。</li>
+<li><strong>时间采样器（Temporal Sampler）</strong>：预测视频帧的异常分数，并采样高响应部分作为多模态LLM的输入，具有轻量级和高效推理的特点。</li>
+<li><strong>多模态大语言模型（Multi-modal LLM）</strong>：在结合视频特征的基础上，生成关于检测到的异常事件的文本解释。</li>
+</ol>
+<p>作者还通过实验验证了Holmes-VAD的有效性和可解释性，结果表明该方法在异常检测任务中性能优越，并能够提供详细的解释内容。</p>
+<h2 id="2-相关工作">2. 相关工作</h2>
+<h3 id="2-1-视频异常检测相关工作">2.1. 视频异常检测相关工作</h3>
+<ul>
+<li>讨论了现有的视频异常检测方法，特别是无监督、弱监督和全监督方法的现状与挑战。无监督方法通常在正常视频上进行训练，弱监督方法使用视频级别标签，而全监督方法由于逐帧标注的高成本应用较少。</li>
+<li>进一步分析了近年来VAD领域的研究进展，包括基于深度学习的方法和如何提升异常检测的精度和效率。</li>
+</ul>
+<h3 id="2-2-多模态大语言模型（MLLM）">2.2. 多模态大语言模型（MLLM）</h3>
+<ul>
+<li>多模态大语言模型最近的进展，例如CLIP等模型，在视觉和语言的结合上取得了显著进展。该部分讨论了如何利用MLLM来增强异常检测系统的解释性。</li>
+<li>涉及到的模型可能包括ChatGPT、LLaMA等，它们在文本生成和视觉理解上的表现，为多模态数据处理提供了基础。</li>
+</ul>
+<h3 id="2-3-多模态VAD">2.3 多模态VAD</h3>
+<p>多模态视频异常检测。大规模的视觉语言预训练模型如CLIP [ 42 ]充当了视觉和文本模态之间的桥梁。最近在视频异常检测领域的一些工作[  41、17、57、61]利用文本信息作为提示来增强模型的异常表示。基于此，[ 56 ]首先提出了开放词汇VAD任务。此外，文献[ 65  ]使用字幕模型从视频帧中提取字幕，并为LLMs设计提示以提供异常评分。然而，这些方法主要关注生成异常分数，缺乏在大规模特定领域指令数据集上的微调，导致其性能高度依赖于基LLM。</p>
+<h2 id="3-VAD-Instruct50k构建">3. VAD-Instruct50k构建</h2>
+<p><img src="/img/Holmes-VAD.assets/image-20241031153101330.png" alt="image-20241031153101330"></p>
+<blockquote>
+<p>**图二：**针对本文提出的VAD -  Instruct50k的数据引擎。我们从现有的数据集中收集了大量的异常/正常视频，然后进行了一系列的标注增强，包括时间单帧标注，事件片段生成和事件片段描述。然后，我们通过使用增强的注释来提示功能强大的LLM来构造指令数据。在整个管道中，人工作业和大型基础模型相互协调，以确保施工的效率和质量。</p>
+</blockquote>
+<h3 id="3-1-数据集生成过程：">3.1 数据集生成过程：</h3>
+<ul>
+<li><strong>数据收集</strong>：VAD-Instruct50k 的数据主要来自两个现有的弱监督视频异常检测数据集：UCF-Crime 和 XD-Violence。UCF-Crime包含来自监控摄像头的异常视频，涵盖了13类现实世界异常事件。XD-Violence则包含6种异常类型，如车祸、爆炸和斗殴等。经过筛选，最终收集了5547段未经修剪的长视频，其中包括异常视频和正常视频。</li>
+</ul>
+<h3 id="3-2-注释增强">3.2 注释增强</h3>
+<ul>
+<li>
+<p><strong>单帧标注：<strong>由于这些视频只有粗粒度的、视频级别的异常标签，作者通过</strong>单帧标注</strong>来提升注释的准确性。具体方法是在每个异常事件的视频中仅标注一帧代表异常的关键帧。这种方法在保持标注成本较低的同时，能够有效提高异常检测模型的训练效果。通过这个过程，我们平均每个视频收集了2.35个单帧标注。</p>
+</li>
+<li>
+<p><strong>事件片段生成</strong>：基于单帧标注，作者设计了一个<strong>伪标签生成方法</strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">\phi_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，并使用它来训练VAD网络。通过该方法，能够生成与注释帧周围相应的异常事件片段。这一过程包含以下步骤：</p>
+<ul>
+<li><strong>异常事件提议生成</strong>：对于每个有单帧标注的异常视频（记为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>g</mi><mi>i</mi></msub><msubsup><mo stretchy="false">}</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>g</mi></msub></msubsup></mrow><annotation encoding="application/x-tex">G = \{g_i\}_{i=1}^{N_g}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2973em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0205em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2421em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2819em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>g</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">g_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>个注释帧），作者使用训练好的VAD网络估计每帧的异常得分，并围绕注释帧生成多个异常事件提议（proposals）。每个提议由起始时间<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span>和结束时间 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>组成。</li>
+<li><strong>正常事件提议生成</strong>：为了让模型学习正常行为，作者还从正常视频中随机提取了一些正常事件提议（即正常视频中的一些时间段）。这一过程生成的提议用于训练模型区分正常和异常行为。</li>
+</ul>
+<p>最后，所有的已修剪事件片段都被标注为异常类别（例如“Explosion”）或“Normal”。整个数据表示为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>s</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>e</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>i</mi></msub><msubsup><mo stretchy="false">}</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>e</mi></msub></msubsup></mrow><annotation encoding="application/x-tex">\xi = \{s_i, e_i, y_i\}_{i=1}^{N_e}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.04601em;">ξ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2001em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9232em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为视频事件片段的标签，异常片段为对应的异常类别，正常片段则标注为“Normal”。</p>
+</li>
+<li>
+<p><strong>事件片段描述</strong>：为了从这些事件片段中提取更丰富的语义信息，作者使用了一个<strong>基于视频的多模态大语言模型（MLLM）</strong>，为每个事件片段生成详细的文字描述。为了确保描述的准确性，作者也使用了<strong>SurveillanceVision</strong>数据集中的一些手工标注的事件描述，这些描述主要来自UCF-Crime中的片段。</p>
+<ul>
+<li><strong>数据表示</strong>：最终，每个事件片段都被标注了异常标签，并通过多模态大模型生成了详细的文字描述。数据集包含的事件片段表示为：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>s</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>e</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>c</mi><mi>i</mi></msub><msubsup><mo stretchy="false">}</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>e</mi></msub></msubsup></mrow><annotation encoding="application/x-tex">\xi = \{s_i, e_i, y_i, c_i\}_{i=1}^{N_e}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.04601em;">ξ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2001em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9232em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">c_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为事件片段的文字描述。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/Holmes-VAD.assets/image-20241031153117763.png" alt="image-20241031153117763"></p>
+<blockquote>
+<p>**图三：**Holmes - VAD将未修剪的视频和用户提示作为输入，将异常评分和对检测到的异常的解释输出。时序采样器将帧的类别标记作为输入并估计异常分数，密集的视觉标记在进入projector之前根据其异常分数进行重采样。</p>
+</blockquote>
+<h3 id="3-3-指令微调数据集的构建">3.3 指令微调数据集的构建</h3>
+<p><strong>注释增强</strong>过程有效地填补了原始视频级注释信息的不足，但仍然缺乏关于异常事件的解释性说明，例如“异常是什么”和“为什么是异常”。为了弥补这一缺陷，作者利用了具有丰富开放领域知识的大语言模型（LLM），进一步生成指令微调数据集。</p>
+<p>在技术上，对于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi></mrow><annotation encoding="application/x-tex">\xi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.04601em;">ξ</span></span></span></span> 中的每个事件片段，我们结合可参考的异常上下文，即异常标签 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 和细节描述 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">c_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，设计了一个任务提示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">P_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 。然后将组合提示输入到LLM <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>中，对视频片段中的异常进行判断并给出解释。生成的响应与相应的异常感知查询 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">P_d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 配对，产生一个指令项：</p>
+<p><img src="/img/Holmes-VAD.assets/image-20241031153137650.png" alt="image-20241031153137650"></p>
+<p>我们使用Llama3 - Instruct - 70B 作为这里的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>，因为它的开源可用性和与GPT4相当的性能。我们设计了多个Pd来保证指令数据的多样性，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">P_d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>的一个典型提示是：’ &lt;video&gt;\ n视频片段中是否有意外或不寻常的事件? '。</p>
+<h2 id="4-Holmes-VAD">4. Holmes-VAD</h2>
+<p>利用提出的VAD - Intruct50k数据集进行训练，我们开发了一个可解释视频异常检测的定制解决方案，即Holmes -  VAD，它有3个关键组件：<strong>视频编码器( Video Encoder )</strong>、<strong>时间采样器( Temporal Sampler )<strong>和带有</strong>可调LoRA 模块的多模态LLM</strong>。</p>
+<h3 id="4-1-模型架构">4.1 模型架构</h3>
+<h4 id="4-1-1-视频编码器（visual-encoder）">4.1.1 视频编码器（visual encoder）</h4>
+<p><strong>视频编码器</strong>的作用是对输入视频进行编码，将其转化为适合后续处理的特征表示。Holmes-VAD使用了<strong>LanguageBind</strong>模型中的冻结视频编码器，继承了来自<strong>CLIP</strong>（ViT-L/14架构）的视频编码能力。不同于原始的ViT结构，这个编码器在时间维度上增加了自注意力层，用于建模帧间的时间关系。</p>
+<p>具体来说，给定一个视频帧序列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>N</mi><mo>×</mo><mi>H</mi><mo>×</mo><mi>W</mi><mo>×</mo><mi>C</mi></mrow></msup></mrow><annotation encoding="application/x-tex">V \in \mathbb{R}^{N \times H \times W \times C}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">W</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span></span></span></span></span></span></span></span></span>，每帧的输出特征表示为：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>F</mi><mi>i</mi><mi>d</mi></msubsup><mo>=</mo><mo stretchy="false">{</mo><msubsup><mi>f</mi><mi>i</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo separator="true">,</mo><msubsup><mi>f</mi><mi>i</mi><mn>1</mn></msubsup><mo separator="true">,</mo><msubsup><mi>f</mi><mi>i</mi><mn>2</mn></msubsup><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msubsup><mi>f</mi><mi>i</mi><mrow><mi>N</mi><mi>p</mi></mrow></msubsup><mo stretchy="false">}</mo><mo>=</mo><msub><mi>ϕ</mi><mi>v</mi></msub><mo stretchy="false">(</mo><msub><mi>V</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>i</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>N</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">F_i^d=\{f_i^{cls},f_i^1,f_i^2,…,f_i^{Np}\}=ϕ_v(V_i),i∈\{1,2,…,N\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1078em;vertical-align:-0.2587em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2361em;vertical-align:-0.2769em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9592em;"><span style="top:-2.4231em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.1809em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">Np</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">}</span></span></span></span></p>
+<p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>i</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">f^{cls}_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1078em;vertical-align:-0.2587em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4413em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2587em;"><span></span></span></span></span></span></span></span></span></span> 表示第<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>帧的类别标记特征，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>i</mi><mi>j</mi></msubsup></mrow><annotation encoding="application/x-tex">f^j_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2194em;vertical-align:-0.2769em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9426em;"><span style="top:-2.4231em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.1809em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span></span> 表示该帧的每个patch的视觉嵌入，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">N_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 是每帧的patch数。</p>
+<h4 id="4-1-2-时间采样器（Temporal-Sampler）">4.1.2 时间采样器（Temporal Sampler）</h4>
+<ul>
+<li>
+<p><strong>时间采样器</strong>用于估计每帧的异常分数，并选择高响应的帧作为多模态 LLM 的输入。这一模块的设计重点是减少计算开销，同时确保高效检测长视频中的异常事件。</p>
+</li>
+<li>
+<p>在处理长视频时，逐帧处理会导致大量冗余计算。因此，Holmes-VAD首先将密集的帧输入视频编码器，然后使用预先训练好的 VAD 网络计算每帧的类别标记特征（class token），并输出异常分数<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>s</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>s</mi><mi>N</mi></msub></mrow><annotation encoding="application/x-tex">s_1, s_2, \dots, s_N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>：</p>
+</li>
+</ul>
+<p><strong>cls token 的目的</strong>是作为全局图像特征的汇聚点。ViT模型通过一系列自注意力（self-attention）机制来交换补丁之间的信息，而cls令牌通过这些交互，逐步积累了整个图像的全局语义信息。最终，cls_token被用作图像的全局表示，用于分类任务。具体的做法是在ViT的最后一层，从cls令牌中提取全局特征进行分类或其他下游任务。</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><msub><mi>s</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>s</mi><mn>2</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>s</mi><mi>N</mi></msub><mo stretchy="false">}</mo><mo>=</mo><msub><mi>ϕ</mi><mi>s</mi></msub><mo stretchy="false">(</mo><mo stretchy="false">{</mo><msubsup><mi>f</mi><mn>1</mn><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo separator="true">,</mo><msubsup><mi>f</mi><mn>2</mn><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msubsup><mi>f</mi><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi></mrow></msubsup><mo stretchy="false">}</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\{s_1,s_2,...,s_N\}=\phi_s(\{f_1^{cls},f_2^{cls},...,f_N^{cls}\})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1244em;vertical-align:-0.2753em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">({</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4519em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4519em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.4247em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2753em;"><span></span></span></span></span></span></span><span class="mclose">})</span></span></span></span></p>
+<p>其中，$\phi_s $是训练好的 VAD 网络。</p>
+<p>然后，我们根据异常分数对视频令牌进行采样。具体来说，只有来自异常分数sk高于设定阈值<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">θ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>的帧的令牌<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">f_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>才会被输入到后续的网络中：</p>
+<h4 id="4-1-3-Projector-和-MLLM">4.1.3 Projector 和 MLLM</h4>
+<p>为了使LLM能够理解视觉编码器输出的特征，在它们之间设计了一个由两层MLP组成的投影仪<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mrow><mi>p</mi><mi>r</mi><mi>o</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\phi_{proj}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">ro</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>，之后，特征维度与LLM的输入维度对齐。我们利用 Vicuna [7] 作为我们的LLM,经过微调可以生成与视频内容相关的文本响应。</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mi>L</mi><mi>L</mi><mi>M</mi><mo stretchy="false">(</mo><mo stretchy="false">[</mo><msub><mi>ϕ</mi><mrow><mi>p</mi><mi>r</mi><mi>o</mi><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msup><mi>F</mi><mi>s</mi></msup><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>ϕ</mi><mi>T</mi></msub><mo stretchy="false">(</mo><msub><mi>T</mi><mrow><mn>0</mn><mo>:</mo><mi>i</mi></mrow></msub><mo stretchy="false">)</mo><mo stretchy="false">]</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">T_{i+1}=LLM([ϕ_{proj}(F^s),ϕ_T(T_{0:i})])</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord mathnormal">LL</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mopen">([</span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">ro</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)])</span></span></span></span></p>
+<p>其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mn>0</mn><mo>:</mo><mi>i</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{0:i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示输入的文本标记(text token)，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">T_{i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> 表示预测的下一个标记(token)。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mtext>proj</mtext></msub></mrow><annotation encoding="application/x-tex">\phi_{\text{proj}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">proj</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">\phi_T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">ϕ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 分别表示projector和文本编码器。</p>
+<h3 id="4-2-模型训练">4.2 模型训练</h3>
+<h4 id="1-时间采样器的训练（Training-of-the-Temporal-Sampler）">1. 时间采样器的训练（Training of the Temporal Sampler）</h4>
+<ul>
+<li>
+<p>该阶段中，使用单帧标注进行训练，采用了一种伪标签监督策略。伪标签由单帧标注初始化，并在训练过程中在线更新。这一过程通过使用生成的伪标签来监督预测的异常分数，从而减少时间采样器对正常行为的偏差。</p>
+<p>时间采样器的训练目标是通过二元交叉熵损失函数（BCE）来优化异常得分，公式为：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>a</mi><mi>b</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>B</mi><mi>C</mi><mi>E</mi><mo stretchy="false">(</mo><mi>S</mi><mo separator="true">,</mo><mover accent="true"><mi>S</mi><mo>~</mo></mover><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L_{abn}=BCE(S,\tilde{S})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">abn</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1702em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">BCE</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9202em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span><span style="top:-3.6023em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">~</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+<p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">{S}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span></span> 是预测的异常得分，$\tilde{S} $是生成的伪帧级标签。</p>
+</li>
+</ul>
+<h4 id="2-指令微调（Instruction-Tuning）">2. 指令微调（Instruction Tuning）</h4>
+<ul>
+<li>在指令微调阶段，模型接收的是修剪过的事件片段输入，因此不需要使用时间采样器。此时，投影器和多模态 LLM 被训练，以生成解释性文本。</li>
+<li>投影器使用两层 MLP 进行优化，并通过 LoRA 方法微调多模态 LLM。该阶段的训练目标是最大化生成正确响应的可能性，即基于输入特征生成连贯且准确的响应。</li>
+</ul>
+<h2 id="5-Experiments">5. Experiments</h2>
+<h3 id="5-1-实验设置">5.1 实验设置</h3>
+<ul>
+<li><strong>视频编码器</strong>：Holmes-VAD 使用 <strong>LanguageBind</strong> 模型中的 ViT（Vision Transformer）作为视频编码器。ViT 继承了 CLIP 模型的 ViT-L/14 结构，并在时间维度上增加了自注意力层，用于捕捉视频帧之间的时间关系。</li>
+<li><strong>多模态大语言模型（Multi-modal LLM）</strong>：模型初始化使用了 <strong>Video-LLaVA</strong> 作为多模态语言模型的基础，并在 VAD-Instruct50k 数据集上进行指令微调。微调过程中使用了 LoRA 技术来降低训练复杂度。</li>
+<li><strong>时间采样器（Temporal Sampler）</strong>：时间采样器的基础结构使用了 <strong>UR-DMU</strong>。在训练时间采样器时，随机采样每 16 帧中的一帧，使用 Adam 优化器，学习率设置为 1e-4。</li>
+<li><strong>训练细节</strong>：指令微调过程中，使用的批量大小为 128，训练 1 个 epoch。采用 AdamW 优化器，学习率逐渐递减。投影器的学习率设为 2e-5，LoRA 的参数设定为：秩 r=64、学习率为 2e-4。</li>
+<li><strong>推理过程中异常阈值</strong>：在推理阶段，异常得分的阈值 θ 设为 0.8。</li>
+</ul>
+<h3 id="5-2-主要结果">5.2 主要结果</h3>
+<p><img src="/img/Holmes-VAD.assets/image-20241014172032201.png" alt="image-20241014172032201"></p>
+<h3 id="5-3-分析结果">5.3 分析结果</h3>
+<p><img src="/img/Holmes-VAD.assets/image-20241014171959401.png" alt="image-20241014171959401"></p>
+<p><img src="/img/Holmes-VAD.assets/image-20241014172206457.png" alt="image-20241014172206457"></p>
+<h2 id="6-Conclusion">6. Conclusion</h2>
+<p>在本文中，我们介绍了一种称为 Holmes-VAD  的视频异常检测系统，以解决现有异常检测方法中的偏差和缺乏可解释性。通过引入更高效的标记范式并构建大规模多模态视频异常检测数据集  VAD-Instruct50k，我们验证了 Holmes-VAD 的通用性和可解释性。通过大量的实验，我们将 Holmes-VAD  定位为现实世界应用的有价值的工具。</p>
+<p>**限制和未来的工作。**尽管在构建 VAD-Instruct50k  数据集期间人类努力过滤噪声指令数据，但依赖现成的视频字幕模型来生成视频描述可能并不总是能够捕获细微差别和特定于上下文的信息。这是我们在标注成本和效率之间做出的权衡，我们认为数据质量与数据数量同等重要，未来我们计划在可接受的人力成本范围内进一步提升数据质量和数量。此外，虽然我们通过Temporal Sampler控制输入到Multi-modal LLM的视频长度并准确分析修剪后的视频片段中的异常内容，但Multimodal  LLM仍然缺乏理解长期视频异常的有效解决方案而不损害其图像级感知能力。我们把这些留给我们未来的探索。</p>
+]]></content>
+      <categories>
+        <category>Research</category>
+      </categories>
+      <tags>
+        <tag>大模型</tag>
+        <tag>视频异常检测</tag>
+        <tag>CVPR</tag>
+        <tag>计算机视觉</tag>
+        <tag>多模态</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JAVASE高级（二）</title>
+    <url>/2024/11/19/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h1>JAVA高级（二）</h1>
+<h2 id="1-正则表达式">1. 正则表达式</h2>
+<ul>
+<li>
+<p>作用：</p>
+<ul>
+<li>用来校验数据格式是否合法</li>
+<li>在一段文本中查找满足需求的内容</li>
+</ul>
+</li>
+<li>
+<p>书写规则：</p>
+</li>
+</ul>
+<p><img src="/%E7%A0%94%E4%BA%8C/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241119143551049.png" alt="image-20241119143551049"></p>
+<h2 id="2-集合框架（一）">2. 集合框架（一）</h2>
+<ul>
+<li>集合体系结构
+<ul>
+<li>Collection单列集合</li>
+<li>Map双列集合（键值对）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/%E7%A0%94%E4%BA%8C/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241121105320555.png" alt="image-20241121105320555"></p>
+<ul>
+<li>Collection的遍历方式：
+<ul>
+<li>迭代器Iterator</li>
+<li>增强for循环:可以用来遍历数组或者集合（本质是迭代器的简化写法）</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//迭代器iterator</span></span><br><span class="line">Collection&lt;String&gt; c = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">c.add(<span class="string">&quot;alex&quot;</span>);</span><br><span class="line">Iterator&lt;String&gt; it = c.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">	<span class="type">String</span> <span class="variable">ele</span> <span class="operator">=</span> it.next();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//增强for循环</span></span><br><span class="line"><span class="keyword">for</span>(String ele : c)&#123;</span><br><span class="line">   	System</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//forEach方法结合lambda表达式</span></span><br><span class="line">c.forEach(<span class="keyword">new</span> <span class="title class_">Consumer</span>&lt;String&gt;()&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">accept</span><span class="params">(String s)</span>&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">c.forEach((String s)-&gt;&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line">c.forEach(s-&gt;&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;);</span><br><span class="line">c.forEach(System.out::println);   </span><br></pre></td></tr></table></figure>
+<ul>
+<li>List集合：有序、可重复、有索引
+<ul>
+<li>ArrayList集合特点
+<ul>
+<li>基于数组实现</li>
+<li>查询效率低</li>
+<li>删除效率低</li>
+<li>添加效率极低</li>
+</ul>
+</li>
+<li>LinkedList（双向链表）
+<ul>
+<li>查询慢（需要从开始查）</li>
+<li>增删相对快</li>
+<li>双向列表对首位元素进行增删改查的速度极快。</li>
+<li>应用场景：可以用来设计栈</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//ArrayList</span></span><br><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;121&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;232&quot;</span>);</span><br><span class="line">list.add(<span class="number">1</span>,<span class="string">&quot;222&quot;</span>);</span><br><span class="line">list.remove(<span class="number">2</span>);</span><br><span class="line">list.get(<span class="number">1</span>);</span><br><span class="line">list.set(<span class="number">1</span>,<span class="string">&quot;zz&quot;</span>);</span><br><span class="line"><span class="comment">//LinkedList</span></span><br><span class="line">LinkedList&lt;String&gt; queue = newe LinkedList&lt;&gt;();</span><br><span class="line">queue.addLast(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">queue,addLast(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">queue.removeFirst();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Set集合：无序、不重复、无索引
+<ul>
+<li>HashSet：无序、不重复、无索引</li>
+<li>LinkedHashSet：有序、不重复、无索引
+<ul>
+<li>原理：每个元素额外多了一个双链表机制记录前后元素的位置</li>
+</ul>
+</li>
+<li>TreeSet：排序、不重复、无索引、可排序（基于红黑树实现）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/%E7%A0%94%E4%BA%8C/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241121141703741.png" alt="image-20241121141703741"></p>
+<ul>
+<li>注意事项：集合的并发修改异常
+<ul>
+<li>iterator会带来并发修改异常</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//并发修改异常</span></span><br><span class="line">Iterator&lt;String&gt; it =list.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> it.next();</span><br><span class="line">    <span class="keyword">if</span>(name.contains(<span class="string">&quot;李&quot;</span>))&#123;</span><br><span class="line">        list.remove(name);<span class="comment">//并发修改异常</span></span><br><span class="line">        it.remove()<span class="comment">//删除迭代器当前遍历的数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-集合框架（二）">3. 集合框架（二）</h2>
+<ul>
+<li>可变参数：
+<ul>
+<li>一种特殊的形参，可以不传数据给他；可以传一个或者多个数据给他，也可以传一个数组；可以更灵活的接收数据。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可变参数</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span>...nums)</span>&#123;&#125;;</span><br><span class="line"><span class="comment">//Collections(工具类)</span></span><br><span class="line">List&lt;String&gt; names = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">Collections.addAll(names,<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;zhw&quot;</span>,<span class="string">&quot;www&quot;</span>);</span><br><span class="line">Collections.shuffle(names);<span class="comment">//打乱元素的顺序</span></span><br><span class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="number">3</span>);</span><br><span class="line">list.add(<span class="number">4</span>);</span><br><span class="line">Collections.sort(list);<span class="comment">//对list排序</span></span><br><span class="line"><span class="comment">//如果是针对如Student类，需要在类里implements Comparable,重写compareTo方法</span></span><br><span class="line">Collections.sort(Students,( o1, o2) -&gt; Double.compare(o1.getHeight(),o2.getHeight()));</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JavaSE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JAVASE基础</title>
     <url>/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1>JAVASE基础</h1>
@@ -705,6 +805,241 @@
       <tags>
         <tag>Java</tag>
         <tag>JavaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VideoLLM最新研究</title>
+    <url>/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/</url>
+    <content><![CDATA[<h1>VideoLLM最新研究</h1>
+<h2 id="MovieLLM-Enhancing-Long-Video-Understanding-with-AI-Generated-Movies">MovieLLM: Enhancing Long Video Understanding with AI-Generated Movies</h2>
+<p><strong>MovieLLM：利用人工智能生成的电影增强对长视频的理解（复旦大学）</strong></p>
+<p>**地址：**<a href="https://arxiv.org/abs/2403.01422">https://arxiv.org/abs/2403.01422</a></p>
+<blockquote>
+<p>参考：</p>
+<p><a href="https://blog.csdn.net/xixiaoyaoww/article/details/136651416">https://blog.csdn.net/xixiaoyaoww/article/details/136651416</a></p>
+<p><a href="https://www.aihub.cn/tools/llm/moviellm/">MovieLLM-通过AI生成电影来增强长视频理解的框架 - AIHub | AI导航</a></p>
+</blockquote>
+<p><strong>时间</strong>：2024.6.24(v2)</p>
+<h3 id="1-摘要">1.<strong>摘要</strong></h3>
+<p>多模态模型的发展标志着机器理解视频的重大进步。这些模型在分析短视频片段方面表现出了良好的前景。然而，当涉及到电影等较长的格式时，它们往往就显得力不从心了。主要的障碍是缺乏高质量、多样化的视频数据，以及收集或注释此类数据所需的大量工作。面对这些挑战，我们提出了 MovieLLM，这是一个新颖的框架，旨在合成一致且高质量的视频数据以进行指令调整。该管道经过精心设计，可通过改进文本反转技术以及 GPT-4 强大的文本生成功能来控制视频的风格。作为第一个这样做的框架，我们的方法以其灵活性和可扩展性而脱颖而出，使用户能够仅使用一个描述来创建自定义电影。这使其成为传统数据收集方法的更好替代方案。我们进行了广泛的实验，验证了 MovieLLM 生成的数据显著提高了多模态模型在理解复杂视频叙事方面的表现，克服了现有数据集在稀缺性和偏见方面的局限性。</p>
+<h3 id="2-理解">2.<strong>理解</strong></h3>
+<p>利用GPT-4并引导文图生成模型生成一致的电影级视频关键帧，利用该框架生成的长视频指令数据，显著提高了多模态模型在理解复杂视频叙事方面的性能，让大模型更懂电影。</p>
+<p>该方法包括三个相互关联的步骤：电影情节生成、风格固定化过程和视频指导数据生成。仅凭简单的主题描述，就能够生成整部电影的关键帧。</p>
+<p>整个流程如下图所示：首先利用GPT-4基于主题短语生成整个电影情节；利用文本反转技术将从情节生成的风格描述固定到扩散模型的潜在空间，引导其生成具有固定风格的帧。整合先前获取的所有信息，最终生成一致的关键帧和相应的问答对。</p>
+<ul>
+<li><strong>电影情节生成（Movie Plot Generation）</strong>：我们没有将绘图生成限制为传统数据源（例如网络或现有数据集），而是利用 GPT-4 的功能来生成合成数据。通过提供主题、概述和样式等特定元素，我们指导 GPT-4 生成适合后一代流程的电影级关键帧描述。</li>
+<li><strong>风格固定过程(Style Immobilization)</strong>：通过巧妙地采用文本反转（Gal et al., 2022），我们将从脚本生成的风格描述固定到扩散模型的潜在空间中。这种方法引导模型以一致的风格生成场景，同时在统一的审美下保持多样性。</li>
+<li><strong>视频指令数据生成（video instruction data generation）</strong>:通过将 GPT-4 强大的生成能力与开发的风格引导扩散模型相结合，我们生成风格一致的关键帧和相应的 QA 对，从而形成全面的指令调优语料库。</li>
+</ul>
+<p>我们的方法允许在不受数据量限制的情况下生成数据集，确保生成的内容具有高度的多样性。此外，它还有助于自动注释，从而显着减少对体力劳动的需求和相关成本。这些优势增强了长视频理解数据集创建的可扩展性、丰富性和效率，标志着该领域的重大飞跃。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122185209461.png" alt="image-20241122185209461"></p>
+<blockquote>
+<p>我们提出的用于生成长视频指令调整数据集的管道。只需简单的主题描述，我们的流程就能够生成整部电影的关键帧。该流程大致可以分为三个阶段：</p>
+<p>（a）电影情节生成，我们使用 GPT-4 根据主题短语生成整个电影情节。</p>
+<p>（b）风格固定化过程，我们利用文本反转技术将情节生成的风格描述固定到扩散模型的潜在空间中，引导其生成具有固定风格的框架。</p>
+<p>©视频指令数据生成，我们整合之前获得的所有信息，最终生成一致的关键帧和相应的问答对。</p>
+</blockquote>
+<p><strong>总结</strong>：类似于大模型在电影领域的效果增强？</p>
+<h2 id="Movie101v2-Improved-Movie-Narration-Benchmark">Movie101v2: Improved Movie Narration Benchmark</h2>
+<p><strong>Movie101v2：改进的电影叙述基准（人民大学）</strong></p>
+<p><strong>paper</strong>：<a href="https://arxiv.org/pdf/2404.13370">https://arxiv.org/pdf/2404.13370</a></p>
+<p><strong>时间</strong>：2024.10.18（v2）</p>
+<h3 id="1-摘要-2">1. 摘要</h3>
+<p>自动电影旁白旨在生成与视频一致的情节描述，以帮助视障观众。与标准视频字幕不同，它不仅涉及描述关键视觉细节，还涉及推断多个电影镜头中展开的情节，从而提出独特而复杂的挑战。为了推动这一领域的发展，我们引入了  Movie101v2，这是一个专门为电影叙事设计的大规模双语数据集，具有增强的数据质量。重新审视该任务，我们建议将自动电影叙述的最终目标分解为三个渐进阶段，提供清晰的路线图和相应的评估指标。基于我们的新基准，我们对包括 GPT-4V  在内的一系列大型视觉语言模型进行了基线分析，并对叙述生成中的挑战进行了深入分析。我们的研究结果强调，实现适用的电影叙事生成是一个令人着迷的目标，需要进行大量研究。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122190408521.png" alt="image-20241122190408521"></p>
+<blockquote>
+<p>来自其他数据集（左）和 Movie101v2（右）的示例，其中案例来自 Goodbye Mr. Loser。</p>
+</blockquote>
+<h3 id="2-理解-2">2. 理解</h3>
+<p>不错的任务以及描述，要求比较深入的视频理解能力，如果实现可以对其他任务作出帮助，目前的结果难以满足实际应用需求。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122192755452.png" alt="image-20241122192755452"></p>
+<blockquote>
+<p>我们的模型框架。(a) 用于 MCN 任务的 RMN；(b) 用于 TNG 任务的全局镜头检索和局部时序定位。</p>
+<p>MCN：电影片段解说、RMN：叙述生成框架、TNG：时序定位（不用管）</p>
+</blockquote>
+<p>总结：一个数据集Movie101，随电影自动生成旁白（MCN），比较有意思。</p>
+<h2 id="Streaming-Long-Video-Understanding-with-Large-Language-Models">Streaming Long Video Understanding with Large Language Models</h2>
+<p><strong>使用大型语言模型流式传输长视频理解（港中文）</strong></p>
+<p><strong>paper</strong>：<a href="https://arxiv.org/pdf/2405.16009">https://arxiv.org/pdf/2405.16009</a></p>
+<p><strong>时间</strong>：2024.5.25（v2）</p>
+<h3 id="1-摘要-3">1. 摘要</h3>
+<p>本文提出了 VideoStreaming，这是一种用于视频理解的高级视觉语言大型模型  (VLLM)，它能够通过流式编码和自适应选择的恒定数量的视频标记来理解任意长度的视频。视觉语言领域视频理解的挑战主要在于从长视频中提取的大量标记造成的巨大计算负担。以前的工作依靠稀疏采样或帧压缩来减少标记。然而，此类方法要么忽视长时间跨度的时间信息，要么牺牲空间细节，导致压缩有缺陷。为了解决这些限制，我们的视频流有两个核心设计：**内存传播流编码和自适应内存选择。**内存传播流编码架构将长视频分割成短剪辑，并使用传播内存顺序对每个剪辑进行编码。在每次迭代中，我们利用前一个剪辑的编码结果作为历史内存，将其与当前剪辑集成以提取压缩表示，该表示封装了截至当前时间戳的视频内容。该方法不仅将长期时间动态合并到流编码过程中，而且还产生固定长度的存储器作为任意长视频的全局表示。编码过程结束后，自适应记忆选择策略从所有历史记忆中选择恒定数量的与问题相关的记忆，并将它们输入 LLM  以生成信息丰富的响应。与问题相关的选择减少了记忆中的冗余，从而实现高效、精确的视频理解。同时，解开的视频提取和推理设计使得LLM可以通过直接选择相应的记忆来回答有关视频的不同问题，而无需为每个问题对整个视频进行编码。通过大量的实验，我们的模型在长视频基准上实现了卓越的性能和更高的效率，展示了对详细问题解答的精确时间理解。</p>
+<h3 id="2-理解-3">2. 理解</h3>
+<p>提出一种让LLM可以适配长短视频的视频处理方案，[标记一下，待续]。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122194217566.png" alt="image-20241122194217566"></p>
+<blockquote>
+<p>图 1a  显示了视频流的概述，其中我们将长视频分割成短剪辑，并将每个剪辑迭代编码到紧凑的内存中。然后，根据具体问题，我们选择恒定数量的相关记忆子集作为LLM的输入以产生答案。 ✓ 和 ✗  分别表示选定和未选定的存储器。图1b说明了每次流编码迭代的详细过程。我们参考特定时间戳和前一个剪辑的历史记忆将当前剪辑特征编码为压缩表示。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Research</category>
+      </categories>
+      <tags>
+        <tag>大模型</tag>
+        <tag>计算机视觉</tag>
+        <tag>多模态</tag>
+        <tag>视频理解</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MMGaitFormer</title>
+    <url>/2024/10/31/MMGaitFormer/</url>
+    <content><![CDATA[<h1>Multi-Modal Gait Recognition via Effective Spatial-Temporal Feature Fusion</h1>
+<p><strong>CVPR 2023</strong></p>
+<h2 id="Abstract">Abstract</h2>
+<p>步态识别是一种通过人的步态特征进行身份识别的技术。然而，现有的步态识别方法主要基于两种数据：轮廓和骨架。轮廓数据易受到服装遮挡的影响，骨架数据则缺乏身体外形信息。为了解决这些问题，论文提出了一种融合这两种数据的步态识别方法，从而获得更健壮和全面的步态表示。</p>
+<p>论文提出了一个基于<strong>Transformer</strong>的步态识别框架 <strong>MMGaitFormer</strong>。该框架通过以下两个关键模块来实现多模态的融合：</p>
+<ul>
+<li><strong>空间融合模块（Spatial Fusion Module, SFM）</strong>：该模块通过注意力机制，将步态的细粒度空间特征（如骨架关节和轮廓身体部分）进行融合。</li>
+<li><strong>时间融合模块（Temporal Fusion Module, TFM）</strong>：该模块通过一种称为循环位置嵌入（Cycle Position Embedding, CPE）的技术，结合步态序列的时间信息进行建模和融合。</li>
+</ul>
+<h2 id="1-Introduction">1.Introduction</h2>
+<p><img src="/img/MMGaitFormer.assets/image-20241004150309776.png" alt="image-20241004150309776"></p>
+<p>如图1（a）所示，虽然剪影保留了大部分身体形状信息，但当身体区域重叠时会出现自遮挡问题。此外，当衣服条件发生变化时，如图1（b）所示，衣服遮蔽会导致外部身体形状发生显着变化。</p>
+<blockquote>
+<p>骨架只保留内部身体结构信息，有效解决了衣服遮挡和自我遮挡问题，但完全忽略了辨别性的身体形状信息导致性能不佳。</p>
+<p>因此，我们可以观察到剪影保留了外部身体形状信息并省略了一些身体结构线索，而骨骼保留了内部身体结构信息。这两种数据模式是互补的，它们的组合有望成为更全面的步态表示</p>
+</blockquote>
+<p>我们提出了一种名为 MMGaitFormer 的基于 Transformer 的步态识别框架，它有效地融合和聚合了骨骼和轮廓的时空信息。</p>
+<h3 id="1-1-模型整体架构">1.1 <strong>模型整体架构</strong></h3>
+<p>MMGaitFormer 主要由以下三个阶段组成：</p>
+<ul>
+<li><strong>预处理阶段</strong>：从原始视频中提取轮廓序列和骨架序列。轮廓是通过图像分割方法从RGB视频中获得，骨架是通过姿态估计模型提取出来的。</li>
+<li><strong>编码阶段</strong>：轮廓和骨架序列分别输入独立的编码模块，提取它们各自的空间和时间特征。</li>
+<li><strong>融合阶段</strong>：引入了<strong>空间融合模块（SFM）和时间融合模块（TFM）</strong>，分别用于空间和时间层次的特征融合，最终将这些特征融合为一个统一的步态表示。</li>
+</ul>
+<h3 id="1-2-关键模块介绍">1.2 <strong>关键模块介绍</strong></h3>
+<h4 id="1-2-1-轮廓编码模块（Silhouette-Encoding-Module-SiEM）">1.2.1 <strong>轮廓编码模块（Silhouette Encoding Module, SiEM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：用于从轮廓图像中提取空间和时间特征。</li>
+<li><strong>结构</strong>：SiEM 主要使用 3D 卷积神经网络（CNN）以及其他特征提取层，如最大池化层和微运动捕捉模块（Micro-motion Capture Module, MCM），以捕捉轮廓的局部和全局步态特征。</li>
+</ul>
+<h4 id="1-2-2-骨架编码模块（Skeleton-Encoding-Module-SkEM）">1.2.2  <strong>骨架编码模块（Skeleton Encoding Module, SkEM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：用于从骨架数据中提取空间和时间特征。</li>
+<li><strong>结构</strong>：SkEM 使用图卷积网络（Graph Convolutional Network, GCN）来从骨架的关节点序列中提取空间和时间信息。由于骨架和轮廓数据的性质不同，SkEM 和 SiEM 是分开的编码模块。</li>
+</ul>
+<h4 id="1-2-3-空间融合模块（Spatial-Fusion-Module-SFM）">1.2.3 <strong>空间融合模块（Spatial Fusion Module, SFM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：融合骨架和轮廓的空间信息，利用它们的互补性来获得更加完整的步态表示。</li>
+<li><strong>机制</strong>：SFM 通过一种<strong>共注意力机制（Co-Attention Mechanism）<strong>实现，将骨架关节和轮廓部位的细粒度特征进行匹配和融合。这一过程被称为</strong>细粒度身体部位融合（Fine-grained Body Parts Fusion, FBPF）</strong>，基于人体的先验知识，将头部、躯干和腿部分别进行特征融合。
+<ul>
+<li><strong>共注意力机制</strong>：它使用双重交叉注意力模块（Cross-attention blocks）来实现骨架和轮廓之间的交互，并通过预定义的注意力掩码，确保相应的身体部位（如头、躯干、腿）之间的特征能够准确匹配。</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-2-4-时间融合模块（Temporal-Fusion-Module-TFM）">1.2.4  <strong>时间融合模块（Temporal Fusion Module, TFM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：对步态序列的时间信息进行建模和融合。</li>
+<li><strong>机制</strong>：TFM 提出了<strong>循环位置嵌入（Cycle Position Embedding, CPE）</strong>，用于捕捉步态序列中的周期性特征。CPE 能够模拟步态的周期过程，并且适应任意长度的步态序列，有效提高时间建模的准确性。
+<ul>
+<li><strong>时间共注意力机制</strong>：与 SFM 类似，TFM 也使用共注意力机制来融合骨架和轮廓的时间信息，确保步态序列中的时间特征能够有效地进行融合和增强。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-Related-Work">2. Related Work</h2>
+<h3 id="2-1-基于外观的方法（Appearance-based-Methods）">2.1  <strong>基于外观的方法（Appearance-based Methods）</strong></h3>
+<p>基于外观的步态识别方法通常依赖于从视频中提取的<strong>轮廓图像</strong>，即通过分割得到的二值化的轮廓图来描述人体的外部形态。这类方法的核心是利用这些轮廓图像来消除外部因素（如背景噪声）的干扰，专注于人体形状和运动模式。这类方法在文献中得到了广泛应用，主要包括以下几种代表性方法：</p>
+<ul>
+<li><strong>GaitSet</strong>：将步态看作一组轮廓图像序列，通过帧级特征提取模块获取空间特征，再通过时空聚合模块获取步态表示。</li>
+<li><strong>GaitPart</strong>：引入了微运动捕捉模块（Micro-motion Capture Module, MCM），以捕获局部的微运动特征。</li>
+<li><strong>GaitGL</strong>：基于3D卷积神经网络（3D CNN），同时捕获局部和全局的时空特征。</li>
+</ul>
+<p>尽管这些基于轮廓的方法在步态识别中表现优异，但它们在面对服装遮挡和自遮挡问题时表现出局限性，识别性能会受到一定影响。</p>
+<h3 id="2-2-基于模型的方法（Model-based-Methods）">2.2  <strong>基于模型的方法（Model-based Methods）</strong></h3>
+<p>这类方法通过建模人体的物理结构，从而以一种更加可解释的方式来表达步态信息。模型化的方法通常会提取骨架信息，使用姿态估计模型从视频中获取人体关节的位置信息，并基于这些关节节点的动态特征进行步态识别。</p>
+<ul>
+<li><strong>PoseGait</strong>：利用人体的先验知识设计姿态特征，使用卷积神经网络（CNN）提取步态特征。</li>
+<li><strong>GaitGraph</strong>：通过图卷积网络（Graph Convolutional Network, GCN）来处理骨架关节的时空关系，生成步态特征。</li>
+</ul>
+<p>骨架信息的优势在于它对外观变化（如服装变化）有更好的鲁棒性，但由于缺少人体的外部形态信息，这类方法的区分性有时不如基于外观的方法。</p>
+<h3 id="2-3-多模态步态识别方法（Multi-modal-Gait-Recognition-Methods）">2.3  <strong>多模态步态识别方法（Multi-modal Gait Recognition Methods）</strong></h3>
+<p>多模态步态识别尝试通过融合多种数据源（如深度图、视频、骨架数据等）来提升识别性能。早期研究探索了深度图像、惯性传感器数据和视频数据的融合，但基于同源视频数据的多模态方法尚未被充分开发。现有方法大多采用简单的特征拼接或全局特征融合，这种融合方式无法充分利用细粒度的空间和时间信息。</p>
+<ul>
+<li><strong>BiFusion</strong>：一种融合骨架和轮廓信息的步态识别方法，通过简单地拼接全局特征进行融合，但无法捕捉细粒度的时空特征。</li>
+<li><strong>TransGait</strong>：使用多模态学习的方法，利用 Set Transformer 实现骨架和轮廓的融合，但融合过程仍然较为简单，缺乏对细节的深度挖掘。</li>
+</ul>
+<p>这些多模态融合方法尽管在识别准确率上有一定提升，但由于缺乏细粒度的空间和时间融合手段，仍未能充分发挥多模态数据的潜力。</p>
+<h2 id="3-Methods">3.  Methods</h2>
+<h3 id="3-1-Pipeline">3.1 Pipeline</h3>
+<p><img src="/img/MMGaitFormer.assets/image-20241004192949785.png" alt="image-20241004192949785"></p>
+<blockquote>
+<p><strong>预处理阶段</strong>：分别通过分割方法和姿态估计方法从原始RGB视频中提取剪影序列和骨架序列。</p>
+<p><strong>编码阶段</strong>：我们将输入轮廓和骨架分别输入轮廓编码模块（SiEM）和骨架编码模块（SkEM）以学习时空特征图。</p>
+<p><strong>融合阶段</strong>：提出了空间融合模块（SFM）和时间融合模块（TFM），分别用于有效的细粒度空间和细对齐时间特征融合。</p>
+<p>ATT表示交叉注意力块，两个ATT形成共同注意力结构，用于特征融合。 TFM 中的嵌入建模 (EM) 用于时间建模。单独的全连接层（SFC）用于编码和融合阶段的特征映射。</p>
+</blockquote>
+<h3 id="3-2-SiEM和SkEM">3.2 SiEM和SkEM</h3>
+<h4 id="3-2-1-motivation">3.2.1 motivation</h4>
+<p>两种模态表示的数据结构差异太大，很难在数据层面上直接融合。因此，我们设计独立的编码模块来捕获每个模态的独特判别信息，并增强后续融合的时空特征表示。为了加速模型收敛，我们专门进行了轮廓损失Lsil和骨架损失Lske来分别监督每个模态特征的学习。</p>
+<h4 id="3-2-2-实现方式">3.2.2 实现方式</h4>
+<p><strong>SiEM</strong> 网络由 3D CNN 块 、最大池化层和微动作捕捉模块 (MCM)  组成。</p>
+<p><strong>SkEM</strong>我们引入图卷积网络（GCN）来从骨架图序列中提取时空步态特征。</p>
+<p>这两个模块的输出通道数被设定为相同（128个通道），以便于后续的融合处理。</p>
+<blockquote>
+<p>SiEM 和 SkEM 模块在框架中可以替换为其他步态识别网络。更复杂的结构可能会带来更好的性能提升，但这并不是该论文提出方法的优先目标，因此它们可以被视为一种基线方法。</p>
+</blockquote>
+<h3 id="3-3-SFM-空间融合模块Spatial-Fusion-Module">3.3 SFM(空间融合模块Spatial Fusion Module)</h3>
+<h4 id="1-设计动机-Motivation-：">1. <strong>设计动机 (Motivation)</strong>：</h4>
+<ul>
+<li>论文指出，之前的方法在融合多个步态模态（例如轮廓和骨架）时，通常采用全局特征级别的简单融合方法（例如特征拼接），这种融合方式缺乏解释性和灵活性。</li>
+<li>这些方法通常依赖于每种模态的预训练模型，更像是“集成模型”而不是“多模态融合模型”。</li>
+</ul>
+<p><img src="/img/MMGaitFormer.assets/image-20241010111324162.png" alt="image-20241010111324162"></p>
+<ul>
+<li>为了应对这些问题，论文提出了基于共注意力的融合模块，该模块通过注意力机制来解释身体部位的外部形状（轮廓）和内部结构（骨架）的融合（即<strong>细粒度身体部位融合</strong>）。</li>
+</ul>
+<p><img src="/img/MMGaitFormer.assets/image-20241010112006243.png" alt="image-20241010112006243"></p>
+<h4 id="2-细粒度身体部位融合-Fine-grained-Body-Parts-Fusion-：">2. <strong>细粒度身体部位融合 (Fine-grained Body Parts Fusion)</strong>：</h4>
+<ul>
+<li>人体在行走时，头部、躯干和腿部等不同部位有着明显的不同形状和运动模式。论文认为，空间特征融合应该是细粒度的。</li>
+<li>论文提出了一种基于人体先验知识的简单但有效的策略，将人体的不同部位（头、躯干、腿部）进行分区，并限制轮廓和骨架的特征在对应的身体部位之间进行交互，来实现更加精细的空间特征融合。</li>
+<li>这种方法不仅能够更好地利用人体的先验信息，提高融合的解释性，还可以通过减少计算量降低模型的复杂性，并有效减少过拟合的风险。</li>
+</ul>
+<h4 id="3-空间共注意力聚合-Spatial-Co-attention-Aggregation-：">3. <strong>空间共注意力聚合 (Spatial Co-attention Aggregation)</strong>：</h4>
+<ul>
+<li>该模块通过<strong>共注意力机制</strong>实现轮廓和骨架的交互。这种机制能够在轮廓部分和骨架关节之间建立各种空间关系，利用两种数据模态的互补优势，形成更鲁棒的步态特征表示。</li>
+<li>与单独使用交叉注意力的模块相比，共注意力结构可以更好地融合骨架和轮廓的互补信息。</li>
+<li>通过构造注意力掩码（Attention Mask）来限制注意力的计算范围，不仅减少了基于Transformer的方法过拟合的风险，还提升了模型的可解释性。</li>
+</ul>
+<h4 id="4-操作流程-Operation-：">4. <strong>操作流程 (Operation)</strong>：</h4>
+<ul>
+<li>该模块的输入是轮廓的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>s</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_s^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0883em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span> 和骨架的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>k</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_k^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.4169em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span>，然后利用基于注意力的机制对两者进行交互。</li>
+<li>交互的结果通过一个前馈神经网络（FFN）层，最终生成空间特征表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">Y_s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li>具体操作中，首先通过最大池化层在时间轴上进行池化，得到用于空间融合的特征嵌入。然后将这些嵌入输入到共注意力结构中进行特征融合，最后生成空间特征表示。</li>
+<li><img src="/img/MMGaitFormer.assets/image-20241010112016465.png" alt="image-20241010112016465"></li>
+<li><strong>图五</strong>我们提出的空间融合模块（a）和时间融合模块（b）的网络结构，两者都包含共同注意结构。每个共同注意结构由两个互连的交叉注意块组成。</li>
+</ul>
+<h3 id="3-4-时间融合模块（Temporal-Fusion-Module）">3.4 时间融合模块（Temporal Fusion Module）</h3>
+<h4 id="1-设计动机-Motivation-：-2">1. <strong>设计动机 (Motivation)</strong>：</h4>
+<ul>
+<li>步态识别作为基于视频的识别任务，时间帧之间的关系包含了独特的生物特征，这对于识别是非常关键的。</li>
+<li>在该部分中，论文提出了一个基于注意力机制的<strong>时间融合模块（TFM）</strong>，用于聚合来自轮廓和骨架的时间特征。</li>
+<li>由于步态是一个周期性且对称的过程，论文提出了<strong>周期位置嵌入（CPE，Cycle Position Embedding）</strong>，用于更好地建模和对齐两个模态的时间信息。</li>
+</ul>
+<h4 id="2-周期位置嵌入-Cycle-Position-Embedding-CPE-：">2. <strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong>：</h4>
+<ul>
+<li><strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong> 是第3.4节中介绍的一个重要概念，用于步态识别中的时间建模。它的目的是通过引入步态的周期性特征，提升模型捕捉时间信息的能力。</li>
+<li>普通的注意力机制不能区分输入序列中特征的位置信息。现有的视觉Transformer方法（例如ViT）通常使用位置嵌入来指示输入特征的顺序，但这对步态识别任务不太理想，因为步态是一个周期性的过程。</li>
+<li>论文提出了一种周期位置嵌入（CPE）来应对这一问题。CPE通过模拟步态周期过程，重复位置嵌入，直到它与特征嵌入序列的长度相同。这样，模型能够处理任意长度的序列。</li>
+<li>该方法不仅模拟了步态周期过程，更有效地捕捉了步态中的周期性特征。此外，CPE通过限制可学习参数的数量，降低了过拟合风险，帮助模型更好地收敛。</li>
+</ul>
+<p><img src="/img/MMGaitFormer.assets/image-20241010155155189.png" alt="image-20241010155155189"></p>
+<h4 id="3-时间共注意力聚合-Temporal-Co-attention-Aggregation-：">3. <strong>时间共注意力聚合 (Temporal Co-attention Aggregation)</strong>：</h4>
+<ul>
+<li>与空间融合模块类似，时间融合模块也设计了一个<strong>共注意力模块</strong>，用于融合和聚合两个模态的时间信息。</li>
+<li>由于轮廓和骨架的时间特征差异较大，模型使用了两个单独的前馈神经网络（FFN）层来分别映射这两个模态的时间特征。</li>
+<li>最终，模型会为轮廓和骨架生成相应的时间融合特征表示。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Research</category>
+      </categories>
+      <tags>
+        <tag>CVPR</tag>
+        <tag>计算机视觉</tag>
+        <tag>多模态</tag>
+        <tag>步态识别</tag>
       </tags>
   </entry>
   <entry>
@@ -932,6 +1267,18 @@
       </tags>
   </entry>
   <entry>
+    <title>测试_第一篇文章</title>
+    <url>/2024/11/02/test/</url>
+    <content><![CDATA[<p>this is my first article</p>
+]]></content>
+      <categories>
+        <category>Others</category>
+      </categories>
+      <tags>
+        <tag>测试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>LeetCode每日一题</title>
     <url>/2024/11/02/LeetCode/</url>
     <content><![CDATA[<h1>力扣每日一题</h1>
@@ -949,177 +1296,19 @@
       </tags>
   </entry>
   <entry>
-    <title>测试_第一篇文章</title>
-    <url>/2024/11/02/test/</url>
-    <content><![CDATA[<p>this is my first article</p>
-]]></content>
-      <categories>
-        <category>Others</category>
-      </categories>
-      <tags>
-        <tag>测试</tag>
-      </tags>
+    <title>关于</title>
+    <url>/about/index.html</url>
+    <content><![CDATA[<h1>Github贡献图</h1>
+<img src="https://ghchart.rshah.org/zlatan-zzz" alt="zlatan-zzz's Github chart" />
+<h1>文章贡献图</h1>
+<div id="posts-calendar" class="js-pjax"></div>
+<h1>标签统计图</h1>
+<div id="tags-chart" data-length="8" class="js-pjax"></div>]]></content>
   </entry>
   <entry>
-    <title>MMGaitFormer</title>
-    <url>/2024/10/31/MMGaitFormer/</url>
-    <content><![CDATA[<h1>Multi-Modal Gait Recognition via Effective Spatial-Temporal Feature Fusion</h1>
-<p><strong>CVPR 2023</strong></p>
-<h2 id="Abstract">Abstract</h2>
-<p>步态识别是一种通过人的步态特征进行身份识别的技术。然而，现有的步态识别方法主要基于两种数据：轮廓和骨架。轮廓数据易受到服装遮挡的影响，骨架数据则缺乏身体外形信息。为了解决这些问题，论文提出了一种融合这两种数据的步态识别方法，从而获得更健壮和全面的步态表示。</p>
-<p>论文提出了一个基于<strong>Transformer</strong>的步态识别框架 <strong>MMGaitFormer</strong>。该框架通过以下两个关键模块来实现多模态的融合：</p>
-<ul>
-<li><strong>空间融合模块（Spatial Fusion Module, SFM）</strong>：该模块通过注意力机制，将步态的细粒度空间特征（如骨架关节和轮廓身体部分）进行融合。</li>
-<li><strong>时间融合模块（Temporal Fusion Module, TFM）</strong>：该模块通过一种称为循环位置嵌入（Cycle Position Embedding, CPE）的技术，结合步态序列的时间信息进行建模和融合。</li>
-</ul>
-<h2 id="1-Introduction">1.Introduction</h2>
-<p><img src="/img/MMGaitFormer.assets/image-20241004150309776.png" alt="image-20241004150309776"></p>
-<p>如图1（a）所示，虽然剪影保留了大部分身体形状信息，但当身体区域重叠时会出现自遮挡问题。此外，当衣服条件发生变化时，如图1（b）所示，衣服遮蔽会导致外部身体形状发生显着变化。</p>
-<blockquote>
-<p>骨架只保留内部身体结构信息，有效解决了衣服遮挡和自我遮挡问题，但完全忽略了辨别性的身体形状信息导致性能不佳。</p>
-<p>因此，我们可以观察到剪影保留了外部身体形状信息并省略了一些身体结构线索，而骨骼保留了内部身体结构信息。这两种数据模式是互补的，它们的组合有望成为更全面的步态表示</p>
-</blockquote>
-<p>我们提出了一种名为 MMGaitFormer 的基于 Transformer 的步态识别框架，它有效地融合和聚合了骨骼和轮廓的时空信息。</p>
-<h3 id="1-1-模型整体架构">1.1 <strong>模型整体架构</strong></h3>
-<p>MMGaitFormer 主要由以下三个阶段组成：</p>
-<ul>
-<li><strong>预处理阶段</strong>：从原始视频中提取轮廓序列和骨架序列。轮廓是通过图像分割方法从RGB视频中获得，骨架是通过姿态估计模型提取出来的。</li>
-<li><strong>编码阶段</strong>：轮廓和骨架序列分别输入独立的编码模块，提取它们各自的空间和时间特征。</li>
-<li><strong>融合阶段</strong>：引入了<strong>空间融合模块（SFM）和时间融合模块（TFM）</strong>，分别用于空间和时间层次的特征融合，最终将这些特征融合为一个统一的步态表示。</li>
-</ul>
-<h3 id="1-2-关键模块介绍">1.2 <strong>关键模块介绍</strong></h3>
-<h4 id="1-2-1-轮廓编码模块（Silhouette-Encoding-Module-SiEM）">1.2.1 <strong>轮廓编码模块（Silhouette Encoding Module, SiEM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：用于从轮廓图像中提取空间和时间特征。</li>
-<li><strong>结构</strong>：SiEM 主要使用 3D 卷积神经网络（CNN）以及其他特征提取层，如最大池化层和微运动捕捉模块（Micro-motion Capture Module, MCM），以捕捉轮廓的局部和全局步态特征。</li>
-</ul>
-<h4 id="1-2-2-骨架编码模块（Skeleton-Encoding-Module-SkEM）">1.2.2  <strong>骨架编码模块（Skeleton Encoding Module, SkEM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：用于从骨架数据中提取空间和时间特征。</li>
-<li><strong>结构</strong>：SkEM 使用图卷积网络（Graph Convolutional Network, GCN）来从骨架的关节点序列中提取空间和时间信息。由于骨架和轮廓数据的性质不同，SkEM 和 SiEM 是分开的编码模块。</li>
-</ul>
-<h4 id="1-2-3-空间融合模块（Spatial-Fusion-Module-SFM）">1.2.3 <strong>空间融合模块（Spatial Fusion Module, SFM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：融合骨架和轮廓的空间信息，利用它们的互补性来获得更加完整的步态表示。</li>
-<li><strong>机制</strong>：SFM 通过一种<strong>共注意力机制（Co-Attention Mechanism）<strong>实现，将骨架关节和轮廓部位的细粒度特征进行匹配和融合。这一过程被称为</strong>细粒度身体部位融合（Fine-grained Body Parts Fusion, FBPF）</strong>，基于人体的先验知识，将头部、躯干和腿部分别进行特征融合。
-<ul>
-<li><strong>共注意力机制</strong>：它使用双重交叉注意力模块（Cross-attention blocks）来实现骨架和轮廓之间的交互，并通过预定义的注意力掩码，确保相应的身体部位（如头、躯干、腿）之间的特征能够准确匹配。</li>
-</ul>
-</li>
-</ul>
-<h4 id="1-2-4-时间融合模块（Temporal-Fusion-Module-TFM）">1.2.4  <strong>时间融合模块（Temporal Fusion Module, TFM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：对步态序列的时间信息进行建模和融合。</li>
-<li><strong>机制</strong>：TFM 提出了<strong>循环位置嵌入（Cycle Position Embedding, CPE）</strong>，用于捕捉步态序列中的周期性特征。CPE 能够模拟步态的周期过程，并且适应任意长度的步态序列，有效提高时间建模的准确性。
-<ul>
-<li><strong>时间共注意力机制</strong>：与 SFM 类似，TFM 也使用共注意力机制来融合骨架和轮廓的时间信息，确保步态序列中的时间特征能够有效地进行融合和增强。</li>
-</ul>
-</li>
-</ul>
-<h2 id="2-Related-Work">2. Related Work</h2>
-<h3 id="2-1-基于外观的方法（Appearance-based-Methods）">2.1  <strong>基于外观的方法（Appearance-based Methods）</strong></h3>
-<p>基于外观的步态识别方法通常依赖于从视频中提取的<strong>轮廓图像</strong>，即通过分割得到的二值化的轮廓图来描述人体的外部形态。这类方法的核心是利用这些轮廓图像来消除外部因素（如背景噪声）的干扰，专注于人体形状和运动模式。这类方法在文献中得到了广泛应用，主要包括以下几种代表性方法：</p>
-<ul>
-<li><strong>GaitSet</strong>：将步态看作一组轮廓图像序列，通过帧级特征提取模块获取空间特征，再通过时空聚合模块获取步态表示。</li>
-<li><strong>GaitPart</strong>：引入了微运动捕捉模块（Micro-motion Capture Module, MCM），以捕获局部的微运动特征。</li>
-<li><strong>GaitGL</strong>：基于3D卷积神经网络（3D CNN），同时捕获局部和全局的时空特征。</li>
-</ul>
-<p>尽管这些基于轮廓的方法在步态识别中表现优异，但它们在面对服装遮挡和自遮挡问题时表现出局限性，识别性能会受到一定影响。</p>
-<h3 id="2-2-基于模型的方法（Model-based-Methods）">2.2  <strong>基于模型的方法（Model-based Methods）</strong></h3>
-<p>这类方法通过建模人体的物理结构，从而以一种更加可解释的方式来表达步态信息。模型化的方法通常会提取骨架信息，使用姿态估计模型从视频中获取人体关节的位置信息，并基于这些关节节点的动态特征进行步态识别。</p>
-<ul>
-<li><strong>PoseGait</strong>：利用人体的先验知识设计姿态特征，使用卷积神经网络（CNN）提取步态特征。</li>
-<li><strong>GaitGraph</strong>：通过图卷积网络（Graph Convolutional Network, GCN）来处理骨架关节的时空关系，生成步态特征。</li>
-</ul>
-<p>骨架信息的优势在于它对外观变化（如服装变化）有更好的鲁棒性，但由于缺少人体的外部形态信息，这类方法的区分性有时不如基于外观的方法。</p>
-<h3 id="2-3-多模态步态识别方法（Multi-modal-Gait-Recognition-Methods）">2.3  <strong>多模态步态识别方法（Multi-modal Gait Recognition Methods）</strong></h3>
-<p>多模态步态识别尝试通过融合多种数据源（如深度图、视频、骨架数据等）来提升识别性能。早期研究探索了深度图像、惯性传感器数据和视频数据的融合，但基于同源视频数据的多模态方法尚未被充分开发。现有方法大多采用简单的特征拼接或全局特征融合，这种融合方式无法充分利用细粒度的空间和时间信息。</p>
-<ul>
-<li><strong>BiFusion</strong>：一种融合骨架和轮廓信息的步态识别方法，通过简单地拼接全局特征进行融合，但无法捕捉细粒度的时空特征。</li>
-<li><strong>TransGait</strong>：使用多模态学习的方法，利用 Set Transformer 实现骨架和轮廓的融合，但融合过程仍然较为简单，缺乏对细节的深度挖掘。</li>
-</ul>
-<p>这些多模态融合方法尽管在识别准确率上有一定提升，但由于缺乏细粒度的空间和时间融合手段，仍未能充分发挥多模态数据的潜力。</p>
-<h2 id="3-Methods">3.  Methods</h2>
-<h3 id="3-1-Pipeline">3.1 Pipeline</h3>
-<p><img src="/img/MMGaitFormer.assets/image-20241004192949785.png" alt="image-20241004192949785"></p>
-<blockquote>
-<p><strong>预处理阶段</strong>：分别通过分割方法和姿态估计方法从原始RGB视频中提取剪影序列和骨架序列。</p>
-<p><strong>编码阶段</strong>：我们将输入轮廓和骨架分别输入轮廓编码模块（SiEM）和骨架编码模块（SkEM）以学习时空特征图。</p>
-<p><strong>融合阶段</strong>：提出了空间融合模块（SFM）和时间融合模块（TFM），分别用于有效的细粒度空间和细对齐时间特征融合。</p>
-<p>ATT表示交叉注意力块，两个ATT形成共同注意力结构，用于特征融合。 TFM 中的嵌入建模 (EM) 用于时间建模。单独的全连接层（SFC）用于编码和融合阶段的特征映射。</p>
-</blockquote>
-<h3 id="3-2-SiEM和SkEM">3.2 SiEM和SkEM</h3>
-<h4 id="3-2-1-motivation">3.2.1 motivation</h4>
-<p>两种模态表示的数据结构差异太大，很难在数据层面上直接融合。因此，我们设计独立的编码模块来捕获每个模态的独特判别信息，并增强后续融合的时空特征表示。为了加速模型收敛，我们专门进行了轮廓损失Lsil和骨架损失Lske来分别监督每个模态特征的学习。</p>
-<h4 id="3-2-2-实现方式">3.2.2 实现方式</h4>
-<p><strong>SiEM</strong> 网络由 3D CNN 块 、最大池化层和微动作捕捉模块 (MCM)  组成。</p>
-<p><strong>SkEM</strong>我们引入图卷积网络（GCN）来从骨架图序列中提取时空步态特征。</p>
-<p>这两个模块的输出通道数被设定为相同（128个通道），以便于后续的融合处理。</p>
-<blockquote>
-<p>SiEM 和 SkEM 模块在框架中可以替换为其他步态识别网络。更复杂的结构可能会带来更好的性能提升，但这并不是该论文提出方法的优先目标，因此它们可以被视为一种基线方法。</p>
-</blockquote>
-<h3 id="3-3-SFM-空间融合模块Spatial-Fusion-Module">3.3 SFM(空间融合模块Spatial Fusion Module)</h3>
-<h4 id="1-设计动机-Motivation-：">1. <strong>设计动机 (Motivation)</strong>：</h4>
-<ul>
-<li>论文指出，之前的方法在融合多个步态模态（例如轮廓和骨架）时，通常采用全局特征级别的简单融合方法（例如特征拼接），这种融合方式缺乏解释性和灵活性。</li>
-<li>这些方法通常依赖于每种模态的预训练模型，更像是“集成模型”而不是“多模态融合模型”。</li>
-</ul>
-<p><img src="/img/MMGaitFormer.assets/image-20241010111324162.png" alt="image-20241010111324162"></p>
-<ul>
-<li>为了应对这些问题，论文提出了基于共注意力的融合模块，该模块通过注意力机制来解释身体部位的外部形状（轮廓）和内部结构（骨架）的融合（即<strong>细粒度身体部位融合</strong>）。</li>
-</ul>
-<p><img src="/img/MMGaitFormer.assets/image-20241010112006243.png" alt="image-20241010112006243"></p>
-<h4 id="2-细粒度身体部位融合-Fine-grained-Body-Parts-Fusion-：">2. <strong>细粒度身体部位融合 (Fine-grained Body Parts Fusion)</strong>：</h4>
-<ul>
-<li>人体在行走时，头部、躯干和腿部等不同部位有着明显的不同形状和运动模式。论文认为，空间特征融合应该是细粒度的。</li>
-<li>论文提出了一种基于人体先验知识的简单但有效的策略，将人体的不同部位（头、躯干、腿部）进行分区，并限制轮廓和骨架的特征在对应的身体部位之间进行交互，来实现更加精细的空间特征融合。</li>
-<li>这种方法不仅能够更好地利用人体的先验信息，提高融合的解释性，还可以通过减少计算量降低模型的复杂性，并有效减少过拟合的风险。</li>
-</ul>
-<h4 id="3-空间共注意力聚合-Spatial-Co-attention-Aggregation-：">3. <strong>空间共注意力聚合 (Spatial Co-attention Aggregation)</strong>：</h4>
-<ul>
-<li>该模块通过<strong>共注意力机制</strong>实现轮廓和骨架的交互。这种机制能够在轮廓部分和骨架关节之间建立各种空间关系，利用两种数据模态的互补优势，形成更鲁棒的步态特征表示。</li>
-<li>与单独使用交叉注意力的模块相比，共注意力结构可以更好地融合骨架和轮廓的互补信息。</li>
-<li>通过构造注意力掩码（Attention Mask）来限制注意力的计算范围，不仅减少了基于Transformer的方法过拟合的风险，还提升了模型的可解释性。</li>
-</ul>
-<h4 id="4-操作流程-Operation-：">4. <strong>操作流程 (Operation)</strong>：</h4>
-<ul>
-<li>该模块的输入是轮廓的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>s</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_s^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0883em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span> 和骨架的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>k</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_k^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.4169em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span>，然后利用基于注意力的机制对两者进行交互。</li>
-<li>交互的结果通过一个前馈神经网络（FFN）层，最终生成空间特征表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">Y_s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
-<li>具体操作中，首先通过最大池化层在时间轴上进行池化，得到用于空间融合的特征嵌入。然后将这些嵌入输入到共注意力结构中进行特征融合，最后生成空间特征表示。</li>
-<li><img src="/img/MMGaitFormer.assets/image-20241010112016465.png" alt="image-20241010112016465"></li>
-<li><strong>图五</strong>我们提出的空间融合模块（a）和时间融合模块（b）的网络结构，两者都包含共同注意结构。每个共同注意结构由两个互连的交叉注意块组成。</li>
-</ul>
-<h3 id="3-4-时间融合模块（Temporal-Fusion-Module）">3.4 时间融合模块（Temporal Fusion Module）</h3>
-<h4 id="1-设计动机-Motivation-：-2">1. <strong>设计动机 (Motivation)</strong>：</h4>
-<ul>
-<li>步态识别作为基于视频的识别任务，时间帧之间的关系包含了独特的生物特征，这对于识别是非常关键的。</li>
-<li>在该部分中，论文提出了一个基于注意力机制的<strong>时间融合模块（TFM）</strong>，用于聚合来自轮廓和骨架的时间特征。</li>
-<li>由于步态是一个周期性且对称的过程，论文提出了<strong>周期位置嵌入（CPE，Cycle Position Embedding）</strong>，用于更好地建模和对齐两个模态的时间信息。</li>
-</ul>
-<h4 id="2-周期位置嵌入-Cycle-Position-Embedding-CPE-：">2. <strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong>：</h4>
-<ul>
-<li><strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong> 是第3.4节中介绍的一个重要概念，用于步态识别中的时间建模。它的目的是通过引入步态的周期性特征，提升模型捕捉时间信息的能力。</li>
-<li>普通的注意力机制不能区分输入序列中特征的位置信息。现有的视觉Transformer方法（例如ViT）通常使用位置嵌入来指示输入特征的顺序，但这对步态识别任务不太理想，因为步态是一个周期性的过程。</li>
-<li>论文提出了一种周期位置嵌入（CPE）来应对这一问题。CPE通过模拟步态周期过程，重复位置嵌入，直到它与特征嵌入序列的长度相同。这样，模型能够处理任意长度的序列。</li>
-<li>该方法不仅模拟了步态周期过程，更有效地捕捉了步态中的周期性特征。此外，CPE通过限制可学习参数的数量，降低了过拟合风险，帮助模型更好地收敛。</li>
-</ul>
-<p><img src="/img/MMGaitFormer.assets/image-20241010155155189.png" alt="image-20241010155155189"></p>
-<h4 id="3-时间共注意力聚合-Temporal-Co-attention-Aggregation-：">3. <strong>时间共注意力聚合 (Temporal Co-attention Aggregation)</strong>：</h4>
-<ul>
-<li>与空间融合模块类似，时间融合模块也设计了一个<strong>共注意力模块</strong>，用于融合和聚合两个模态的时间信息。</li>
-<li>由于轮廓和骨架的时间特征差异较大，模型使用了两个单独的前馈神经网络（FFN）层来分别映射这两个模态的时间特征。</li>
-<li>最终，模型会为轮廓和骨架生成相应的时间融合特征表示。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Research</category>
-      </categories>
-      <tags>
-        <tag>CVPR</tag>
-        <tag>计算机视觉</tag>
-        <tag>多模态</tag>
-        <tag>步态识别</tag>
-      </tags>
+    <title>categories</title>
+    <url>/categories/index.html</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1207,11 +1396,6 @@
       margin: 5px 1% 0 1% !important;
     }
   }]]></content>
-  </entry>
-  <entry>
-    <title>categories</title>
-    <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1318,16 +1502,6 @@
   background-color: #3eb8be;
   border-radius: 8px;
 }]]></content>
-  </entry>
-  <entry>
-    <title>关于</title>
-    <url>/about/index.html</url>
-    <content><![CDATA[<h1>Github贡献图</h1>
-<img src="https://ghchart.rshah.org/zlatan-zzz" alt="zlatan-zzz's Github chart" />
-<h1>文章贡献图</h1>
-<div id="posts-calendar" class="js-pjax"></div>
-<h1>标签统计图</h1>
-<div id="tags-chart" data-length="8" class="js-pjax"></div>]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1658,14 +1832,14 @@
   </entry>
   <entry>
     <title></title>
-    <url>/js/runtime.js</url>
-    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
-  </entry>
-  <entry>
-    <title></title>
     <url>/js/universe.js</url>
     <content><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};
 dark()]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/js/runtime.js</url>
+    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
   </entry>
   <entry>
     <title>tags</title>

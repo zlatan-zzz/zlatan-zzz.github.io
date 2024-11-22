@@ -1,0 +1,330 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>VideoLLM最新研究 | ZZ's Oasis</title><meta name="author" content="Zlatan"><meta name="copyright" content="Zlatan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="最新的LLM4Video研究">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VideoLLM最新研究">
+<meta property="og:url" content="https://blog.zlatanzz.online/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/index.html">
+<meta property="og:site_name" content="ZZ&#39;s Oasis">
+<meta property="og:description" content="最新的LLM4Video研究">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.zlatanzz.online/img/album/p14.webp">
+<meta property="article:published_time" content="2024-11-22T10:52:07.152Z">
+<meta property="article:modified_time" content="2024-11-22T11:50:00.000Z">
+<meta property="article:author" content="Zlatan">
+<meta property="article:tag" content="大模型">
+<meta property="article:tag" content="计算机视觉">
+<meta property="article:tag" content="多模态">
+<meta property="article:tag" content="视频理解">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.zlatanzz.online/img/album/p14.webp"><link rel="shortcut icon" href="/img/flag.png"><link rel="canonical" href="https://blog.zlatanzz.online/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        if (name && globalFn[key][name]) return
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fca0b1d0b8e5975cbf47740ff1c8805";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+btf.addGlobalFn('pjaxComplete', () => {
+  _hmt.push(['_trackPageview',window.location.pathname])
+}, 'baidu_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":5,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":230,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Zlatan","link":"链接: ","source":"来源: ZZ's Oasis","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-right"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VideoLLM最新研究',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-22 19:50:00'
+}</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="/css/cate_bottom.css"><link rel="stylesheet" href="https://www.fomal.cc/static/css/runtime.min.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(/img/p5.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/head_img.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/album/p14.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">ZZ's Oasis</span></a><a class="nav-page-title" href="/"><span class="site-name">VideoLLM最新研究</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">VideoLLM最新研究</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon fas fa-history"></i><span class="post-meta-label">更新于</span><time datetime="2024-11-22T11:50:00.000Z" title="更新于 2024-11-22 19:50:00">2024-11-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Research/">Research</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.4k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>VideoLLM最新研究</h1>
+<h2 id="MovieLLM-Enhancing-Long-Video-Understanding-with-AI-Generated-Movies">MovieLLM: Enhancing Long Video Understanding with AI-Generated Movies</h2>
+<p><strong>MovieLLM：利用人工智能生成的电影增强对长视频的理解（复旦大学）</strong></p>
+<p>**地址：**<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2403.01422">https://arxiv.org/abs/2403.01422</a></p>
+<blockquote>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xixiaoyaoww/article/details/136651416">https://blog.csdn.net/xixiaoyaoww/article/details/136651416</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.aihub.cn/tools/llm/moviellm/">MovieLLM-通过AI生成电影来增强长视频理解的框架 - AIHub | AI导航</a></p>
+</blockquote>
+<p><strong>时间</strong>：2024.6.24(v2)</p>
+<h3 id="1-摘要">1.<strong>摘要</strong></h3>
+<p>多模态模型的发展标志着机器理解视频的重大进步。这些模型在分析短视频片段方面表现出了良好的前景。然而，当涉及到电影等较长的格式时，它们往往就显得力不从心了。主要的障碍是缺乏高质量、多样化的视频数据，以及收集或注释此类数据所需的大量工作。面对这些挑战，我们提出了 MovieLLM，这是一个新颖的框架，旨在合成一致且高质量的视频数据以进行指令调整。该管道经过精心设计，可通过改进文本反转技术以及 GPT-4 强大的文本生成功能来控制视频的风格。作为第一个这样做的框架，我们的方法以其灵活性和可扩展性而脱颖而出，使用户能够仅使用一个描述来创建自定义电影。这使其成为传统数据收集方法的更好替代方案。我们进行了广泛的实验，验证了 MovieLLM 生成的数据显著提高了多模态模型在理解复杂视频叙事方面的表现，克服了现有数据集在稀缺性和偏见方面的局限性。</p>
+<h3 id="2-理解">2.<strong>理解</strong></h3>
+<p>利用GPT-4并引导文图生成模型生成一致的电影级视频关键帧，利用该框架生成的长视频指令数据，显著提高了多模态模型在理解复杂视频叙事方面的性能，让大模型更懂电影。</p>
+<p>该方法包括三个相互关联的步骤：电影情节生成、风格固定化过程和视频指导数据生成。仅凭简单的主题描述，就能够生成整部电影的关键帧。</p>
+<p>整个流程如下图所示：首先利用GPT-4基于主题短语生成整个电影情节；利用文本反转技术将从情节生成的风格描述固定到扩散模型的潜在空间，引导其生成具有固定风格的帧。整合先前获取的所有信息，最终生成一致的关键帧和相应的问答对。</p>
+<ul>
+<li><strong>电影情节生成（Movie Plot Generation）</strong>：我们没有将绘图生成限制为传统数据源（例如网络或现有数据集），而是利用 GPT-4 的功能来生成合成数据。通过提供主题、概述和样式等特定元素，我们指导 GPT-4 生成适合后一代流程的电影级关键帧描述。</li>
+<li><strong>风格固定过程(Style Immobilization)</strong>：通过巧妙地采用文本反转（Gal et al., 2022），我们将从脚本生成的风格描述固定到扩散模型的潜在空间中。这种方法引导模型以一致的风格生成场景，同时在统一的审美下保持多样性。</li>
+<li><strong>视频指令数据生成（video instruction data generation）</strong>:通过将 GPT-4 强大的生成能力与开发的风格引导扩散模型相结合，我们生成风格一致的关键帧和相应的 QA 对，从而形成全面的指令调优语料库。</li>
+</ul>
+<p>我们的方法允许在不受数据量限制的情况下生成数据集，确保生成的内容具有高度的多样性。此外，它还有助于自动注释，从而显着减少对体力劳动的需求和相关成本。这些优势增强了长视频理解数据集创建的可扩展性、丰富性和效率，标志着该领域的重大飞跃。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122185209461.png" alt="image-20241122185209461"></p>
+<blockquote>
+<p>我们提出的用于生成长视频指令调整数据集的管道。只需简单的主题描述，我们的流程就能够生成整部电影的关键帧。该流程大致可以分为三个阶段：</p>
+<p>（a）电影情节生成，我们使用 GPT-4 根据主题短语生成整个电影情节。</p>
+<p>（b）风格固定化过程，我们利用文本反转技术将情节生成的风格描述固定到扩散模型的潜在空间中，引导其生成具有固定风格的框架。</p>
+<p>©视频指令数据生成，我们整合之前获得的所有信息，最终生成一致的关键帧和相应的问答对。</p>
+</blockquote>
+<p><strong>总结</strong>：类似于大模型在电影领域的效果增强？</p>
+<h2 id="Movie101v2-Improved-Movie-Narration-Benchmark">Movie101v2: Improved Movie Narration Benchmark</h2>
+<p><strong>Movie101v2：改进的电影叙述基准（人民大学）</strong></p>
+<p><strong>paper</strong>：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2404.13370">https://arxiv.org/pdf/2404.13370</a></p>
+<p><strong>时间</strong>：2024.10.18（v2）</p>
+<h3 id="1-摘要-2">1. 摘要</h3>
+<p>自动电影旁白旨在生成与视频一致的情节描述，以帮助视障观众。与标准视频字幕不同，它不仅涉及描述关键视觉细节，还涉及推断多个电影镜头中展开的情节，从而提出独特而复杂的挑战。为了推动这一领域的发展，我们引入了  Movie101v2，这是一个专门为电影叙事设计的大规模双语数据集，具有增强的数据质量。重新审视该任务，我们建议将自动电影叙述的最终目标分解为三个渐进阶段，提供清晰的路线图和相应的评估指标。基于我们的新基准，我们对包括 GPT-4V  在内的一系列大型视觉语言模型进行了基线分析，并对叙述生成中的挑战进行了深入分析。我们的研究结果强调，实现适用的电影叙事生成是一个令人着迷的目标，需要进行大量研究。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122190408521.png" alt="image-20241122190408521"></p>
+<blockquote>
+<p>来自其他数据集（左）和 Movie101v2（右）的示例，其中案例来自 Goodbye Mr. Loser。</p>
+</blockquote>
+<h3 id="2-理解-2">2. 理解</h3>
+<p>不错的任务以及描述，要求比较深入的视频理解能力，如果实现可以对其他任务作出帮助，目前的结果难以满足实际应用需求。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122192755452.png" alt="image-20241122192755452"></p>
+<blockquote>
+<p>我们的模型框架。(a) 用于 MCN 任务的 RMN；(b) 用于 TNG 任务的全局镜头检索和局部时序定位。</p>
+<p>MCN：电影片段解说、RMN：叙述生成框架、TNG：时序定位（不用管）</p>
+</blockquote>
+<p>总结：一个数据集Movie101，随电影自动生成旁白（MCN），比较有意思。</p>
+<h2 id="Streaming-Long-Video-Understanding-with-Large-Language-Models">Streaming Long Video Understanding with Large Language Models</h2>
+<p><strong>使用大型语言模型流式传输长视频理解（港中文）</strong></p>
+<p><strong>paper</strong>：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2405.16009">https://arxiv.org/pdf/2405.16009</a></p>
+<p><strong>时间</strong>：2024.5.25（v2）</p>
+<h3 id="1-摘要-3">1. 摘要</h3>
+<p>本文提出了 VideoStreaming，这是一种用于视频理解的高级视觉语言大型模型  (VLLM)，它能够通过流式编码和自适应选择的恒定数量的视频标记来理解任意长度的视频。视觉语言领域视频理解的挑战主要在于从长视频中提取的大量标记造成的巨大计算负担。以前的工作依靠稀疏采样或帧压缩来减少标记。然而，此类方法要么忽视长时间跨度的时间信息，要么牺牲空间细节，导致压缩有缺陷。为了解决这些限制，我们的视频流有两个核心设计：**内存传播流编码和自适应内存选择。**内存传播流编码架构将长视频分割成短剪辑，并使用传播内存顺序对每个剪辑进行编码。在每次迭代中，我们利用前一个剪辑的编码结果作为历史内存，将其与当前剪辑集成以提取压缩表示，该表示封装了截至当前时间戳的视频内容。该方法不仅将长期时间动态合并到流编码过程中，而且还产生固定长度的存储器作为任意长视频的全局表示。编码过程结束后，自适应记忆选择策略从所有历史记忆中选择恒定数量的与问题相关的记忆，并将它们输入 LLM  以生成信息丰富的响应。与问题相关的选择减少了记忆中的冗余，从而实现高效、精确的视频理解。同时，解开的视频提取和推理设计使得LLM可以通过直接选择相应的记忆来回答有关视频的不同问题，而无需为每个问题对整个视频进行编码。通过大量的实验，我们的模型在长视频基准上实现了卓越的性能和更高的效率，展示了对详细问题解答的精确时间理解。</p>
+<h3 id="2-理解-3">2. 理解</h3>
+<p>提出一种让LLM可以适配长短视频的视频处理方案，[标记一下，待续]。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122194217566.png" alt="image-20241122194217566"></p>
+<blockquote>
+<p>图 1a  显示了视频流的概述，其中我们将长视频分割成短剪辑，并将每个剪辑迭代编码到紧凑的内存中。然后，根据具体问题，我们选择恒定数量的相关记忆子集作为LLM的输入以产生答案。 ✓ 和 ✗  分别表示选定和未选定的存储器。图1b说明了每次流编码迭代的详细过程。我们参考特定时间戳和前一个剪辑的历史记忆将当前剪辑特征编码为压缩表示。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://blog.zlatanzz.online">Zlatan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://blog.zlatanzz.online/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/">https://blog.zlatanzz.online/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://blog.zlatanzz.online" target="_blank">ZZ's Oasis</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/">计算机视觉</a><a class="post-meta__tags" href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><a class="post-meta__tags" href="/tags/%E8%A7%86%E9%A2%91%E7%90%86%E8%A7%A3/">视频理解</a></div><div class="post-share"><div class="social-share" data-image="/img/album/p14.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/10/31/Holmes-VAD/" title="Holmes-VAD"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p5.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="fas fa-history fa-fw"></i> 2024-10-31</div><div class="info-item-2">Holmes-VAD</div></div><div class="info-2"><div class="info-item-1">利用MLLM实现视频异常检测的无偏性和可解释性</div></div></div></a><a class="pagination-related" href="/2024/10/31/LAVAD/" title="LAVAD"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p10.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="fas fa-history fa-fw"></i> 2024-10-31</div><div class="info-item-2">LAVAD</div></div><div class="info-2"><div class="info-item-1">利用LLM实现无需训练的视频异常检测</div></div></div></a><a class="pagination-related" href="/2024/10/31/MMGaitFormer/" title="MMGaitFormer"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p1.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="fas fa-history fa-fw"></i> 2024-10-31</div><div class="info-item-2">MMGaitFormer</div></div><div class="info-2"><div class="info-item-1">融合时空特征的多模态步态识别</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/head_img.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Zlatan</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zlatan-zzz"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zlatan-zzz" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:1138492923@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">VideoLLM最新研究</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MovieLLM-Enhancing-Long-Video-Understanding-with-AI-Generated-Movies"><span class="toc-text">MovieLLM: Enhancing Long Video Understanding with AI-Generated Movies</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%91%98%E8%A6%81"><span class="toc-text">1.摘要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%90%86%E8%A7%A3"><span class="toc-text">2.理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Movie101v2-Improved-Movie-Narration-Benchmark"><span class="toc-text">Movie101v2: Improved Movie Narration Benchmark</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%91%98%E8%A6%81-2"><span class="toc-text">1. 摘要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%90%86%E8%A7%A3-2"><span class="toc-text">2. 理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Streaming-Long-Video-Understanding-with-Large-Language-Models"><span class="toc-text">Streaming Long Video Understanding with Large Language Models</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%91%98%E8%A6%81-3"><span class="toc-text">1. 摘要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%90%86%E8%A7%A3-3"><span class="toc-text">2. 理解</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/" title="VideoLLM最新研究"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p14.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="VideoLLM最新研究"/></a><div class="content"><a class="title" href="/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/" title="VideoLLM最新研究">VideoLLM最新研究</a><time datetime="2024-11-22T10:52:07.152Z" title="发表于 2024-11-22 18:52:07">2024-11-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/19/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/" title="JAVASE高级（二）"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p8.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JAVASE高级（二）"/></a><div class="content"><a class="title" href="/2024/11/19/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/" title="JAVASE高级（二）">JAVASE高级（二）</a><time datetime="2024-11-19T04:57:09.752Z" title="发表于 2024-11-19 12:57:09">2024-11-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/10/JAVASE%E9%AB%98%E7%BA%A7/" title="JAVASE高级（一）"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p6.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JAVASE高级（一）"/></a><div class="content"><a class="title" href="/2024/11/10/JAVASE%E9%AB%98%E7%BA%A7/" title="JAVASE高级（一）">JAVASE高级（一）</a><time datetime="2024-11-10T12:27:23.786Z" title="发表于 2024-11-10 20:27:23">2024-11-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/" title="JAVASE基础"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p16.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JAVASE基础"/></a><div class="content"><a class="title" href="/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/" title="JAVASE基础">JAVASE基础</a><time datetime="2024-11-04T12:20:10.286Z" title="发表于 2024-11-04 20:20:10">2024-11-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/11/02/test/" title="测试_第一篇文章"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/album/p4.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="测试_第一篇文章"/></a><div class="content"><a class="title" href="/2024/11/02/test/" title="测试_第一篇文章">测试_第一篇文章</a><time datetime="2024-11-02T09:41:33.999Z" title="发表于 2024-11-02 17:41:33">2024-11-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 By Zlatan</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://butterfly.js.org/">oasis</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>(() => {
+  const panguFn = () => {
+    if (typeof pangu === 'object') pangu.autoSpacingPage()
+    else {
+      btf.getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+        .then(() => {
+          pangu.autoSpacingPage()
+        })
+    }
+  }
+
+  const panguInit = () => {
+    if (false){
+      GLOBAL_CONFIG_SITE.isPost && panguFn()
+    } else {
+      panguFn()
+    }
+  }
+
+  btf.addGlobalFn('pjaxComplete', panguInit, 'pangu')
+  document.addEventListener('DOMContentLoaded', panguInit)
+})()</script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'Ov23liaL7e7er4GOUaAJ',
+      clientSecret: 'b3f009984c5fdec6bcddc1b9010489ab7ca1360d',
+      repo: 'issue',
+      owner: 'zlatan-zzz',
+      admin: ['zlatan-zzz'],
+      id: 'e60e1c8d5bf2bd32b3cd649519aabaff',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><canvas id="universe"></canvas><script defer src="/js/universe.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><!-- hexo injector body_end start --><script data-pjax>
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(/img/p1.jpg);"> <a class="categoryBar-list-link" href="categories/Technique/">Technique</a><span class="categoryBar-list-count">4</span><span class="categoryBar-list-descr">Research</span></li><li class="categoryBar-list-item" style="background:url(/img/p2.jpg);"> <a class="categoryBar-list-link" href="categories/Research/">Research</a><span class="categoryBar-list-count">4</span><span class="categoryBar-list-descr">Technique</span></li><li class="categoryBar-list-item" style="background:url(/img/p3.jpg);"> <a class="categoryBar-list-link" href="categories/Others/">Others</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr">Others</span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://vercel.com/" style="margin-inline:5px" data-title="本站采用多线部署，主线路托管于Vercel" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Hosted-Vercel-brightgreen?style=flat&amp;logo=Vercel" alt=""/></a><a class="github-badge" target="_blank" href="https://dashboard.4everland.org/" style="margin-inline:5px" data-title="本站采用多线部署，备用线路托管于4EVERLAND" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Hosted-4EVERLAND-22DDDD?style=flat&amp;logo=IPFS" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime.js"></script><!-- hexo injector body_end end --></body></html>
