@@ -550,499 +550,6 @@
       </tags>
   </entry>
   <entry>
-    <title>JAVASE高级（二）</title>
-    <url>/2024/11/19/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
-    <content><![CDATA[<h1>JAVA高级（二）</h1>
-<h2 id="1-正则表达式">1. 正则表达式</h2>
-<ul>
-<li>
-<p>作用：</p>
-<ul>
-<li>用来校验数据格式是否合法</li>
-<li>在一段文本中查找满足需求的内容</li>
-</ul>
-</li>
-<li>
-<p>书写规则：</p>
-</li>
-</ul>
-<p><img src="/%E7%A0%94%E4%BA%8C/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241119143551049.png" alt="image-20241119143551049"></p>
-<h2 id="2-集合框架（一）">2. 集合框架（一）</h2>
-<ul>
-<li>集合体系结构
-<ul>
-<li>Collection单列集合</li>
-<li>Map双列集合（键值对）</li>
-</ul>
-</li>
-</ul>
-<p><img src="/%E7%A0%94%E4%BA%8C/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241121105320555.png" alt="image-20241121105320555"></p>
-<ul>
-<li>Collection的遍历方式：
-<ul>
-<li>迭代器Iterator</li>
-<li>增强for循环:可以用来遍历数组或者集合（本质是迭代器的简化写法）</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//迭代器iterator</span></span><br><span class="line">Collection&lt;String&gt; c = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">c.add(<span class="string">&quot;alex&quot;</span>);</span><br><span class="line">Iterator&lt;String&gt; it = c.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">	<span class="type">String</span> <span class="variable">ele</span> <span class="operator">=</span> it.next();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//增强for循环</span></span><br><span class="line"><span class="keyword">for</span>(String ele : c)&#123;</span><br><span class="line">   	System</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//forEach方法结合lambda表达式</span></span><br><span class="line">c.forEach(<span class="keyword">new</span> <span class="title class_">Consumer</span>&lt;String&gt;()&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">accept</span><span class="params">(String s)</span>&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">c.forEach((String s)-&gt;&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line">c.forEach(s-&gt;&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;);</span><br><span class="line">c.forEach(System.out::println);   </span><br></pre></td></tr></table></figure>
-<ul>
-<li>List集合：有序、可重复、有索引
-<ul>
-<li>ArrayList集合特点
-<ul>
-<li>基于数组实现</li>
-<li>查询效率低</li>
-<li>删除效率低</li>
-<li>添加效率极低</li>
-</ul>
-</li>
-<li>LinkedList（双向链表）
-<ul>
-<li>查询慢（需要从开始查）</li>
-<li>增删相对快</li>
-<li>双向列表对首位元素进行增删改查的速度极快。</li>
-<li>应用场景：可以用来设计栈</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//ArrayList</span></span><br><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;121&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;232&quot;</span>);</span><br><span class="line">list.add(<span class="number">1</span>,<span class="string">&quot;222&quot;</span>);</span><br><span class="line">list.remove(<span class="number">2</span>);</span><br><span class="line">list.get(<span class="number">1</span>);</span><br><span class="line">list.set(<span class="number">1</span>,<span class="string">&quot;zz&quot;</span>);</span><br><span class="line"><span class="comment">//LinkedList</span></span><br><span class="line">LinkedList&lt;String&gt; queue = newe LinkedList&lt;&gt;();</span><br><span class="line">queue.addLast(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">queue,addLast(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">queue.removeFirst();</span><br></pre></td></tr></table></figure>
-<ul>
-<li>Set集合：无序、不重复、无索引
-<ul>
-<li>HashSet：无序、不重复、无索引</li>
-<li>LinkedHashSet：有序、不重复、无索引
-<ul>
-<li>原理：每个元素额外多了一个双链表机制记录前后元素的位置</li>
-</ul>
-</li>
-<li>TreeSet：排序、不重复、无索引、可排序（基于红黑树实现）</li>
-</ul>
-</li>
-</ul>
-<p><img src="/%E7%A0%94%E4%BA%8C/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241121141703741.png" alt="image-20241121141703741"></p>
-<ul>
-<li>注意事项：集合的并发修改异常
-<ul>
-<li>iterator会带来并发修改异常</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//并发修改异常</span></span><br><span class="line">Iterator&lt;String&gt; it =list.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> it.next();</span><br><span class="line">    <span class="keyword">if</span>(name.contains(<span class="string">&quot;李&quot;</span>))&#123;</span><br><span class="line">        list.remove(name);<span class="comment">//并发修改异常</span></span><br><span class="line">        it.remove()<span class="comment">//删除迭代器当前遍历的数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="3-集合框架（二）">3. 集合框架（二）</h2>
-<ul>
-<li>可变参数：
-<ul>
-<li>一种特殊的形参，可以不传数据给他；可以传一个或者多个数据给他，也可以传一个数组；可以更灵活的接收数据。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可变参数</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span>...nums)</span>&#123;&#125;;</span><br><span class="line"><span class="comment">//Collections(工具类)</span></span><br><span class="line">List&lt;String&gt; names = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">Collections.addAll(names,<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;zhw&quot;</span>,<span class="string">&quot;www&quot;</span>);</span><br><span class="line">Collections.shuffle(names);<span class="comment">//打乱元素的顺序</span></span><br><span class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="number">3</span>);</span><br><span class="line">list.add(<span class="number">4</span>);</span><br><span class="line">Collections.sort(list);<span class="comment">//对list排序</span></span><br><span class="line"><span class="comment">//如果是针对如Student类，需要在类里implements Comparable,重写compareTo方法</span></span><br><span class="line">Collections.sort(Students,( o1, o2) -&gt; Double.compare(o1.getHeight(),o2.getHeight()));</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>JavaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JAVASE基础</title>
-    <url>/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1>JAVASE基础</h1>
-<p><a href="https://www.bilibili.com/video/BV1Cv411372m">https://www.bilibili.com/video/BV1Cv411372m</a></p>
-<h2 id="0-IntelliJ-IDEA实用快捷键">0.IntelliJ IDEA实用快捷键</h2>
-<ul>
-<li>CTRL + / :为代码注释</li>
-<li>CTRL+SHIFT+/:整段注释</li>
-<li>CTRL+D：复制到下一行</li>
-<li>CTRL+ALT+T：环绕代码（for\while等）</li>
-<li>CTRL+ALT+SPACE：自动提示代码</li>
-<li>右键-生成：快速为类生成set、get、构造函数</li>
-</ul>
-<h2 id="1-Java入门">1. Java入门</h2>
-<h3 id="1-1-java基础知识">1.1 java基础知识</h3>
-<blockquote>
-<p><strong>javac.exe</strong>：编译工具</p>
-<p><strong>java.exe</strong>：执行工具</p>
-</blockquote>
-<p>过程：1.编写代码 2.编译代码（javac) 3.运行代码(java)</p>
-<p>文件名称必须与代码的类名称一致。、</p>
-<blockquote>
-<p>javac HelloWorld.java(生成HelloWorld.class)</p>
-<p>java HelloWorld</p>
-</blockquote>
-<h3 id="1-2-JDK的组成">1.2 JDK的组成</h3>
-<ul>
-<li>JVM：Java虚拟机，运行Java程序的地方。</li>
-<li>核心类库：Java类。</li>
-<li>JRE：Java的运行环境。（JVM+核心类库）</li>
-<li>开发工具：Java、Javac</li>
-</ul>
-<h3 id="1-3-IDEA">1.3 IDEA</h3>
-<p><strong>project的构成：</strong></p>
-<ul>
-<li>project（项目、工程）</li>
-<li>module（模块）</li>
-<li>package（包）</li>
-<li>class（类）</li>
-</ul>
-<h2 id="2-Java语法">2. Java语法</h2>
-<h3 id="2-1-char类型ASCII码（leetcode用）">2.1 char类型ASCII码（leetcode用）</h3>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="string">&#x27;a&#x27;</span>+<span class="number">10</span>);<span class="comment">//107</span></span><br><span class="line">System.out.println(<span class="string">&#x27;A&#x27;</span>+<span class="number">10</span>);<span class="comment">//75</span></span><br><span class="line">System.out.println(<span class="string">&#x27;C&#x27;</span>-<span class="string">&#x27;A&#x27;</span>);<span class="comment">//2</span></span><br><span class="line">System.out.println((<span class="type">char</span>)(<span class="string">&#x27;c&#x27;</span>-<span class="number">1</span>));<span class="comment">//b</span></span><br></pre></td></tr></table></figure>
-<p>Java支持二进制、八进制、十六进制的数据，分别需要以0b、0、0X或者0x开头。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="number">0B01100001</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="number">0141</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="number">0XFA</span>;</span><br><span class="line">System.out.println(a1+<span class="string">&quot;  &quot;</span>+a2+<span class="string">&quot;   &quot;</span>+a3);<span class="comment">//97  97  250</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-2-变量类型转换">2.2 变量类型转换</h3>
-<ul>
-<li>
-<p>自动类型转换</p>
-<ul>
-<li>byte→short→int→long→float→double</li>
-<li>char→int</li>
-</ul>
-</li>
-<li>
-<p>表达式的自动类型转换</p>
-<ul>
-<li>表达式的最终结果由表达式的最高类型决定。</li>
-<li>表达式在，byte、short、char是转换为int参与运算。</li>
-</ul>
-</li>
-<li>
-<p>强制类型转换</p>
-<ul>
-<li>byte b = (byte)a   (快捷键：ALT+ENTER)</li>
-<li>可能会造成精度丢失。</li>
-<li>小数转为整数是直接阶段小数保留整数。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">System.out.println(i/j);<span class="comment">//2</span></span><br><span class="line">System.out.println(<span class="number">1.0</span>*i/j);<span class="comment">//2.5</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-3-运算符">2.3 运算符</h3>
-<ul>
-<li>自增/自减</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">rs</span> <span class="operator">=</span> ++a;<span class="comment">//11</span></span><br><span class="line">a=<span class="number">10</span>;</span><br><span class="line">rs =a++;<span class="comment">//10</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span><span class="number">3</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> ++m - --m + m++ - ++n + n-- +<span class="number">3</span>; <span class="comment">//6-5+5-4+4+3=9</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>扩展的赋值运算符+=、-=自带强制类型转换。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>, b = <span class="number">5</span>;</span><br><span class="line">System.out.println(a = b);<span class="comment">//5,先赋值给a</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>
-<p>逻辑与：&amp;；逻辑或：|；逻辑非：！；逻辑异或：^；</p>
-</li>
-<li>
-<p>&amp;&amp;短路与；||短路或；<strong>一边已经确定，另一边就不执行</strong>。</p>
-</li>
-<li>
-<p>三元运算符：条件表达式？值1：值2</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">score</span> <span class="operator">=</span> <span class="number">61</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> score &gt;= <span class="number">60</span> ? <span class="string">&quot;及格&quot;</span> : <span class="string">&quot;不及格&quot;</span></span><br><span class="line">System.out.println(rs);<span class="comment">//及格</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>运算符优先级 &amp;&amp; &gt; ||(加个括号就好了)</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">10</span> &gt; <span class="number">3</span> || <span class="number">10</span> &gt; <span class="number">3</span> &amp;&amp; <span class="number">10</span> &lt; <span class="number">3</span>);<span class="comment">//(true || false)=true</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>使用Scanner接收键盘输入</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> sc.nextInt();<span class="comment">//等待输入整数，直到输入回车键</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> sc.next();<span class="comment">//等待输入字符串</span></span><br></pre></td></tr></table></figure>
-<h2 id="3-流程控制">3. 流程控制</h2>
-<ul>
-<li>
-<p>switch表达式要求只能是byte、short、int、char、string。</p>
-</li>
-<li>
-<p>do-while先执行后判断，while先判断后循环。</p>
-</li>
-<li>
-<p>Random的使用</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="comment">// 1.导包</span></span><br><span class="line"><span class="comment">// 2.创建一个Random对象</span></span><br><span class="line"><span class="comment">// 3.调用Random提供的功能：nextInt得到随机数</span></span><br><span class="line"><span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"><span class="type">int</span> <span class="variable">data</span> <span class="operator">=</span> r.nextInt(bound:<span class="number">10</span>);<span class="comment">//生成0-9</span></span><br></pre></td></tr></table></figure>
-<h2 id="4-数组">4. 数组</h2>
-<ul>
-<li>数组初始化</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span>[] ages = &#123;<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>,<span class="number">50</span>&#125;;<span class="comment">//静态初始化</span></span><br><span class="line"><span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">3</span>];<span class="comment">//&#123;0,0,0&#125;；动态初始化</span></span><br><span class="line"><span class="type">boolean</span>[] arr = <span class="keyword">new</span> <span class="title class_">boolean</span>[<span class="number">3</span>];<span class="comment">//&#123;false,false,false&#125;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>数组存储</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span>[] arr1 = &#123;<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>&#125;;</span><br><span class="line"><span class="type">int</span>[] arr2 =arr1;<span class="comment">//两个数组指向同一片内存区域</span></span><br><span class="line">arr[<span class="number">1</span>] = <span class="number">99</span>;</span><br><span class="line">System.out.println(arr1[<span class="number">1</span>]);<span class="comment">//99</span></span><br><span class="line">arr2 = <span class="literal">null</span>;</span><br><span class="line">System.out.println(arr2);<span class="comment">//null</span></span><br><span class="line">System.out.println(arr2.length);<span class="comment">//空指针异常</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>debug工具使用
-<ul>
-<li>打断点</li>
-<li>使用Debug方式启动程序</li>
-<li>控制代码一行一行执行</li>
-</ul>
-</li>
-</ul>
-<h2 id="5-方法（函数）">5. 方法（函数）</h2>
-<ul>
-<li>
-<p>方法在计算机的执行：栈。</p>
-</li>
-<li>
-<p>参数传递机制：值传递，传输的是实参的值的副本。</p>
-<ul>
-<li>实参：在方法内部定义的变量。</li>
-<li>形参：以方法为例，是方法定义时的变量。</li>
-</ul>
-</li>
-<li>
-<p>基本类型的参数传输的是参数的数据值，<strong>引用类型的参数传输存储的地址值。</strong></p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(<span class="type">int</span>[] arrs)</span>&#123;<span class="type">int</span>[] arrs = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;</span><br><span class="line">    &#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>&#125;;</span><br><span class="line">	change(arrs);</span><br><span class="line">	System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//222</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(<span class="type">int</span>[] arrs)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//20</span></span><br><span class="line">    arrs[<span class="number">1</span>] = <span class="number">222</span>;</span><br><span class="line">    System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//222</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>JavaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VideoLLM最新研究</title>
-    <url>/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/</url>
-    <content><![CDATA[<h1>VideoLLM最新研究</h1>
-<h2 id="MovieLLM-Enhancing-Long-Video-Understanding-with-AI-Generated-Movies">MovieLLM: Enhancing Long Video Understanding with AI-Generated Movies</h2>
-<p><strong>MovieLLM：利用人工智能生成的电影增强对长视频的理解（复旦大学）</strong></p>
-<p>**地址：**<a href="https://arxiv.org/abs/2403.01422">https://arxiv.org/abs/2403.01422</a></p>
-<blockquote>
-<p>参考：</p>
-<p><a href="https://blog.csdn.net/xixiaoyaoww/article/details/136651416">https://blog.csdn.net/xixiaoyaoww/article/details/136651416</a></p>
-<p><a href="https://www.aihub.cn/tools/llm/moviellm/">MovieLLM-通过AI生成电影来增强长视频理解的框架 - AIHub | AI导航</a></p>
-</blockquote>
-<p><strong>时间</strong>：2024.6.24(v2)</p>
-<h3 id="1-摘要">1.<strong>摘要</strong></h3>
-<p>多模态模型的发展标志着机器理解视频的重大进步。这些模型在分析短视频片段方面表现出了良好的前景。然而，当涉及到电影等较长的格式时，它们往往就显得力不从心了。主要的障碍是缺乏高质量、多样化的视频数据，以及收集或注释此类数据所需的大量工作。面对这些挑战，我们提出了 MovieLLM，这是一个新颖的框架，旨在合成一致且高质量的视频数据以进行指令调整。该管道经过精心设计，可通过改进文本反转技术以及 GPT-4 强大的文本生成功能来控制视频的风格。作为第一个这样做的框架，我们的方法以其灵活性和可扩展性而脱颖而出，使用户能够仅使用一个描述来创建自定义电影。这使其成为传统数据收集方法的更好替代方案。我们进行了广泛的实验，验证了 MovieLLM 生成的数据显著提高了多模态模型在理解复杂视频叙事方面的表现，克服了现有数据集在稀缺性和偏见方面的局限性。</p>
-<h3 id="2-理解">2.<strong>理解</strong></h3>
-<p>利用GPT-4并引导文图生成模型生成一致的电影级视频关键帧，利用该框架生成的长视频指令数据，显著提高了多模态模型在理解复杂视频叙事方面的性能，让大模型更懂电影。</p>
-<p>该方法包括三个相互关联的步骤：电影情节生成、风格固定化过程和视频指导数据生成。仅凭简单的主题描述，就能够生成整部电影的关键帧。</p>
-<p>整个流程如下图所示：首先利用GPT-4基于主题短语生成整个电影情节；利用文本反转技术将从情节生成的风格描述固定到扩散模型的潜在空间，引导其生成具有固定风格的帧。整合先前获取的所有信息，最终生成一致的关键帧和相应的问答对。</p>
-<ul>
-<li><strong>电影情节生成（Movie Plot Generation）</strong>：我们没有将绘图生成限制为传统数据源（例如网络或现有数据集），而是利用 GPT-4 的功能来生成合成数据。通过提供主题、概述和样式等特定元素，我们指导 GPT-4 生成适合后一代流程的电影级关键帧描述。</li>
-<li><strong>风格固定过程(Style Immobilization)</strong>：通过巧妙地采用文本反转（Gal et al., 2022），我们将从脚本生成的风格描述固定到扩散模型的潜在空间中。这种方法引导模型以一致的风格生成场景，同时在统一的审美下保持多样性。</li>
-<li><strong>视频指令数据生成（video instruction data generation）</strong>:通过将 GPT-4 强大的生成能力与开发的风格引导扩散模型相结合，我们生成风格一致的关键帧和相应的 QA 对，从而形成全面的指令调优语料库。</li>
-</ul>
-<p>我们的方法允许在不受数据量限制的情况下生成数据集，确保生成的内容具有高度的多样性。此外，它还有助于自动注释，从而显着减少对体力劳动的需求和相关成本。这些优势增强了长视频理解数据集创建的可扩展性、丰富性和效率，标志着该领域的重大飞跃。</p>
-<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122185209461.png" alt="image-20241122185209461"></p>
-<blockquote>
-<p>我们提出的用于生成长视频指令调整数据集的管道。只需简单的主题描述，我们的流程就能够生成整部电影的关键帧。该流程大致可以分为三个阶段：</p>
-<p>（a）电影情节生成，我们使用 GPT-4 根据主题短语生成整个电影情节。</p>
-<p>（b）风格固定化过程，我们利用文本反转技术将情节生成的风格描述固定到扩散模型的潜在空间中，引导其生成具有固定风格的框架。</p>
-<p>©视频指令数据生成，我们整合之前获得的所有信息，最终生成一致的关键帧和相应的问答对。</p>
-</blockquote>
-<p><strong>总结</strong>：类似于大模型在电影领域的效果增强？</p>
-<h2 id="Movie101v2-Improved-Movie-Narration-Benchmark">Movie101v2: Improved Movie Narration Benchmark</h2>
-<p><strong>Movie101v2：改进的电影叙述基准（人民大学）</strong></p>
-<p><strong>paper</strong>：<a href="https://arxiv.org/pdf/2404.13370">https://arxiv.org/pdf/2404.13370</a></p>
-<p><strong>时间</strong>：2024.10.18（v2）</p>
-<h3 id="1-摘要-2">1. 摘要</h3>
-<p>自动电影旁白旨在生成与视频一致的情节描述，以帮助视障观众。与标准视频字幕不同，它不仅涉及描述关键视觉细节，还涉及推断多个电影镜头中展开的情节，从而提出独特而复杂的挑战。为了推动这一领域的发展，我们引入了  Movie101v2，这是一个专门为电影叙事设计的大规模双语数据集，具有增强的数据质量。重新审视该任务，我们建议将自动电影叙述的最终目标分解为三个渐进阶段，提供清晰的路线图和相应的评估指标。基于我们的新基准，我们对包括 GPT-4V  在内的一系列大型视觉语言模型进行了基线分析，并对叙述生成中的挑战进行了深入分析。我们的研究结果强调，实现适用的电影叙事生成是一个令人着迷的目标，需要进行大量研究。</p>
-<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122190408521.png" alt="image-20241122190408521"></p>
-<blockquote>
-<p>来自其他数据集（左）和 Movie101v2（右）的示例，其中案例来自 Goodbye Mr. Loser。</p>
-</blockquote>
-<h3 id="2-理解-2">2. 理解</h3>
-<p>不错的任务以及描述，要求比较深入的视频理解能力，如果实现可以对其他任务作出帮助，目前的结果难以满足实际应用需求。</p>
-<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122192755452.png" alt="image-20241122192755452"></p>
-<blockquote>
-<p>我们的模型框架。(a) 用于 MCN 任务的 RMN；(b) 用于 TNG 任务的全局镜头检索和局部时序定位。</p>
-<p>MCN：电影片段解说、RMN：叙述生成框架、TNG：时序定位（不用管）</p>
-</blockquote>
-<p>总结：一个数据集Movie101，随电影自动生成旁白（MCN），比较有意思。</p>
-<h2 id="Streaming-Long-Video-Understanding-with-Large-Language-Models">Streaming Long Video Understanding with Large Language Models</h2>
-<p><strong>使用大型语言模型流式传输长视频理解（港中文）</strong></p>
-<p><strong>paper</strong>：<a href="https://arxiv.org/pdf/2405.16009">https://arxiv.org/pdf/2405.16009</a></p>
-<p><strong>时间</strong>：2024.5.25（v2）</p>
-<h3 id="1-摘要-3">1. 摘要</h3>
-<p>本文提出了 VideoStreaming，这是一种用于视频理解的高级视觉语言大型模型  (VLLM)，它能够通过流式编码和自适应选择的恒定数量的视频标记来理解任意长度的视频。视觉语言领域视频理解的挑战主要在于从长视频中提取的大量标记造成的巨大计算负担。以前的工作依靠稀疏采样或帧压缩来减少标记。然而，此类方法要么忽视长时间跨度的时间信息，要么牺牲空间细节，导致压缩有缺陷。为了解决这些限制，我们的视频流有两个核心设计：**内存传播流编码和自适应内存选择。**内存传播流编码架构将长视频分割成短剪辑，并使用传播内存顺序对每个剪辑进行编码。在每次迭代中，我们利用前一个剪辑的编码结果作为历史内存，将其与当前剪辑集成以提取压缩表示，该表示封装了截至当前时间戳的视频内容。该方法不仅将长期时间动态合并到流编码过程中，而且还产生固定长度的存储器作为任意长视频的全局表示。编码过程结束后，自适应记忆选择策略从所有历史记忆中选择恒定数量的与问题相关的记忆，并将它们输入 LLM  以生成信息丰富的响应。与问题相关的选择减少了记忆中的冗余，从而实现高效、精确的视频理解。同时，解开的视频提取和推理设计使得LLM可以通过直接选择相应的记忆来回答有关视频的不同问题，而无需为每个问题对整个视频进行编码。通过大量的实验，我们的模型在长视频基准上实现了卓越的性能和更高的效率，展示了对详细问题解答的精确时间理解。</p>
-<h3 id="2-理解-3">2. 理解</h3>
-<p>提出一种让LLM可以适配长短视频的视频处理方案，[标记一下，待续]。</p>
-<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122194217566.png" alt="image-20241122194217566"></p>
-<blockquote>
-<p>图 1a  显示了视频流的概述，其中我们将长视频分割成短剪辑，并将每个剪辑迭代编码到紧凑的内存中。然后，根据具体问题，我们选择恒定数量的相关记忆子集作为LLM的输入以产生答案。 ✓ 和 ✗  分别表示选定和未选定的存储器。图1b说明了每次流编码迭代的详细过程。我们参考特定时间戳和前一个剪辑的历史记忆将当前剪辑特征编码为压缩表示。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Research</category>
-      </categories>
-      <tags>
-        <tag>大模型</tag>
-        <tag>计算机视觉</tag>
-        <tag>多模态</tag>
-        <tag>视频理解</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MMGaitFormer</title>
-    <url>/2024/10/31/MMGaitFormer/</url>
-    <content><![CDATA[<h1>Multi-Modal Gait Recognition via Effective Spatial-Temporal Feature Fusion</h1>
-<p><strong>CVPR 2023</strong></p>
-<h2 id="Abstract">Abstract</h2>
-<p>步态识别是一种通过人的步态特征进行身份识别的技术。然而，现有的步态识别方法主要基于两种数据：轮廓和骨架。轮廓数据易受到服装遮挡的影响，骨架数据则缺乏身体外形信息。为了解决这些问题，论文提出了一种融合这两种数据的步态识别方法，从而获得更健壮和全面的步态表示。</p>
-<p>论文提出了一个基于<strong>Transformer</strong>的步态识别框架 <strong>MMGaitFormer</strong>。该框架通过以下两个关键模块来实现多模态的融合：</p>
-<ul>
-<li><strong>空间融合模块（Spatial Fusion Module, SFM）</strong>：该模块通过注意力机制，将步态的细粒度空间特征（如骨架关节和轮廓身体部分）进行融合。</li>
-<li><strong>时间融合模块（Temporal Fusion Module, TFM）</strong>：该模块通过一种称为循环位置嵌入（Cycle Position Embedding, CPE）的技术，结合步态序列的时间信息进行建模和融合。</li>
-</ul>
-<h2 id="1-Introduction">1.Introduction</h2>
-<p><img src="/img/MMGaitFormer.assets/image-20241004150309776.png" alt="image-20241004150309776"></p>
-<p>如图1（a）所示，虽然剪影保留了大部分身体形状信息，但当身体区域重叠时会出现自遮挡问题。此外，当衣服条件发生变化时，如图1（b）所示，衣服遮蔽会导致外部身体形状发生显着变化。</p>
-<blockquote>
-<p>骨架只保留内部身体结构信息，有效解决了衣服遮挡和自我遮挡问题，但完全忽略了辨别性的身体形状信息导致性能不佳。</p>
-<p>因此，我们可以观察到剪影保留了外部身体形状信息并省略了一些身体结构线索，而骨骼保留了内部身体结构信息。这两种数据模式是互补的，它们的组合有望成为更全面的步态表示</p>
-</blockquote>
-<p>我们提出了一种名为 MMGaitFormer 的基于 Transformer 的步态识别框架，它有效地融合和聚合了骨骼和轮廓的时空信息。</p>
-<h3 id="1-1-模型整体架构">1.1 <strong>模型整体架构</strong></h3>
-<p>MMGaitFormer 主要由以下三个阶段组成：</p>
-<ul>
-<li><strong>预处理阶段</strong>：从原始视频中提取轮廓序列和骨架序列。轮廓是通过图像分割方法从RGB视频中获得，骨架是通过姿态估计模型提取出来的。</li>
-<li><strong>编码阶段</strong>：轮廓和骨架序列分别输入独立的编码模块，提取它们各自的空间和时间特征。</li>
-<li><strong>融合阶段</strong>：引入了<strong>空间融合模块（SFM）和时间融合模块（TFM）</strong>，分别用于空间和时间层次的特征融合，最终将这些特征融合为一个统一的步态表示。</li>
-</ul>
-<h3 id="1-2-关键模块介绍">1.2 <strong>关键模块介绍</strong></h3>
-<h4 id="1-2-1-轮廓编码模块（Silhouette-Encoding-Module-SiEM）">1.2.1 <strong>轮廓编码模块（Silhouette Encoding Module, SiEM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：用于从轮廓图像中提取空间和时间特征。</li>
-<li><strong>结构</strong>：SiEM 主要使用 3D 卷积神经网络（CNN）以及其他特征提取层，如最大池化层和微运动捕捉模块（Micro-motion Capture Module, MCM），以捕捉轮廓的局部和全局步态特征。</li>
-</ul>
-<h4 id="1-2-2-骨架编码模块（Skeleton-Encoding-Module-SkEM）">1.2.2  <strong>骨架编码模块（Skeleton Encoding Module, SkEM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：用于从骨架数据中提取空间和时间特征。</li>
-<li><strong>结构</strong>：SkEM 使用图卷积网络（Graph Convolutional Network, GCN）来从骨架的关节点序列中提取空间和时间信息。由于骨架和轮廓数据的性质不同，SkEM 和 SiEM 是分开的编码模块。</li>
-</ul>
-<h4 id="1-2-3-空间融合模块（Spatial-Fusion-Module-SFM）">1.2.3 <strong>空间融合模块（Spatial Fusion Module, SFM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：融合骨架和轮廓的空间信息，利用它们的互补性来获得更加完整的步态表示。</li>
-<li><strong>机制</strong>：SFM 通过一种<strong>共注意力机制（Co-Attention Mechanism）<strong>实现，将骨架关节和轮廓部位的细粒度特征进行匹配和融合。这一过程被称为</strong>细粒度身体部位融合（Fine-grained Body Parts Fusion, FBPF）</strong>，基于人体的先验知识，将头部、躯干和腿部分别进行特征融合。
-<ul>
-<li><strong>共注意力机制</strong>：它使用双重交叉注意力模块（Cross-attention blocks）来实现骨架和轮廓之间的交互，并通过预定义的注意力掩码，确保相应的身体部位（如头、躯干、腿）之间的特征能够准确匹配。</li>
-</ul>
-</li>
-</ul>
-<h4 id="1-2-4-时间融合模块（Temporal-Fusion-Module-TFM）">1.2.4  <strong>时间融合模块（Temporal Fusion Module, TFM）</strong></h4>
-<ul>
-<li><strong>目的</strong>：对步态序列的时间信息进行建模和融合。</li>
-<li><strong>机制</strong>：TFM 提出了<strong>循环位置嵌入（Cycle Position Embedding, CPE）</strong>，用于捕捉步态序列中的周期性特征。CPE 能够模拟步态的周期过程，并且适应任意长度的步态序列，有效提高时间建模的准确性。
-<ul>
-<li><strong>时间共注意力机制</strong>：与 SFM 类似，TFM 也使用共注意力机制来融合骨架和轮廓的时间信息，确保步态序列中的时间特征能够有效地进行融合和增强。</li>
-</ul>
-</li>
-</ul>
-<h2 id="2-Related-Work">2. Related Work</h2>
-<h3 id="2-1-基于外观的方法（Appearance-based-Methods）">2.1  <strong>基于外观的方法（Appearance-based Methods）</strong></h3>
-<p>基于外观的步态识别方法通常依赖于从视频中提取的<strong>轮廓图像</strong>，即通过分割得到的二值化的轮廓图来描述人体的外部形态。这类方法的核心是利用这些轮廓图像来消除外部因素（如背景噪声）的干扰，专注于人体形状和运动模式。这类方法在文献中得到了广泛应用，主要包括以下几种代表性方法：</p>
-<ul>
-<li><strong>GaitSet</strong>：将步态看作一组轮廓图像序列，通过帧级特征提取模块获取空间特征，再通过时空聚合模块获取步态表示。</li>
-<li><strong>GaitPart</strong>：引入了微运动捕捉模块（Micro-motion Capture Module, MCM），以捕获局部的微运动特征。</li>
-<li><strong>GaitGL</strong>：基于3D卷积神经网络（3D CNN），同时捕获局部和全局的时空特征。</li>
-</ul>
-<p>尽管这些基于轮廓的方法在步态识别中表现优异，但它们在面对服装遮挡和自遮挡问题时表现出局限性，识别性能会受到一定影响。</p>
-<h3 id="2-2-基于模型的方法（Model-based-Methods）">2.2  <strong>基于模型的方法（Model-based Methods）</strong></h3>
-<p>这类方法通过建模人体的物理结构，从而以一种更加可解释的方式来表达步态信息。模型化的方法通常会提取骨架信息，使用姿态估计模型从视频中获取人体关节的位置信息，并基于这些关节节点的动态特征进行步态识别。</p>
-<ul>
-<li><strong>PoseGait</strong>：利用人体的先验知识设计姿态特征，使用卷积神经网络（CNN）提取步态特征。</li>
-<li><strong>GaitGraph</strong>：通过图卷积网络（Graph Convolutional Network, GCN）来处理骨架关节的时空关系，生成步态特征。</li>
-</ul>
-<p>骨架信息的优势在于它对外观变化（如服装变化）有更好的鲁棒性，但由于缺少人体的外部形态信息，这类方法的区分性有时不如基于外观的方法。</p>
-<h3 id="2-3-多模态步态识别方法（Multi-modal-Gait-Recognition-Methods）">2.3  <strong>多模态步态识别方法（Multi-modal Gait Recognition Methods）</strong></h3>
-<p>多模态步态识别尝试通过融合多种数据源（如深度图、视频、骨架数据等）来提升识别性能。早期研究探索了深度图像、惯性传感器数据和视频数据的融合，但基于同源视频数据的多模态方法尚未被充分开发。现有方法大多采用简单的特征拼接或全局特征融合，这种融合方式无法充分利用细粒度的空间和时间信息。</p>
-<ul>
-<li><strong>BiFusion</strong>：一种融合骨架和轮廓信息的步态识别方法，通过简单地拼接全局特征进行融合，但无法捕捉细粒度的时空特征。</li>
-<li><strong>TransGait</strong>：使用多模态学习的方法，利用 Set Transformer 实现骨架和轮廓的融合，但融合过程仍然较为简单，缺乏对细节的深度挖掘。</li>
-</ul>
-<p>这些多模态融合方法尽管在识别准确率上有一定提升，但由于缺乏细粒度的空间和时间融合手段，仍未能充分发挥多模态数据的潜力。</p>
-<h2 id="3-Methods">3.  Methods</h2>
-<h3 id="3-1-Pipeline">3.1 Pipeline</h3>
-<p><img src="/img/MMGaitFormer.assets/image-20241004192949785.png" alt="image-20241004192949785"></p>
-<blockquote>
-<p><strong>预处理阶段</strong>：分别通过分割方法和姿态估计方法从原始RGB视频中提取剪影序列和骨架序列。</p>
-<p><strong>编码阶段</strong>：我们将输入轮廓和骨架分别输入轮廓编码模块（SiEM）和骨架编码模块（SkEM）以学习时空特征图。</p>
-<p><strong>融合阶段</strong>：提出了空间融合模块（SFM）和时间融合模块（TFM），分别用于有效的细粒度空间和细对齐时间特征融合。</p>
-<p>ATT表示交叉注意力块，两个ATT形成共同注意力结构，用于特征融合。 TFM 中的嵌入建模 (EM) 用于时间建模。单独的全连接层（SFC）用于编码和融合阶段的特征映射。</p>
-</blockquote>
-<h3 id="3-2-SiEM和SkEM">3.2 SiEM和SkEM</h3>
-<h4 id="3-2-1-motivation">3.2.1 motivation</h4>
-<p>两种模态表示的数据结构差异太大，很难在数据层面上直接融合。因此，我们设计独立的编码模块来捕获每个模态的独特判别信息，并增强后续融合的时空特征表示。为了加速模型收敛，我们专门进行了轮廓损失Lsil和骨架损失Lske来分别监督每个模态特征的学习。</p>
-<h4 id="3-2-2-实现方式">3.2.2 实现方式</h4>
-<p><strong>SiEM</strong> 网络由 3D CNN 块 、最大池化层和微动作捕捉模块 (MCM)  组成。</p>
-<p><strong>SkEM</strong>我们引入图卷积网络（GCN）来从骨架图序列中提取时空步态特征。</p>
-<p>这两个模块的输出通道数被设定为相同（128个通道），以便于后续的融合处理。</p>
-<blockquote>
-<p>SiEM 和 SkEM 模块在框架中可以替换为其他步态识别网络。更复杂的结构可能会带来更好的性能提升，但这并不是该论文提出方法的优先目标，因此它们可以被视为一种基线方法。</p>
-</blockquote>
-<h3 id="3-3-SFM-空间融合模块Spatial-Fusion-Module">3.3 SFM(空间融合模块Spatial Fusion Module)</h3>
-<h4 id="1-设计动机-Motivation-：">1. <strong>设计动机 (Motivation)</strong>：</h4>
-<ul>
-<li>论文指出，之前的方法在融合多个步态模态（例如轮廓和骨架）时，通常采用全局特征级别的简单融合方法（例如特征拼接），这种融合方式缺乏解释性和灵活性。</li>
-<li>这些方法通常依赖于每种模态的预训练模型，更像是“集成模型”而不是“多模态融合模型”。</li>
-</ul>
-<p><img src="/img/MMGaitFormer.assets/image-20241010111324162.png" alt="image-20241010111324162"></p>
-<ul>
-<li>为了应对这些问题，论文提出了基于共注意力的融合模块，该模块通过注意力机制来解释身体部位的外部形状（轮廓）和内部结构（骨架）的融合（即<strong>细粒度身体部位融合</strong>）。</li>
-</ul>
-<p><img src="/img/MMGaitFormer.assets/image-20241010112006243.png" alt="image-20241010112006243"></p>
-<h4 id="2-细粒度身体部位融合-Fine-grained-Body-Parts-Fusion-：">2. <strong>细粒度身体部位融合 (Fine-grained Body Parts Fusion)</strong>：</h4>
-<ul>
-<li>人体在行走时，头部、躯干和腿部等不同部位有着明显的不同形状和运动模式。论文认为，空间特征融合应该是细粒度的。</li>
-<li>论文提出了一种基于人体先验知识的简单但有效的策略，将人体的不同部位（头、躯干、腿部）进行分区，并限制轮廓和骨架的特征在对应的身体部位之间进行交互，来实现更加精细的空间特征融合。</li>
-<li>这种方法不仅能够更好地利用人体的先验信息，提高融合的解释性，还可以通过减少计算量降低模型的复杂性，并有效减少过拟合的风险。</li>
-</ul>
-<h4 id="3-空间共注意力聚合-Spatial-Co-attention-Aggregation-：">3. <strong>空间共注意力聚合 (Spatial Co-attention Aggregation)</strong>：</h4>
-<ul>
-<li>该模块通过<strong>共注意力机制</strong>实现轮廓和骨架的交互。这种机制能够在轮廓部分和骨架关节之间建立各种空间关系，利用两种数据模态的互补优势，形成更鲁棒的步态特征表示。</li>
-<li>与单独使用交叉注意力的模块相比，共注意力结构可以更好地融合骨架和轮廓的互补信息。</li>
-<li>通过构造注意力掩码（Attention Mask）来限制注意力的计算范围，不仅减少了基于Transformer的方法过拟合的风险，还提升了模型的可解释性。</li>
-</ul>
-<h4 id="4-操作流程-Operation-：">4. <strong>操作流程 (Operation)</strong>：</h4>
-<ul>
-<li>该模块的输入是轮廓的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>s</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_s^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0883em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span> 和骨架的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>k</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_k^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.4169em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span>，然后利用基于注意力的机制对两者进行交互。</li>
-<li>交互的结果通过一个前馈神经网络（FFN）层，最终生成空间特征表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">Y_s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
-<li>具体操作中，首先通过最大池化层在时间轴上进行池化，得到用于空间融合的特征嵌入。然后将这些嵌入输入到共注意力结构中进行特征融合，最后生成空间特征表示。</li>
-<li><img src="/img/MMGaitFormer.assets/image-20241010112016465.png" alt="image-20241010112016465"></li>
-<li><strong>图五</strong>我们提出的空间融合模块（a）和时间融合模块（b）的网络结构，两者都包含共同注意结构。每个共同注意结构由两个互连的交叉注意块组成。</li>
-</ul>
-<h3 id="3-4-时间融合模块（Temporal-Fusion-Module）">3.4 时间融合模块（Temporal Fusion Module）</h3>
-<h4 id="1-设计动机-Motivation-：-2">1. <strong>设计动机 (Motivation)</strong>：</h4>
-<ul>
-<li>步态识别作为基于视频的识别任务，时间帧之间的关系包含了独特的生物特征，这对于识别是非常关键的。</li>
-<li>在该部分中，论文提出了一个基于注意力机制的<strong>时间融合模块（TFM）</strong>，用于聚合来自轮廓和骨架的时间特征。</li>
-<li>由于步态是一个周期性且对称的过程，论文提出了<strong>周期位置嵌入（CPE，Cycle Position Embedding）</strong>，用于更好地建模和对齐两个模态的时间信息。</li>
-</ul>
-<h4 id="2-周期位置嵌入-Cycle-Position-Embedding-CPE-：">2. <strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong>：</h4>
-<ul>
-<li><strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong> 是第3.4节中介绍的一个重要概念，用于步态识别中的时间建模。它的目的是通过引入步态的周期性特征，提升模型捕捉时间信息的能力。</li>
-<li>普通的注意力机制不能区分输入序列中特征的位置信息。现有的视觉Transformer方法（例如ViT）通常使用位置嵌入来指示输入特征的顺序，但这对步态识别任务不太理想，因为步态是一个周期性的过程。</li>
-<li>论文提出了一种周期位置嵌入（CPE）来应对这一问题。CPE通过模拟步态周期过程，重复位置嵌入，直到它与特征嵌入序列的长度相同。这样，模型能够处理任意长度的序列。</li>
-<li>该方法不仅模拟了步态周期过程，更有效地捕捉了步态中的周期性特征。此外，CPE通过限制可学习参数的数量，降低了过拟合风险，帮助模型更好地收敛。</li>
-</ul>
-<p><img src="/img/MMGaitFormer.assets/image-20241010155155189.png" alt="image-20241010155155189"></p>
-<h4 id="3-时间共注意力聚合-Temporal-Co-attention-Aggregation-：">3. <strong>时间共注意力聚合 (Temporal Co-attention Aggregation)</strong>：</h4>
-<ul>
-<li>与空间融合模块类似，时间融合模块也设计了一个<strong>共注意力模块</strong>，用于融合和聚合两个模态的时间信息。</li>
-<li>由于轮廓和骨架的时间特征差异较大，模型使用了两个单独的前馈神经网络（FFN）层来分别映射这两个模态的时间特征。</li>
-<li>最终，模型会为轮廓和骨架生成相应的时间融合特征表示。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Research</category>
-      </categories>
-      <tags>
-        <tag>CVPR</tag>
-        <tag>计算机视觉</tag>
-        <tag>多模态</tag>
-        <tag>步态识别</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LAVAD</title>
     <url>/2024/10/31/LAVAD/</url>
     <content><![CDATA[<h1>LAVAD</h1>
@@ -1267,15 +774,165 @@
       </tags>
   </entry>
   <entry>
-    <title>测试_第一篇文章</title>
-    <url>/2024/11/02/test/</url>
-    <content><![CDATA[<p>this is my first article</p>
+    <title>JAVASE高级（二）</title>
+    <url>/2024/11/19/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h1>JAVA高级（二）</h1>
+<h2 id="1-正则表达式">1. 正则表达式</h2>
+<ul>
+<li>
+<p>作用：</p>
+<ul>
+<li>用来校验数据格式是否合法</li>
+<li>在一段文本中查找满足需求的内容</li>
+</ul>
+</li>
+<li>
+<p>书写规则：<img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241119143551049.png" alt="image-20241119143551049"></p>
+</li>
+</ul>
+<h2 id="2-集合框架（一）">2. 集合框架（一）</h2>
+<ul>
+<li>集合体系结构
+<ul>
+<li>Collection单列集合</li>
+<li>Map双列集合（键值对）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241121105320555.png" alt="image-20241121105320555"></p>
+<ul>
+<li>Collection的遍历方式：
+<ul>
+<li>迭代器Iterator</li>
+<li>增强for循环:可以用来遍历数组或者集合（本质是迭代器的简化写法）</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//迭代器iterator</span></span><br><span class="line">Collection&lt;String&gt; c = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">c.add(<span class="string">&quot;alex&quot;</span>);</span><br><span class="line">Iterator&lt;String&gt; it = c.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">	<span class="type">String</span> <span class="variable">ele</span> <span class="operator">=</span> it.next();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//增强for循环</span></span><br><span class="line"><span class="keyword">for</span>(String ele : c)&#123;</span><br><span class="line">   	System</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//forEach方法结合lambda表达式</span></span><br><span class="line">c.forEach(<span class="keyword">new</span> <span class="title class_">Consumer</span>&lt;String&gt;()&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">accept</span><span class="params">(String s)</span>&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">c.forEach((String s)-&gt;&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line">c.forEach(s-&gt;&#123;</span><br><span class="line">		System.out.println(s);</span><br><span class="line">    &#125;);</span><br><span class="line">c.forEach(System.out::println);   </span><br></pre></td></tr></table></figure>
+<ul>
+<li>List集合：有序、可重复、有索引
+<ul>
+<li>ArrayList集合特点
+<ul>
+<li>基于数组实现</li>
+<li>查询效率低</li>
+<li>删除效率低</li>
+<li>添加效率极低</li>
+</ul>
+</li>
+<li>LinkedList（双向链表）
+<ul>
+<li>查询慢（需要从开始查）</li>
+<li>增删相对快</li>
+<li>双向列表对首位元素进行增删改查的速度极快。</li>
+<li>应用场景：可以用来设计栈</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//ArrayList</span></span><br><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;121&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;232&quot;</span>);</span><br><span class="line">list.add(<span class="number">1</span>,<span class="string">&quot;222&quot;</span>);</span><br><span class="line">list.remove(<span class="number">2</span>);</span><br><span class="line">list.get(<span class="number">1</span>);</span><br><span class="line">list.set(<span class="number">1</span>,<span class="string">&quot;zz&quot;</span>);</span><br><span class="line"><span class="comment">//LinkedList</span></span><br><span class="line">LinkedList&lt;String&gt; queue = newe LinkedList&lt;&gt;();</span><br><span class="line">queue.addLast(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">queue,addLast(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">queue.removeFirst();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Set集合：无序、不重复、无索引
+<ul>
+<li>HashSet：无序、不重复、无索引</li>
+<li>LinkedHashSet：有序、不重复、无索引
+<ul>
+<li>原理：每个元素额外多了一个双链表机制记录前后元素的位置</li>
+</ul>
+</li>
+<li>TreeSet：排序、不重复、无索引、可排序（基于红黑树实现）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241121141703741.png" alt="image-20241121141703741"></p>
+<ul>
+<li>注意事项：集合的并发修改异常
+<ul>
+<li>iterator会带来并发修改异常</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//并发修改异常</span></span><br><span class="line">Iterator&lt;String&gt; it =list.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> it.next();</span><br><span class="line">    <span class="keyword">if</span>(name.contains(<span class="string">&quot;李&quot;</span>))&#123;</span><br><span class="line">        list.remove(name);<span class="comment">//并发修改异常</span></span><br><span class="line">        it.remove()<span class="comment">//删除迭代器当前遍历的数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-集合框架（二）">3. 集合框架（二）</h2>
+<ul>
+<li>可变参数：
+<ul>
+<li>一种特殊的形参，可以不传数据给他；可以传一个或者多个数据给他，也可以传一个数组；可以更灵活的接收数据。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可变参数</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span>...nums)</span>&#123;&#125;;</span><br><span class="line"><span class="comment">//Collections(工具类)</span></span><br><span class="line">List&lt;String&gt; names = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">Collections.addAll(names,<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;zhw&quot;</span>,<span class="string">&quot;www&quot;</span>);</span><br><span class="line">Collections.shuffle(names);<span class="comment">//打乱元素的顺序</span></span><br><span class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="number">3</span>);</span><br><span class="line">list.add(<span class="number">4</span>);</span><br><span class="line">Collections.sort(list);<span class="comment">//对list排序</span></span><br><span class="line"><span class="comment">//如果是针对如Student类，需要在类里implements Comparable,重写compareTo方法</span></span><br><span class="line">Collections.sort(Students,( o1, o2) -&gt; Double.compare(o1.getHeight(),o2.getHeight()));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>Map系列集合</p>
+<ul>
+<li>
+<p>特点：</p>
+<ul>
+<li>
+<p>Map集合被称为双列集合，一次要存一堆数据作为一个元素</p>
+</li>
+<li>
+<p>键值对集合，一一对应</p>
+</li>
+<li>
+<p>Map中所有键是不允许重复的</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String,Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;手机&quot;</span>,<span class="number">100</span>);</span><br><span class="line">map.put(<span class="string">&quot;手表&quot;</span>,<span class="number">200</span>);</span><br><span class="line">Map&lt;Integer, String&gt; map1 = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;();</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>Map的常用方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.size();</span><br><span class="line">map.clear();<span class="comment">//清空</span></span><br><span class="line">map.isEmpty();<span class="comment">//是否为空</span></span><br><span class="line"><span class="type">int</span> <span class="variable">v1</span> <span class="operator">=</span> map.get(<span class="string">&quot;手表&quot;</span>);<span class="comment">//根据键得到值</span></span><br><span class="line">map.remove(<span class="string">&quot;手表&quot;</span>);<span class="comment">//删除键值对（返回值）</span></span><br><span class="line">map.containsKey(<span class="string">&quot;手机&quot;</span>);<span class="comment">//判断</span></span><br><span class="line">map.containsValue(<span class="number">2</span>);<span class="comment">//判断是否含有某个值</span></span><br><span class="line">Set&lt;String&gt; keys = map.keySet();<span class="comment">//获取Map集合的全部键</span></span><br><span class="line">Collection&lt;Integer&gt; values = map.values();</span><br><span class="line">map1.putAll(map2);<span class="comment">//所有值加入到map1中</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>Map的遍历</p>
+<ul>
+<li>键找值</li>
+<li>键值对</li>
+<li>Lambda</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//键找值</span></span><br><span class="line">Map&lt;String, Double&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;zz&quot;</span>,<span class="number">188.5</span>);</span><br><span class="line">map.put(<span class="string">&quot;xx&quot;</span>,<span class="number">177.6</span>);</span><br><span class="line">map.put(<span class="string">&quot;cc&quot;</span>,<span class="number">177.9</span>);</span><br><span class="line">Set&lt;String&gt; keys = map.keySet();</span><br><span class="line">System.out.println(keys);</span><br><span class="line"><span class="keyword">for</span>(String key : keys)&#123;</span><br><span class="line">    <span class="type">double</span> <span class="variable">value</span> <span class="operator">=</span> map.get(key);</span><br><span class="line">    System.out.println(key+<span class="string">&quot; &quot;</span>+value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//键值对</span></span><br><span class="line">Set&lt;Map.Entry&lt;String, Double&gt; &gt;entries = map.entrySet();<span class="comment">//获取所有的键值对的集合</span></span><br><span class="line"><span class="keyword">for</span>(Map.Entry&lt;String,Double&gt; entry : entries)&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span>  <span class="operator">=</span> entry.getKey();</span><br><span class="line">    <span class="type">double</span> <span class="variable">value</span> <span class="operator">=</span> entry.getValue();</span><br><span class="line">    System.out.println(key+<span class="string">&quot; &quot;</span>+value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Lambda</span></span><br><span class="line">map.forEach((k,v) -&gt;&#123;</span><br><span class="line">    System.out.println(key+<span class="string">&quot; &quot;</span>+value);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Student, String&gt; map = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;(<span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Student&gt;()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Student o1,Student o2)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Double.compare(o2.getHeight(),o1.getHeight());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.out.println(map);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241127105904352.png" alt="image-20241127105904352"></p>
+<ul>
+<li>Stream 流
+<ul>
+<li>定义：
+<ul>
+<li>可以用来操作集合或者数组的数据</li>
+<li>结合了Lambda的语法风格编程，代码更简洁，可读性更好</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; names = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">Collections.addAll(names,<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;zs&quot;</span>,<span class="string">&quot;zd&quot;</span>,<span class="string">&quot;sd&quot;</span>);</span><br><span class="line">List&lt;String&gt; list2 = names.stream().filter(s -&gt; s.startsWith(<span class="string">&quot;z&quot;</span>)).filter(a-&gt;a.length() == <span class="number">2</span>).collect(Collectors.toList());</span><br><span class="line">System.out.println(list2);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//常用方法、、Set集合</span></span><br><span class="line">Set&lt;String&gt; set = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">Collections.addAll(set,<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;zs&quot;</span>,<span class="string">&quot;zd&quot;</span>,<span class="string">&quot;sd&quot;</span>);</span><br><span class="line">Stream&lt;String&gt; stream1 = set.stream();</span><br><span class="line">stream1.filter(s -&gt; s.contains(<span class="string">&quot;z&quot;</span>)).forEach(s -&gt; System.out.println(s));</span><br><span class="line"><span class="comment">//Map集合的Stream流</span></span><br><span class="line">Map&lt;String,String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;zz&quot;</span>,<span class="number">188.5</span>);</span><br><span class="line">map.put(<span class="string">&quot;xx&quot;</span>,<span class="number">177.6</span>);</span><br><span class="line">map.put(<span class="string">&quot;cc&quot;</span>,<span class="number">177.9</span>);</span><br><span class="line"><span class="comment">//分别取出键、值流</span></span><br><span class="line">Set&lt;String&gt; keys = map.keySet();</span><br><span class="line">Stream&lt;String&gt; ks = keys.stream();</span><br><span class="line">Collection&lt;Double&gt; values = map.values();</span><br><span class="line">Stream&lt;Double&gt; vs = values.stream();</span><br><span class="line"><span class="comment">//键值对成对取出</span></span><br><span class="line">Set&lt;Map.Entry&lt;String, Double&gt;&gt; entries = map.entrySet();</span><br><span class="line">Stream&lt;Map.Entry&lt;String, Double&gt;&gt; kvs = entries.stream();</span><br><span class="line">kvs.filter(e -&gt;e.getKey().contains(<span class="string">&quot;z&quot;</span>)).forEach(e -&gt; System.out.println(e.getKey()));</span><br><span class="line"><span class="comment">//Arrays类取出流</span></span><br><span class="line">String[] names = &#123;<span class="string">&quot;zza&quot;</span>,<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;as&quot;</span>&#125;;</span><br><span class="line">Stream&lt;String&gt; s1 = Arrays.stream(names2);</span><br><span class="line">Stream&lt;String&gt; s2 = Stream.of(names2);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Stream流常见的中间方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;Double&gt; scores = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">Collections.addAll(scores,<span class="number">88.5</span>,<span class="number">75.2</span>,<span class="number">12.54</span>,<span class="number">12.3</span>,<span class="number">98.5</span>,<span class="number">2.0</span>);</span><br><span class="line">scores.stream().filter(s -&gt; s &gt;=<span class="number">60</span>).sorted().forEach(s -&gt; System.out.println(s));</span><br><span class="line"><span class="comment">//	Student 类</span></span><br><span class="line"><span class="comment">//年龄在23到30之间，年龄降序输出</span></span><br><span class="line">List&lt;Student&gt; students = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">students.stream().filter(s -&gt; s.getAge() &gt;=<span class="number">23</span> &amp;&amp; s.getAge() &lt;= <span class="number">30</span>).sort((o1,o2) -&gt; o2.getAge() - o1.getAge()).forEach(s -&gt; System.out.println(s));</span><br><span class="line"><span class="comment">//取出升高最高的三个学生，输出（用到limit,表示限制多少个）</span></span><br><span class="line">students.stream().sort((o1,o2) -&gt; Double.compare(o2.getHeight(),o1.getHeight()).limit(<span class="number">3</span>).forEach(s -&gt; System.out.println(s));</span><br><span class="line"><span class="comment">//取身高倒数的两个学生，并输出（用到skip，表示跳过多少个）</span></span><br><span class="line">students.stream().sorted((o1,o2)-&gt;Double.compare(o2.getHeight(),o1.getHeight())).skip(students.size()-<span class="number">2</span>).forEach(s -&gt; System.out.println(s));</span><br><span class="line"><span class="comment">//找到超过168的学生的名字，并去除重复，在输出(用到map映射，加工数据（一种数据变成另一个数据）)(distinct（去重复）)</span></span><br><span class="line">students.stream().filter(s -&gt; s.getHeight()&gt;<span class="number">168</span>).map(s -&gt;s.getName()).distinct().forEach(s -&gt; System.out.println(s));</span><br><span class="line"><span class="comment">//若希望内容一致为重复，需要重写equals()和hashcode()方法</span></span><br><span class="line"><span class="comment">//可以使用concat方法合并两个流</span></span><br><span class="line">Stream&lt;String&gt; st1 = Stream.of(<span class="string">&quot;zz&quot;</span>,<span class="string">&quot;xx&quot;</span>);</span><br><span class="line">Stream&lt;String&gt; st2 = Stream.of(<span class="string">&quot;zz1&quot;</span>,<span class="string">&quot;xx1&quot;</span>);</span><br><span class="line">Stream&lt;String&gt; st3 = Stream.concat(st1,st2);</span><br><span class="line">allSt.forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Stream流的终结方法
+<ul>
+<li>终结方法指的是调用完成后，不会返回新的Stream了，没法再继续使用流了</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//1.forEach()方法</span></span><br><span class="line"><span class="comment">//2.count()方法,long类型</span></span><br><span class="line"><span class="type">long</span> <span class="variable">size</span> <span class="operator">=</span> students.stream().filter(s -&gt; s.getHeight() &gt; <span class="number">168</span>).count();</span><br><span class="line">System.out.println(size);</span><br><span class="line"><span class="comment">//找出身高最高的学生对象</span></span><br><span class="line"><span class="comment">//3.max(),min()方法</span></span><br><span class="line">students.stream().max((o1,o2) -&gt; Double.compare(o1.getHeight(),o2.getHeight()));</span><br><span class="line"><span class="comment">//4.收集stream流；转回到集合/数组中</span></span><br><span class="line"><span class="comment">//流只能收集一次</span></span><br><span class="line"><span class="comment">//collect()收集到List集合中,toList()/toSet()转为List/Set</span></span><br><span class="line">List&lt;Student&gt; students1 = students.stream().filter(s -&gt; s.getHeight &gt; <span class="number">170.0</span>).collect(Collectors.toList());</span><br><span class="line">Set&lt;Student&gt; students2 = students.stream().filter(s -&gt; s.getHeight &gt; <span class="number">170.0</span>).collect(Collectors.toSet());</span><br><span class="line"><span class="comment">//找到身高超过170的学生对象，并把学生的名字和身高存入到一个Map集合中,toMap()</span></span><br><span class="line">Map&lt;String, Double&gt; map = students.stream().filter(a -&gt; a.getHeight()&gt;<span class="number">170</span>).distinct().collect(Collectors.toMap(a -&gt;a.getName,a-&gt;a.getHeight()));</span><br><span class="line">Object[] arr = students.stream().filter(a -&gt; a.getHeight()&gt;<span class="number">170</span>).toArray();</span><br><span class="line">Student[] arr = students.stream().filter(a -&gt; a.getHeight()&gt;<span class="number">170</span>).toArray(len -&gt; <span class="keyword">new</span> <span class="title class_">Student</span>[len]);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>Others</category>
+        <category>Technique</category>
       </categories>
       <tags>
-        <tag>测试</tag>
+        <tag>Java</tag>
+        <tag>JavaSE</tag>
       </tags>
   </entry>
   <entry>
@@ -1296,14 +953,409 @@
       </tags>
   </entry>
   <entry>
-    <title>关于</title>
-    <url>/about/index.html</url>
-    <content><![CDATA[<h1>Github贡献图</h1>
-<img src="https://ghchart.rshah.org/zlatan-zzz" alt="zlatan-zzz's Github chart" />
-<h1>文章贡献图</h1>
-<div id="posts-calendar" class="js-pjax"></div>
-<h1>标签统计图</h1>
-<div id="tags-chart" data-length="8" class="js-pjax"></div>]]></content>
+    <title>JAVASE基础</title>
+    <url>/2024/11/04/JAVASE%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1>JAVASE基础</h1>
+<p><a href="https://www.bilibili.com/video/BV1Cv411372m">https://www.bilibili.com/video/BV1Cv411372m</a></p>
+<h2 id="0-IntelliJ-IDEA实用快捷键">0.IntelliJ IDEA实用快捷键</h2>
+<ul>
+<li>CTRL + / :为代码注释</li>
+<li>CTRL+SHIFT+/:整段注释</li>
+<li>CTRL+D：复制到下一行</li>
+<li>CTRL+ALT+T：环绕代码（for\while等）</li>
+<li>CTRL+ALT+SPACE：自动提示代码</li>
+<li>右键-生成：快速为类生成set、get、构造函数</li>
+</ul>
+<h2 id="1-Java入门">1. Java入门</h2>
+<h3 id="1-1-java基础知识">1.1 java基础知识</h3>
+<blockquote>
+<p><strong>javac.exe</strong>：编译工具</p>
+<p><strong>java.exe</strong>：执行工具</p>
+</blockquote>
+<p>过程：1.编写代码 2.编译代码（javac) 3.运行代码(java)</p>
+<p>文件名称必须与代码的类名称一致。、</p>
+<blockquote>
+<p>javac HelloWorld.java(生成HelloWorld.class)</p>
+<p>java HelloWorld</p>
+</blockquote>
+<h3 id="1-2-JDK的组成">1.2 JDK的组成</h3>
+<ul>
+<li>JVM：Java虚拟机，运行Java程序的地方。</li>
+<li>核心类库：Java类。</li>
+<li>JRE：Java的运行环境。（JVM+核心类库）</li>
+<li>开发工具：Java、Javac</li>
+</ul>
+<h3 id="1-3-IDEA">1.3 IDEA</h3>
+<p><strong>project的构成：</strong></p>
+<ul>
+<li>project（项目、工程）</li>
+<li>module（模块）</li>
+<li>package（包）</li>
+<li>class（类）</li>
+</ul>
+<h2 id="2-Java语法">2. Java语法</h2>
+<h3 id="2-1-char类型ASCII码（leetcode用）">2.1 char类型ASCII码（leetcode用）</h3>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="string">&#x27;a&#x27;</span>+<span class="number">10</span>);<span class="comment">//107</span></span><br><span class="line">System.out.println(<span class="string">&#x27;A&#x27;</span>+<span class="number">10</span>);<span class="comment">//75</span></span><br><span class="line">System.out.println(<span class="string">&#x27;C&#x27;</span>-<span class="string">&#x27;A&#x27;</span>);<span class="comment">//2</span></span><br><span class="line">System.out.println((<span class="type">char</span>)(<span class="string">&#x27;c&#x27;</span>-<span class="number">1</span>));<span class="comment">//b</span></span><br></pre></td></tr></table></figure>
+<p>Java支持二进制、八进制、十六进制的数据，分别需要以0b、0、0X或者0x开头。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="number">0B01100001</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="number">0141</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">a3</span> <span class="operator">=</span> <span class="number">0XFA</span>;</span><br><span class="line">System.out.println(a1+<span class="string">&quot;  &quot;</span>+a2+<span class="string">&quot;   &quot;</span>+a3);<span class="comment">//97  97  250</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-2-变量类型转换">2.2 变量类型转换</h3>
+<ul>
+<li>
+<p>自动类型转换</p>
+<ul>
+<li>byte→short→int→long→float→double</li>
+<li>char→int</li>
+</ul>
+</li>
+<li>
+<p>表达式的自动类型转换</p>
+<ul>
+<li>表达式的最终结果由表达式的最高类型决定。</li>
+<li>表达式在，byte、short、char是转换为int参与运算。</li>
+</ul>
+</li>
+<li>
+<p>强制类型转换</p>
+<ul>
+<li>byte b = (byte)a   (快捷键：ALT+ENTER)</li>
+<li>可能会造成精度丢失。</li>
+<li>小数转为整数是直接阶段小数保留整数。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">System.out.println(i/j);<span class="comment">//2</span></span><br><span class="line">System.out.println(<span class="number">1.0</span>*i/j);<span class="comment">//2.5</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-运算符">2.3 运算符</h3>
+<ul>
+<li>自增/自减</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">rs</span> <span class="operator">=</span> ++a;<span class="comment">//11</span></span><br><span class="line">a=<span class="number">10</span>;</span><br><span class="line">rs =a++;<span class="comment">//10</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span><span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span><span class="number">3</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> ++m - --m + m++ - ++n + n-- +<span class="number">3</span>; <span class="comment">//6-5+5-4+4+3=9</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>扩展的赋值运算符+=、-=自带强制类型转换。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">10</span>, b = <span class="number">5</span>;</span><br><span class="line">System.out.println(a = b);<span class="comment">//5,先赋值给a</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>逻辑与：&amp;；逻辑或：|；逻辑非：！；逻辑异或：^；</p>
+</li>
+<li>
+<p>&amp;&amp;短路与；||短路或；<strong>一边已经确定，另一边就不执行</strong>。</p>
+</li>
+<li>
+<p>三元运算符：条件表达式？值1：值2</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">score</span> <span class="operator">=</span> <span class="number">61</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> score &gt;= <span class="number">60</span> ? <span class="string">&quot;及格&quot;</span> : <span class="string">&quot;不及格&quot;</span></span><br><span class="line">System.out.println(rs);<span class="comment">//及格</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>运算符优先级 &amp;&amp; &gt; ||(加个括号就好了)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">10</span> &gt; <span class="number">3</span> || <span class="number">10</span> &gt; <span class="number">3</span> &amp;&amp; <span class="number">10</span> &lt; <span class="number">3</span>);<span class="comment">//(true || false)=true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用Scanner接收键盘输入</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> sc.nextInt();<span class="comment">//等待输入整数，直到输入回车键</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> sc.next();<span class="comment">//等待输入字符串</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-流程控制">3. 流程控制</h2>
+<ul>
+<li>
+<p>switch表达式要求只能是byte、short、int、char、string。</p>
+</li>
+<li>
+<p>do-while先执行后判断，while先判断后循环。</p>
+</li>
+<li>
+<p>Random的使用</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="comment">// 1.导包</span></span><br><span class="line"><span class="comment">// 2.创建一个Random对象</span></span><br><span class="line"><span class="comment">// 3.调用Random提供的功能：nextInt得到随机数</span></span><br><span class="line"><span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"><span class="type">int</span> <span class="variable">data</span> <span class="operator">=</span> r.nextInt(bound:<span class="number">10</span>);<span class="comment">//生成0-9</span></span><br></pre></td></tr></table></figure>
+<h2 id="4-数组">4. 数组</h2>
+<ul>
+<li>数组初始化</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span>[] ages = &#123;<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>,<span class="number">50</span>&#125;;<span class="comment">//静态初始化</span></span><br><span class="line"><span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">3</span>];<span class="comment">//&#123;0,0,0&#125;；动态初始化</span></span><br><span class="line"><span class="type">boolean</span>[] arr = <span class="keyword">new</span> <span class="title class_">boolean</span>[<span class="number">3</span>];<span class="comment">//&#123;false,false,false&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>数组存储</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span>[] arr1 = &#123;<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>&#125;;</span><br><span class="line"><span class="type">int</span>[] arr2 =arr1;<span class="comment">//两个数组指向同一片内存区域</span></span><br><span class="line">arr[<span class="number">1</span>] = <span class="number">99</span>;</span><br><span class="line">System.out.println(arr1[<span class="number">1</span>]);<span class="comment">//99</span></span><br><span class="line">arr2 = <span class="literal">null</span>;</span><br><span class="line">System.out.println(arr2);<span class="comment">//null</span></span><br><span class="line">System.out.println(arr2.length);<span class="comment">//空指针异常</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>debug工具使用
+<ul>
+<li>打断点</li>
+<li>使用Debug方式启动程序</li>
+<li>控制代码一行一行执行</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-方法（函数）">5. 方法（函数）</h2>
+<ul>
+<li>
+<p>方法在计算机的执行：栈。</p>
+</li>
+<li>
+<p>参数传递机制：值传递，传输的是实参的值的副本。</p>
+<ul>
+<li>实参：在方法内部定义的变量。</li>
+<li>形参：以方法为例，是方法定义时的变量。</li>
+</ul>
+</li>
+<li>
+<p>基本类型的参数传输的是参数的数据值，<strong>引用类型的参数传输存储的地址值。</strong></p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(<span class="type">int</span>[] arrs)</span>&#123;<span class="type">int</span>[] arrs = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;</span><br><span class="line">    &#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>&#125;;</span><br><span class="line">	change(arrs);</span><br><span class="line">	System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//222</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(<span class="type">int</span>[] arrs)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//20</span></span><br><span class="line">    arrs[<span class="number">1</span>] = <span class="number">222</span>;</span><br><span class="line">    System.out.println(<span class="string">&quot;arrs[1]&quot;</span>);<span class="comment">//222</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JavaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MMGaitFormer</title>
+    <url>/2024/10/31/MMGaitFormer/</url>
+    <content><![CDATA[<h1>Multi-Modal Gait Recognition via Effective Spatial-Temporal Feature Fusion</h1>
+<p><strong>CVPR 2023</strong></p>
+<h2 id="Abstract">Abstract</h2>
+<p>步态识别是一种通过人的步态特征进行身份识别的技术。然而，现有的步态识别方法主要基于两种数据：轮廓和骨架。轮廓数据易受到服装遮挡的影响，骨架数据则缺乏身体外形信息。为了解决这些问题，论文提出了一种融合这两种数据的步态识别方法，从而获得更健壮和全面的步态表示。</p>
+<p>论文提出了一个基于<strong>Transformer</strong>的步态识别框架 <strong>MMGaitFormer</strong>。该框架通过以下两个关键模块来实现多模态的融合：</p>
+<ul>
+<li><strong>空间融合模块（Spatial Fusion Module, SFM）</strong>：该模块通过注意力机制，将步态的细粒度空间特征（如骨架关节和轮廓身体部分）进行融合。</li>
+<li><strong>时间融合模块（Temporal Fusion Module, TFM）</strong>：该模块通过一种称为循环位置嵌入（Cycle Position Embedding, CPE）的技术，结合步态序列的时间信息进行建模和融合。</li>
+</ul>
+<h2 id="1-Introduction">1.Introduction</h2>
+<p><img src="/img/MMGaitFormer.assets/image-20241004150309776.png" alt="image-20241004150309776"></p>
+<p>如图1（a）所示，虽然剪影保留了大部分身体形状信息，但当身体区域重叠时会出现自遮挡问题。此外，当衣服条件发生变化时，如图1（b）所示，衣服遮蔽会导致外部身体形状发生显着变化。</p>
+<blockquote>
+<p>骨架只保留内部身体结构信息，有效解决了衣服遮挡和自我遮挡问题，但完全忽略了辨别性的身体形状信息导致性能不佳。</p>
+<p>因此，我们可以观察到剪影保留了外部身体形状信息并省略了一些身体结构线索，而骨骼保留了内部身体结构信息。这两种数据模式是互补的，它们的组合有望成为更全面的步态表示</p>
+</blockquote>
+<p>我们提出了一种名为 MMGaitFormer 的基于 Transformer 的步态识别框架，它有效地融合和聚合了骨骼和轮廓的时空信息。</p>
+<h3 id="1-1-模型整体架构">1.1 <strong>模型整体架构</strong></h3>
+<p>MMGaitFormer 主要由以下三个阶段组成：</p>
+<ul>
+<li><strong>预处理阶段</strong>：从原始视频中提取轮廓序列和骨架序列。轮廓是通过图像分割方法从RGB视频中获得，骨架是通过姿态估计模型提取出来的。</li>
+<li><strong>编码阶段</strong>：轮廓和骨架序列分别输入独立的编码模块，提取它们各自的空间和时间特征。</li>
+<li><strong>融合阶段</strong>：引入了<strong>空间融合模块（SFM）和时间融合模块（TFM）</strong>，分别用于空间和时间层次的特征融合，最终将这些特征融合为一个统一的步态表示。</li>
+</ul>
+<h3 id="1-2-关键模块介绍">1.2 <strong>关键模块介绍</strong></h3>
+<h4 id="1-2-1-轮廓编码模块（Silhouette-Encoding-Module-SiEM）">1.2.1 <strong>轮廓编码模块（Silhouette Encoding Module, SiEM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：用于从轮廓图像中提取空间和时间特征。</li>
+<li><strong>结构</strong>：SiEM 主要使用 3D 卷积神经网络（CNN）以及其他特征提取层，如最大池化层和微运动捕捉模块（Micro-motion Capture Module, MCM），以捕捉轮廓的局部和全局步态特征。</li>
+</ul>
+<h4 id="1-2-2-骨架编码模块（Skeleton-Encoding-Module-SkEM）">1.2.2  <strong>骨架编码模块（Skeleton Encoding Module, SkEM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：用于从骨架数据中提取空间和时间特征。</li>
+<li><strong>结构</strong>：SkEM 使用图卷积网络（Graph Convolutional Network, GCN）来从骨架的关节点序列中提取空间和时间信息。由于骨架和轮廓数据的性质不同，SkEM 和 SiEM 是分开的编码模块。</li>
+</ul>
+<h4 id="1-2-3-空间融合模块（Spatial-Fusion-Module-SFM）">1.2.3 <strong>空间融合模块（Spatial Fusion Module, SFM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：融合骨架和轮廓的空间信息，利用它们的互补性来获得更加完整的步态表示。</li>
+<li><strong>机制</strong>：SFM 通过一种<strong>共注意力机制（Co-Attention Mechanism）<strong>实现，将骨架关节和轮廓部位的细粒度特征进行匹配和融合。这一过程被称为</strong>细粒度身体部位融合（Fine-grained Body Parts Fusion, FBPF）</strong>，基于人体的先验知识，将头部、躯干和腿部分别进行特征融合。
+<ul>
+<li><strong>共注意力机制</strong>：它使用双重交叉注意力模块（Cross-attention blocks）来实现骨架和轮廓之间的交互，并通过预定义的注意力掩码，确保相应的身体部位（如头、躯干、腿）之间的特征能够准确匹配。</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-2-4-时间融合模块（Temporal-Fusion-Module-TFM）">1.2.4  <strong>时间融合模块（Temporal Fusion Module, TFM）</strong></h4>
+<ul>
+<li><strong>目的</strong>：对步态序列的时间信息进行建模和融合。</li>
+<li><strong>机制</strong>：TFM 提出了<strong>循环位置嵌入（Cycle Position Embedding, CPE）</strong>，用于捕捉步态序列中的周期性特征。CPE 能够模拟步态的周期过程，并且适应任意长度的步态序列，有效提高时间建模的准确性。
+<ul>
+<li><strong>时间共注意力机制</strong>：与 SFM 类似，TFM 也使用共注意力机制来融合骨架和轮廓的时间信息，确保步态序列中的时间特征能够有效地进行融合和增强。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-Related-Work">2. Related Work</h2>
+<h3 id="2-1-基于外观的方法（Appearance-based-Methods）">2.1  <strong>基于外观的方法（Appearance-based Methods）</strong></h3>
+<p>基于外观的步态识别方法通常依赖于从视频中提取的<strong>轮廓图像</strong>，即通过分割得到的二值化的轮廓图来描述人体的外部形态。这类方法的核心是利用这些轮廓图像来消除外部因素（如背景噪声）的干扰，专注于人体形状和运动模式。这类方法在文献中得到了广泛应用，主要包括以下几种代表性方法：</p>
+<ul>
+<li><strong>GaitSet</strong>：将步态看作一组轮廓图像序列，通过帧级特征提取模块获取空间特征，再通过时空聚合模块获取步态表示。</li>
+<li><strong>GaitPart</strong>：引入了微运动捕捉模块（Micro-motion Capture Module, MCM），以捕获局部的微运动特征。</li>
+<li><strong>GaitGL</strong>：基于3D卷积神经网络（3D CNN），同时捕获局部和全局的时空特征。</li>
+</ul>
+<p>尽管这些基于轮廓的方法在步态识别中表现优异，但它们在面对服装遮挡和自遮挡问题时表现出局限性，识别性能会受到一定影响。</p>
+<h3 id="2-2-基于模型的方法（Model-based-Methods）">2.2  <strong>基于模型的方法（Model-based Methods）</strong></h3>
+<p>这类方法通过建模人体的物理结构，从而以一种更加可解释的方式来表达步态信息。模型化的方法通常会提取骨架信息，使用姿态估计模型从视频中获取人体关节的位置信息，并基于这些关节节点的动态特征进行步态识别。</p>
+<ul>
+<li><strong>PoseGait</strong>：利用人体的先验知识设计姿态特征，使用卷积神经网络（CNN）提取步态特征。</li>
+<li><strong>GaitGraph</strong>：通过图卷积网络（Graph Convolutional Network, GCN）来处理骨架关节的时空关系，生成步态特征。</li>
+</ul>
+<p>骨架信息的优势在于它对外观变化（如服装变化）有更好的鲁棒性，但由于缺少人体的外部形态信息，这类方法的区分性有时不如基于外观的方法。</p>
+<h3 id="2-3-多模态步态识别方法（Multi-modal-Gait-Recognition-Methods）">2.3  <strong>多模态步态识别方法（Multi-modal Gait Recognition Methods）</strong></h3>
+<p>多模态步态识别尝试通过融合多种数据源（如深度图、视频、骨架数据等）来提升识别性能。早期研究探索了深度图像、惯性传感器数据和视频数据的融合，但基于同源视频数据的多模态方法尚未被充分开发。现有方法大多采用简单的特征拼接或全局特征融合，这种融合方式无法充分利用细粒度的空间和时间信息。</p>
+<ul>
+<li><strong>BiFusion</strong>：一种融合骨架和轮廓信息的步态识别方法，通过简单地拼接全局特征进行融合，但无法捕捉细粒度的时空特征。</li>
+<li><strong>TransGait</strong>：使用多模态学习的方法，利用 Set Transformer 实现骨架和轮廓的融合，但融合过程仍然较为简单，缺乏对细节的深度挖掘。</li>
+</ul>
+<p>这些多模态融合方法尽管在识别准确率上有一定提升，但由于缺乏细粒度的空间和时间融合手段，仍未能充分发挥多模态数据的潜力。</p>
+<h2 id="3-Methods">3.  Methods</h2>
+<h3 id="3-1-Pipeline">3.1 Pipeline</h3>
+<p><img src="/img/MMGaitFormer.assets/image-20241004192949785.png" alt="image-20241004192949785"></p>
+<blockquote>
+<p><strong>预处理阶段</strong>：分别通过分割方法和姿态估计方法从原始RGB视频中提取剪影序列和骨架序列。</p>
+<p><strong>编码阶段</strong>：我们将输入轮廓和骨架分别输入轮廓编码模块（SiEM）和骨架编码模块（SkEM）以学习时空特征图。</p>
+<p><strong>融合阶段</strong>：提出了空间融合模块（SFM）和时间融合模块（TFM），分别用于有效的细粒度空间和细对齐时间特征融合。</p>
+<p>ATT表示交叉注意力块，两个ATT形成共同注意力结构，用于特征融合。 TFM 中的嵌入建模 (EM) 用于时间建模。单独的全连接层（SFC）用于编码和融合阶段的特征映射。</p>
+</blockquote>
+<h3 id="3-2-SiEM和SkEM">3.2 SiEM和SkEM</h3>
+<h4 id="3-2-1-motivation">3.2.1 motivation</h4>
+<p>两种模态表示的数据结构差异太大，很难在数据层面上直接融合。因此，我们设计独立的编码模块来捕获每个模态的独特判别信息，并增强后续融合的时空特征表示。为了加速模型收敛，我们专门进行了轮廓损失Lsil和骨架损失Lske来分别监督每个模态特征的学习。</p>
+<h4 id="3-2-2-实现方式">3.2.2 实现方式</h4>
+<p><strong>SiEM</strong> 网络由 3D CNN 块 、最大池化层和微动作捕捉模块 (MCM)  组成。</p>
+<p><strong>SkEM</strong>我们引入图卷积网络（GCN）来从骨架图序列中提取时空步态特征。</p>
+<p>这两个模块的输出通道数被设定为相同（128个通道），以便于后续的融合处理。</p>
+<blockquote>
+<p>SiEM 和 SkEM 模块在框架中可以替换为其他步态识别网络。更复杂的结构可能会带来更好的性能提升，但这并不是该论文提出方法的优先目标，因此它们可以被视为一种基线方法。</p>
+</blockquote>
+<h3 id="3-3-SFM-空间融合模块Spatial-Fusion-Module">3.3 SFM(空间融合模块Spatial Fusion Module)</h3>
+<h4 id="1-设计动机-Motivation-：">1. <strong>设计动机 (Motivation)</strong>：</h4>
+<ul>
+<li>论文指出，之前的方法在融合多个步态模态（例如轮廓和骨架）时，通常采用全局特征级别的简单融合方法（例如特征拼接），这种融合方式缺乏解释性和灵活性。</li>
+<li>这些方法通常依赖于每种模态的预训练模型，更像是“集成模型”而不是“多模态融合模型”。</li>
+</ul>
+<p><img src="/img/MMGaitFormer.assets/image-20241010111324162.png" alt="image-20241010111324162"></p>
+<ul>
+<li>为了应对这些问题，论文提出了基于共注意力的融合模块，该模块通过注意力机制来解释身体部位的外部形状（轮廓）和内部结构（骨架）的融合（即<strong>细粒度身体部位融合</strong>）。</li>
+</ul>
+<p><img src="/img/MMGaitFormer.assets/image-20241010112006243.png" alt="image-20241010112006243"></p>
+<h4 id="2-细粒度身体部位融合-Fine-grained-Body-Parts-Fusion-：">2. <strong>细粒度身体部位融合 (Fine-grained Body Parts Fusion)</strong>：</h4>
+<ul>
+<li>人体在行走时，头部、躯干和腿部等不同部位有着明显的不同形状和运动模式。论文认为，空间特征融合应该是细粒度的。</li>
+<li>论文提出了一种基于人体先验知识的简单但有效的策略，将人体的不同部位（头、躯干、腿部）进行分区，并限制轮廓和骨架的特征在对应的身体部位之间进行交互，来实现更加精细的空间特征融合。</li>
+<li>这种方法不仅能够更好地利用人体的先验信息，提高融合的解释性，还可以通过减少计算量降低模型的复杂性，并有效减少过拟合的风险。</li>
+</ul>
+<h4 id="3-空间共注意力聚合-Spatial-Co-attention-Aggregation-：">3. <strong>空间共注意力聚合 (Spatial Co-attention Aggregation)</strong>：</h4>
+<ul>
+<li>该模块通过<strong>共注意力机制</strong>实现轮廓和骨架的交互。这种机制能够在轮廓部分和骨架关节之间建立各种空间关系，利用两种数据模态的互补优势，形成更鲁棒的步态特征表示。</li>
+<li>与单独使用交叉注意力的模块相比，共注意力结构可以更好地融合骨架和轮廓的互补信息。</li>
+<li>通过构造注意力掩码（Attention Mask）来限制注意力的计算范围，不仅减少了基于Transformer的方法过拟合的风险，还提升了模型的可解释性。</li>
+</ul>
+<h4 id="4-操作流程-Operation-：">4. <strong>操作流程 (Operation)</strong>：</h4>
+<ul>
+<li>该模块的输入是轮廓的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>s</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_s^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0883em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span> 和骨架的空间特征嵌入 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>k</mi><mi>S</mi></msubsup></mrow><annotation encoding="application/x-tex">f_k^S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.4169em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span>，然后利用基于注意力的机制对两者进行交互。</li>
+<li>交互的结果通过一个前馈神经网络（FFN）层，最终生成空间特征表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">Y_s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li>具体操作中，首先通过最大池化层在时间轴上进行池化，得到用于空间融合的特征嵌入。然后将这些嵌入输入到共注意力结构中进行特征融合，最后生成空间特征表示。</li>
+<li><img src="/img/MMGaitFormer.assets/image-20241010112016465.png" alt="image-20241010112016465"></li>
+<li><strong>图五</strong>我们提出的空间融合模块（a）和时间融合模块（b）的网络结构，两者都包含共同注意结构。每个共同注意结构由两个互连的交叉注意块组成。</li>
+</ul>
+<h3 id="3-4-时间融合模块（Temporal-Fusion-Module）">3.4 时间融合模块（Temporal Fusion Module）</h3>
+<h4 id="1-设计动机-Motivation-：-2">1. <strong>设计动机 (Motivation)</strong>：</h4>
+<ul>
+<li>步态识别作为基于视频的识别任务，时间帧之间的关系包含了独特的生物特征，这对于识别是非常关键的。</li>
+<li>在该部分中，论文提出了一个基于注意力机制的<strong>时间融合模块（TFM）</strong>，用于聚合来自轮廓和骨架的时间特征。</li>
+<li>由于步态是一个周期性且对称的过程，论文提出了<strong>周期位置嵌入（CPE，Cycle Position Embedding）</strong>，用于更好地建模和对齐两个模态的时间信息。</li>
+</ul>
+<h4 id="2-周期位置嵌入-Cycle-Position-Embedding-CPE-：">2. <strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong>：</h4>
+<ul>
+<li><strong>周期位置嵌入 (Cycle Position Embedding, CPE)</strong> 是第3.4节中介绍的一个重要概念，用于步态识别中的时间建模。它的目的是通过引入步态的周期性特征，提升模型捕捉时间信息的能力。</li>
+<li>普通的注意力机制不能区分输入序列中特征的位置信息。现有的视觉Transformer方法（例如ViT）通常使用位置嵌入来指示输入特征的顺序，但这对步态识别任务不太理想，因为步态是一个周期性的过程。</li>
+<li>论文提出了一种周期位置嵌入（CPE）来应对这一问题。CPE通过模拟步态周期过程，重复位置嵌入，直到它与特征嵌入序列的长度相同。这样，模型能够处理任意长度的序列。</li>
+<li>该方法不仅模拟了步态周期过程，更有效地捕捉了步态中的周期性特征。此外，CPE通过限制可学习参数的数量，降低了过拟合风险，帮助模型更好地收敛。</li>
+</ul>
+<p><img src="/img/MMGaitFormer.assets/image-20241010155155189.png" alt="image-20241010155155189"></p>
+<h4 id="3-时间共注意力聚合-Temporal-Co-attention-Aggregation-：">3. <strong>时间共注意力聚合 (Temporal Co-attention Aggregation)</strong>：</h4>
+<ul>
+<li>与空间融合模块类似，时间融合模块也设计了一个<strong>共注意力模块</strong>，用于融合和聚合两个模态的时间信息。</li>
+<li>由于轮廓和骨架的时间特征差异较大，模型使用了两个单独的前馈神经网络（FFN）层来分别映射这两个模态的时间特征。</li>
+<li>最终，模型会为轮廓和骨架生成相应的时间融合特征表示。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Research</category>
+      </categories>
+      <tags>
+        <tag>CVPR</tag>
+        <tag>计算机视觉</tag>
+        <tag>多模态</tag>
+        <tag>步态识别</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VideoLLM最新研究</title>
+    <url>/2024/11/22/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/</url>
+    <content><![CDATA[<h1>VideoLLM最新研究</h1>
+<h2 id="MovieLLM-Enhancing-Long-Video-Understanding-with-AI-Generated-Movies">MovieLLM: Enhancing Long Video Understanding with AI-Generated Movies</h2>
+<p><strong>MovieLLM：利用人工智能生成的电影增强对长视频的理解（复旦大学）</strong></p>
+<p>**地址：**<a href="https://arxiv.org/abs/2403.01422">https://arxiv.org/abs/2403.01422</a></p>
+<blockquote>
+<p>参考：</p>
+<p><a href="https://blog.csdn.net/xixiaoyaoww/article/details/136651416">https://blog.csdn.net/xixiaoyaoww/article/details/136651416</a></p>
+<p><a href="https://www.aihub.cn/tools/llm/moviellm/">MovieLLM-通过AI生成电影来增强长视频理解的框架 - AIHub | AI导航</a></p>
+</blockquote>
+<p><strong>时间</strong>：2024.6.24(v2)</p>
+<h3 id="1-摘要">1.<strong>摘要</strong></h3>
+<p>多模态模型的发展标志着机器理解视频的重大进步。这些模型在分析短视频片段方面表现出了良好的前景。然而，当涉及到电影等较长的格式时，它们往往就显得力不从心了。主要的障碍是缺乏高质量、多样化的视频数据，以及收集或注释此类数据所需的大量工作。面对这些挑战，我们提出了 MovieLLM，这是一个新颖的框架，旨在合成一致且高质量的视频数据以进行指令调整。该管道经过精心设计，可通过改进文本反转技术以及 GPT-4 强大的文本生成功能来控制视频的风格。作为第一个这样做的框架，我们的方法以其灵活性和可扩展性而脱颖而出，使用户能够仅使用一个描述来创建自定义电影。这使其成为传统数据收集方法的更好替代方案。我们进行了广泛的实验，验证了 MovieLLM 生成的数据显著提高了多模态模型在理解复杂视频叙事方面的表现，克服了现有数据集在稀缺性和偏见方面的局限性。</p>
+<h3 id="2-理解">2.<strong>理解</strong></h3>
+<p>利用GPT-4并引导文图生成模型生成一致的电影级视频关键帧，利用该框架生成的长视频指令数据，显著提高了多模态模型在理解复杂视频叙事方面的性能，让大模型更懂电影。</p>
+<p>该方法包括三个相互关联的步骤：电影情节生成、风格固定化过程和视频指导数据生成。仅凭简单的主题描述，就能够生成整部电影的关键帧。</p>
+<p>整个流程如下图所示：首先利用GPT-4基于主题短语生成整个电影情节；利用文本反转技术将从情节生成的风格描述固定到扩散模型的潜在空间，引导其生成具有固定风格的帧。整合先前获取的所有信息，最终生成一致的关键帧和相应的问答对。</p>
+<ul>
+<li><strong>电影情节生成（Movie Plot Generation）</strong>：我们没有将绘图生成限制为传统数据源（例如网络或现有数据集），而是利用 GPT-4 的功能来生成合成数据。通过提供主题、概述和样式等特定元素，我们指导 GPT-4 生成适合后一代流程的电影级关键帧描述。</li>
+<li><strong>风格固定过程(Style Immobilization)</strong>：通过巧妙地采用文本反转（Gal et al., 2022），我们将从脚本生成的风格描述固定到扩散模型的潜在空间中。这种方法引导模型以一致的风格生成场景，同时在统一的审美下保持多样性。</li>
+<li><strong>视频指令数据生成（video instruction data generation）</strong>:通过将 GPT-4 强大的生成能力与开发的风格引导扩散模型相结合，我们生成风格一致的关键帧和相应的 QA 对，从而形成全面的指令调优语料库。</li>
+</ul>
+<p>我们的方法允许在不受数据量限制的情况下生成数据集，确保生成的内容具有高度的多样性。此外，它还有助于自动注释，从而显着减少对体力劳动的需求和相关成本。这些优势增强了长视频理解数据集创建的可扩展性、丰富性和效率，标志着该领域的重大飞跃。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122185209461.png" alt="image-20241122185209461"></p>
+<blockquote>
+<p>我们提出的用于生成长视频指令调整数据集的管道。只需简单的主题描述，我们的流程就能够生成整部电影的关键帧。该流程大致可以分为三个阶段：</p>
+<p>（a）电影情节生成，我们使用 GPT-4 根据主题短语生成整个电影情节。</p>
+<p>（b）风格固定化过程，我们利用文本反转技术将情节生成的风格描述固定到扩散模型的潜在空间中，引导其生成具有固定风格的框架。</p>
+<p>©视频指令数据生成，我们整合之前获得的所有信息，最终生成一致的关键帧和相应的问答对。</p>
+</blockquote>
+<p><strong>总结</strong>：类似于大模型在电影领域的效果增强？</p>
+<h2 id="Movie101v2-Improved-Movie-Narration-Benchmark">Movie101v2: Improved Movie Narration Benchmark</h2>
+<p><strong>Movie101v2：改进的电影叙述基准（人民大学）</strong></p>
+<p><strong>paper</strong>：<a href="https://arxiv.org/pdf/2404.13370">https://arxiv.org/pdf/2404.13370</a></p>
+<p><strong>时间</strong>：2024.10.18（v2）</p>
+<h3 id="1-摘要-2">1. 摘要</h3>
+<p>自动电影旁白旨在生成与视频一致的情节描述，以帮助视障观众。与标准视频字幕不同，它不仅涉及描述关键视觉细节，还涉及推断多个电影镜头中展开的情节，从而提出独特而复杂的挑战。为了推动这一领域的发展，我们引入了  Movie101v2，这是一个专门为电影叙事设计的大规模双语数据集，具有增强的数据质量。重新审视该任务，我们建议将自动电影叙述的最终目标分解为三个渐进阶段，提供清晰的路线图和相应的评估指标。基于我们的新基准，我们对包括 GPT-4V  在内的一系列大型视觉语言模型进行了基线分析，并对叙述生成中的挑战进行了深入分析。我们的研究结果强调，实现适用的电影叙事生成是一个令人着迷的目标，需要进行大量研究。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122190408521.png" alt="image-20241122190408521"></p>
+<blockquote>
+<p>来自其他数据集（左）和 Movie101v2（右）的示例，其中案例来自 Goodbye Mr. Loser。</p>
+</blockquote>
+<h3 id="2-理解-2">2. 理解</h3>
+<p>不错的任务以及描述，要求比较深入的视频理解能力，如果实现可以对其他任务作出帮助，目前的结果难以满足实际应用需求。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122192755452.png" alt="image-20241122192755452"></p>
+<blockquote>
+<p>我们的模型框架。(a) 用于 MCN 任务的 RMN；(b) 用于 TNG 任务的全局镜头检索和局部时序定位。</p>
+<p>MCN：电影片段解说、RMN：叙述生成框架、TNG：时序定位（不用管）</p>
+</blockquote>
+<p>总结：一个数据集Movie101，随电影自动生成旁白（MCN），比较有意思。</p>
+<h2 id="Streaming-Long-Video-Understanding-with-Large-Language-Models">Streaming Long Video Understanding with Large Language Models</h2>
+<p><strong>使用大型语言模型流式传输长视频理解（港中文）</strong></p>
+<p><strong>paper</strong>：<a href="https://arxiv.org/pdf/2405.16009">https://arxiv.org/pdf/2405.16009</a></p>
+<p><strong>时间</strong>：2024.5.25（v2）</p>
+<h3 id="1-摘要-3">1. 摘要</h3>
+<p>本文提出了 VideoStreaming，这是一种用于视频理解的高级视觉语言大型模型  (VLLM)，它能够通过流式编码和自适应选择的恒定数量的视频标记来理解任意长度的视频。视觉语言领域视频理解的挑战主要在于从长视频中提取的大量标记造成的巨大计算负担。以前的工作依靠稀疏采样或帧压缩来减少标记。然而，此类方法要么忽视长时间跨度的时间信息，要么牺牲空间细节，导致压缩有缺陷。为了解决这些限制，我们的视频流有两个核心设计：**内存传播流编码和自适应内存选择。**内存传播流编码架构将长视频分割成短剪辑，并使用传播内存顺序对每个剪辑进行编码。在每次迭代中，我们利用前一个剪辑的编码结果作为历史内存，将其与当前剪辑集成以提取压缩表示，该表示封装了截至当前时间戳的视频内容。该方法不仅将长期时间动态合并到流编码过程中，而且还产生固定长度的存储器作为任意长视频的全局表示。编码过程结束后，自适应记忆选择策略从所有历史记忆中选择恒定数量的与问题相关的记忆，并将它们输入 LLM  以生成信息丰富的响应。与问题相关的选择减少了记忆中的冗余，从而实现高效、精确的视频理解。同时，解开的视频提取和推理设计使得LLM可以通过直接选择相应的记忆来回答有关视频的不同问题，而无需为每个问题对整个视频进行编码。通过大量的实验，我们的模型在长视频基准上实现了卓越的性能和更高的效率，展示了对详细问题解答的精确时间理解。</p>
+<h3 id="2-理解-3">2. 理解</h3>
+<p>提出一种让LLM可以适配长短视频的视频处理方案，[标记一下，待续]。</p>
+<p><img src="/img/VideoLLM%E6%9C%80%E6%96%B0%E7%A0%94%E7%A9%B6/image-20241122194217566.png" alt="image-20241122194217566"></p>
+<blockquote>
+<p>图 1a  显示了视频流的概述，其中我们将长视频分割成短剪辑，并将每个剪辑迭代编码到紧凑的内存中。然后，根据具体问题，我们选择恒定数量的相关记忆子集作为LLM的输入以产生答案。 ✓ 和 ✗  分别表示选定和未选定的存储器。图1b说明了每次流编码迭代的详细过程。我们参考特定时间戳和前一个剪辑的历史记忆将当前剪辑特征编码为压缩表示。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Research</category>
+      </categories>
+      <tags>
+        <tag>大模型</tag>
+        <tag>计算机视觉</tag>
+        <tag>多模态</tag>
+        <tag>视频理解</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试_第一篇文章</title>
+    <url>/2024/11/02/test/</url>
+    <content><![CDATA[<p>this is my first article</p>
+]]></content>
+      <categories>
+        <category>Others</category>
+      </categories>
+      <tags>
+        <tag>测试</tag>
+      </tags>
   </entry>
   <entry>
     <title>categories</title>
@@ -1396,6 +1448,16 @@
       margin: 5px 1% 0 1% !important;
     }
   }]]></content>
+  </entry>
+  <entry>
+    <title>关于</title>
+    <url>/about/index.html</url>
+    <content><![CDATA[<h1>Github贡献图</h1>
+<img src="https://ghchart.rshah.org/zlatan-zzz" alt="zlatan-zzz's Github chart" />
+<h1>文章贡献图</h1>
+<div id="posts-calendar" class="js-pjax"></div>
+<h1>标签统计图</h1>
+<div id="tags-chart" data-length="8" class="js-pjax"></div>]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1502,6 +1564,11 @@
   background-color: #3eb8be;
   border-radius: 8px;
 }]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/js/runtime.js</url>
+    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
   </entry>
   <entry>
     <title></title>
@@ -1835,11 +1902,6 @@
     <url>/js/universe.js</url>
     <content><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};
 dark()]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/js/runtime.js</url>
-    <content><![CDATA[var now=new Date;function createtime(){now.setTime(now.getTime()+1e3);var e=new Date("10/28/2024 00:00:00"),t=Math.trunc(234e8+(now-e)/1e3*17),a=(t/1496e5).toFixed(6),o=new Date("10/28/2024 00:00:00"),n=(now-o)/1e3/60/60/24,r=Math.floor(n),i=(now-o)/1e3/60/60-24*r,s=Math.floor(i);1==String(s).length&&(s="0"+s);var d=(now-o)/1e3/60-1440*r-60*s,l=Math.floor(d);1==String(l).length&&(l="0"+l);var g=(now-o)/1e3-86400*r-3600*s-60*l,b=Math.round(g);1==String(b).length&&(b="0"+b);let c="";c=s<18&&s>=9?`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`:`<br> <div style="font-size:13px;font-weight:bold">本站居然运行了 ${r} 天 ${s} 小时 ${l} 分 ${b} 秒 <i id="heartbeat" class='fas fa-heartbeat'></i> <br> 旅行者 1 号当前距离地球 ${t} 千米，约为 ${a} 个天文单位 🚀</div>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=c)}setInterval((()=>{createtime()}),1e3);]]></content>
   </entry>
   <entry>
     <title>tags</title>
