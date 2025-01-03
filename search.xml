@@ -860,6 +860,534 @@
 </li>
 </ul>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//1.forEach()方法</span></span><br><span class="line"><span class="comment">//2.count()方法,long类型</span></span><br><span class="line"><span class="type">long</span> <span class="variable">size</span> <span class="operator">=</span> students.stream().filter(s -&gt; s.getHeight() &gt; <span class="number">168</span>).count();</span><br><span class="line">System.out.println(size);</span><br><span class="line"><span class="comment">//找出身高最高的学生对象</span></span><br><span class="line"><span class="comment">//3.max(),min()方法</span></span><br><span class="line">students.stream().max((o1,o2) -&gt; Double.compare(o1.getHeight(),o2.getHeight()));</span><br><span class="line"><span class="comment">//4.收集stream流；转回到集合/数组中</span></span><br><span class="line"><span class="comment">//流只能收集一次</span></span><br><span class="line"><span class="comment">//collect()收集到List集合中,toList()/toSet()转为List/Set</span></span><br><span class="line">List&lt;Student&gt; students1 = students.stream().filter(s -&gt; s.getHeight &gt; <span class="number">170.0</span>).collect(Collectors.toList());</span><br><span class="line">Set&lt;Student&gt; students2 = students.stream().filter(s -&gt; s.getHeight &gt; <span class="number">170.0</span>).collect(Collectors.toSet());</span><br><span class="line"><span class="comment">//找到身高超过170的学生对象，并把学生的名字和身高存入到一个Map集合中,toMap()</span></span><br><span class="line">Map&lt;String, Double&gt; map = students.stream().filter(a -&gt; a.getHeight()&gt;<span class="number">170</span>).distinct().collect(Collectors.toMap(a -&gt;a.getName,a-&gt;a.getHeight()));</span><br><span class="line">Object[] arr = students.stream().filter(a -&gt; a.getHeight()&gt;<span class="number">170</span>).toArray();</span><br><span class="line">Student[] arr = students.stream().filter(a -&gt; a.getHeight()&gt;<span class="number">170</span>).toArray(len -&gt; <span class="keyword">new</span> <span class="title class_">Student</span>[len]);</span><br></pre></td></tr></table></figure>
+<h2 id="4-File、IO流">4. File、IO流</h2>
+<h3 id="4-1-概述">4.1 概述</h3>
+<p>File类的对象，用于代表当前操作系统的文件（文件、文件夹）。</p>
+<p>File类只能对文件本身进行操作，不能读写文件里面存储的数据。</p>
+<p>IO流：用于读写数据的（可以读写文件，或网络中的数据…）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:/resource/ab.txt&quot;</span>);</span><br><span class="line"><span class="type">File</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:&quot;</span>+File.separator+<span class="string">&quot;resource&quot;</span>+File.separator+<span class="string">&quot;ab.txt&quot;</span>);</span><br><span class="line">System.out.println(f1.length());</span><br><span class="line"><span class="type">File</span> <span class="variable">f2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:/resource&quot;</span>);<span class="comment">//文件夹</span></span><br><span class="line"><span class="type">File</span> <span class="variable">f3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D/resource//aaa.txt&quot;</span>);<span class="comment">//不存在</span></span><br><span class="line">System.out.println(f3.exists());<span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-2-File操作方法">4.2 File操作方法</h3>
+<ul>
+<li>判断文件类型、获取文件信息</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">f3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D/resource//aaa.txt&quot;</span>);<span class="comment">//不存在</span></span><br><span class="line">System.out.println(f3.exists());<span class="comment">//false</span></span><br><span class="line">System.out.println(f3.isFile());<span class="comment">//true</span></span><br><span class="line">System.out.println(f3.isDirectory());<span class="comment">//false</span></span><br><span class="line">System.out.println(f3.getName());<span class="comment">//aaa.txt</span></span><br><span class="line"><span class="type">long</span> <span class="variable">time</span> <span class="operator">=</span> f3.lastModified();<span class="comment">//最后修改时间</span></span><br><span class="line"><span class="type">SimpleDateFormat</span> <span class="variable">sdf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleDateFormat</span>(<span class="string">&quot;yyyy/MM/dd HH:mm:ss&quot;</span>);</span><br><span class="line">System.out.println(sdf.format(time));</span><br><span class="line">f3.getPath();<span class="comment">//D/resource//aaa.txt</span></span><br><span class="line">f3.getAbsolutePath();<span class="comment">//D/resource//aaa.txt</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建文件、删除文件</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D/resource//aaa.txt&quot;</span>);<span class="comment">//不存在</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> f1.createNewFile();<span class="comment">//需要抛出异常，若存在返回false</span></span><br><span class="line"><span class="type">File</span> <span class="variable">f2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:/resource/aaa/bbb&quot;</span>);</span><br><span class="line">System.out.println(f2.mkdir());<span class="comment">//false,只能创建一级文件夹</span></span><br><span class="line">System.out.println(f2.mkdirs());<span class="comment">//true,可以创建多级文件夹</span></span><br><span class="line">System.out.println(f1.delete());<span class="comment">//true(删除文件、空文件，不能删除非空文件夹)</span></span><br><span class="line">System.out.println(f1.delete());<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>遍历文件夹
+<ul>
+<li>注意事项：
+<ul>
+<li>当主调是文件，或者路径不存在，返回null</li>
+<li>当主调是空文件夹。返回空数组</li>
+<li>当没有权限时，返回null</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">File</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D/resource&quot;</span>);<span class="comment">//不存在</span></span><br><span class="line">String[] names = f1.list();<span class="comment">//获取当前目录下所有一级文件名称</span></span><br><span class="line"><span class="keyword">for</span>(String name : names)&#123;</span><br><span class="line">	System.out.println(name);</span><br><span class="line">&#125;</span><br><span class="line">File[] files = f1.listFiles();<span class="comment">//获取当前目录下所有一级文件对象</span></span><br><span class="line"><span class="keyword">for</span>(File file : files)&#123;</span><br><span class="line">    System.out.println(file.getAbsolutePath());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>文件搜索</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//需求：找到QQ.exe文件的位置</span></span><br><span class="line"><span class="type">File</span> <span class="variable">root</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:/&quot;</span>);</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">searchFile</span><span class="params">(File dir, String fileName)</span>&#123;</span><br><span class="line">    <span class="comment">//1.把非法情况拦截</span></span><br><span class="line">    <span class="keyword">if</span>(dir == <span class="literal">null</span> || !dir.exists()!! dir.isFile())&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//2. 获取一级文件对象</span></span><br><span class="line">    File[] files = dir.listFiles();</span><br><span class="line">    <span class="comment">//3.判断当前目录下是否存在一级文件对象，以及是否可以拿到</span></span><br><span class="line">    <span class="keyword">if</span>(files != <span class="literal">null</span> &amp;&amp; files.length &gt;<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">for</span>(File f :files)&#123;</span><br><span class="line">            <span class="keyword">if</span>(f.isFile())&#123;</span><br><span class="line">                <span class="keyword">if</span>(f.getName().contains(filename))</span><br><span class="line">                    System.out.println(<span class="string">&quot;找到了&quot;</span>+ f.getAbsolutePath());</span><br><span class="line">              </span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                searchFile(f, fileName);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-3-字符集">4.3 字符集</h3>
+<ul>
+<li>常见字符集
+<ul>
+<li>ASCII字符集：使用一个字节存储一个字符，首位为0。</li>
+<li>GBK（汉字内码扩展规范）：GBK中一个中文字符编码为两个字节的形式存储。规定：第一个字节的第一位必须为1。</li>
+<li>Unicode字符集（统一码，国际组织制定，可以容纳世界上所有文字、符号的字符集）。</li>
+<li>UTF-8：可变长编码方案。英文、数字占一个字节，汉字字符占3个字节。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-4-IO流">4.4 IO流</h3>
+<ul>
+<li>概述：I为输入流，负责把数据读到内存中，O为输出流，负责写数据出去。</li>
+<li>分类：字节输入/输出流、字符输入/输出流。</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241206163035825.png" alt="image-20241206163035825"></p>
+<ul>
+<li>FileInputStream(文件字节输入流)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//FileInputStream(文件字节输入流)</span></span><br><span class="line"><span class="comment">//以内存为基准，可以把磁盘文件中的数据以字节的形式读入到内存中去</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;file-io-app\\src\\001.txt&quot;</span>));</span><br><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;file-io-app\\src\\001.txt&quot;</span>);<span class="comment">//简化写法</span></span><br><span class="line"><span class="type">int</span> <span class="variable">b1</span> <span class="operator">=</span> is.read();</span><br><span class="line">System.out.println((<span class="type">char</span>)b1);<span class="comment">//a</span></span><br><span class="line"><span class="type">int</span> <span class="variable">b2</span> <span class="operator">=</span> is.read();</span><br><span class="line">System.out.println((<span class="type">char</span>)b2);<span class="comment">//b</span></span><br><span class="line"><span class="type">int</span> <span class="variable">b3</span> <span class="operator">=</span> is.read();</span><br><span class="line">System.out.println((<span class="type">char</span>)b3);<span class="comment">//-1(数据读完了)</span></span><br><span class="line"><span class="comment">//这种方法资源消耗比较大，而且容易出现乱码</span></span><br><span class="line"><span class="comment">//流使用完之后必须释放，将流关闭</span></span><br><span class="line">is.close();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>FileInputStream(文件字节输入流)读取多个字节</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//FileInputStream(文件字节输入流)读取多个字节</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;file-io-app\\src\\001.txt&quot;</span>));</span><br><span class="line"><span class="comment">//每次读取多个字节到字节数组中，返回读取的字节数量</span></span><br><span class="line"><span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">3</span>];</span><br><span class="line"><span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> is.read(buffer);<span class="comment">//每次读取多少字节</span></span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(buffer);</span><br><span class="line"><span class="type">int</span> <span class="variable">len2</span> <span class="operator">=</span> is.read(buffer);</span><br><span class="line"><span class="type">String</span> <span class="variable">rs2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(buffer, <span class="number">0</span> ,len2);</span><br><span class="line"><span class="comment">/*------------------------------*/</span></span><br><span class="line"><span class="comment">//改造</span></span><br><span class="line"><span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">3</span>];</span><br><span class="line"><span class="type">int</span> len;</span><br><span class="line"><span class="keyword">while</span>((len = <span class="keyword">new</span> <span class="title class_">String</span>(buffer,<span class="number">0</span>,len)) !=-<span class="number">1</span>)&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(buffer,,<span class="number">0</span>,len);</span><br><span class="line">    System.out.println(rs);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//这种方法也会导致乱码的情况（汉字）</span></span><br><span class="line"><span class="comment">//readAllBytes</span></span><br><span class="line"><span class="type">byte</span>[] buffer = is.readAllBytes();</span><br><span class="line">System.out.print(<span class="keyword">new</span> <span class="title class_">String</span>(buffer));</span><br><span class="line"><span class="comment">//如果文件过大，创建的字节数组也会过大，可能会导致内存溢出</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>FileOutputStream(文件字节输出流)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//FileOutputStream(文件字节输出流)</span></span><br><span class="line"><span class="comment">//1.创建一个字节输出流管道与文件接通</span></span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;file-io-app/src/002.txt&quot;</span>);</span><br><span class="line"><span class="comment">//默认为清空原有数据</span></span><br><span class="line"><span class="comment">//可以用</span></span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;file-io-app/src/002.txt&quot;</span>, append = <span class="literal">true</span>);</span><br><span class="line">os.write(<span class="number">97</span>);<span class="comment">//97就是一个字节，代表a</span></span><br><span class="line">os.write(<span class="string">&quot;b&quot;</span>);</span><br><span class="line"><span class="type">byte</span>[] bytes = <span class="string">&quot;我爱你中国abc&quot;</span>.getBytes();</span><br><span class="line">os.write(bytes);</span><br><span class="line">os.write(bytes,<span class="number">0</span>,<span class="number">15</span>);</span><br><span class="line">os.write(<span class="string">&quot;\r\n&quot;</span>.getBytes()); </span><br><span class="line">os.close();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>文件复制</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//文件复制</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;D:/resource/meinv.png&quot;</span>);</span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;C:/data/meinv2.png&quot;</span>);</span><br><span class="line"><span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>];</span><br><span class="line"><span class="type">int</span> len ;</span><br><span class="line"><span class="keyword">while</span>((len = is.read(buffer))!=-<span class="number">1</span>)&#123;</span><br><span class="line">    os.write(buffer,<span class="number">0</span>,len);</span><br><span class="line">&#125;</span><br><span class="line">os.close;</span><br><span class="line">is.close;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>释放资源的方式
+<ul>
+<li>finally代码区的特点：无论try中的程序是正常执行或是出现异常，最后一定会执行finally区，除非JVM终止</li>
+<li>try-with-resource</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//释放资源的方式</span></span><br><span class="line"><span class="comment">//中间出错导致没有机会关闭流，导致资源浪费</span></span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    System.out.println(<span class="number">10</span>/<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;执行&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a/b;</span><br><span class="line">&#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;执行&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">111</span>;<span class="comment">//不要这样写，否则一定会执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>try-catch-finally</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span><span class="literal">null</span>;</span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span><span class="literal">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="number">10</span>/<span class="number">0</span>);</span><br><span class="line">    is = <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line">    os = <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;bbb.txt&quot;</span>);</span><br><span class="line">    System.out.println(<span class="number">10</span>/<span class="number">0</span>);</span><br><span class="line">    <span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">2024</span>];</span><br><span class="line">    <span class="type">int</span> len;</span><br><span class="line">    <span class="keyword">while</span>((len = is.read(buffer))!=-<span class="number">1</span>)&#123;</span><br><span class="line">        os.write(buffer,<span class="number">0</span>,len);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">&quot;完成&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(os != <span class="literal">null</span>)&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            os.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(is!=<span class="literal">null</span>)&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            is.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>try-with-resource</p>
+<p>该资源使用完毕后，会自动调用close()方法，完成资源的释放</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>(</span><br><span class="line">    <span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line">    <span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&#x27;bbb,txt&#x27;</span>);</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">2024</span>];</span><br><span class="line">    <span class="type">int</span> len;</span><br><span class="line">    <span class="keyword">while</span> ((len = is.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        os.write(buffer, <span class="number">0</span>, len);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">&quot;完成&quot;</span>);</span><br><span class="line">&#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-5-字符流">4.5 字符流</h3>
+<ul>
+<li>作用：以内存为基准，可以把文件中的数据以字符的形式读入到内存中去。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>(<span class="type">Reader</span> <span class="variable">fr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileReader</span>(<span class="string">&quot;aaa.txt&quot;</span>);)&#123;</span><br><span class="line">            <span class="type">int</span> c;</span><br><span class="line">            <span class="keyword">while</span>((c=fr.read())!=-<span class="number">1</span>)&#123;</span><br><span class="line">                System.out.print(c);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">char</span>[] buffer  = <span class="keyword">new</span> <span class="title class_">char</span>[<span class="number">3</span>];</span><br><span class="line">            <span class="type">int</span> len;</span><br><span class="line">            <span class="keyword">while</span>((len = fr.read(buffer))!=-<span class="number">1</span>)&#123;</span><br><span class="line">                System.out.print(<span class="keyword">new</span> <span class="title class_">String</span>(buffer,<span class="number">0</span>,len));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>(<span class="type">Writer</span> <span class="variable">fw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileWriter</span>(<span class="string">&quot;111.txt&quot;</span>);)&#123;</span><br><span class="line">            fw.write(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">            fw.write(<span class="number">97</span>);</span><br><span class="line">            fw.write(<span class="string">&#x27;一&#x27;</span>);</span><br><span class="line">            fw.write(<span class="string">&quot;我爱你中国abc&quot;</span>,<span class="number">0</span>,<span class="number">5</span>);</span><br><span class="line">    		<span class="type">char</span>[] buffer = &#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>&#125;;</span><br><span class="line">    		fw.write(buffer);</span><br><span class="line">    		fw.write(buffer, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">    		fw.write(<span class="string">&quot;\r\n&quot;</span>);<span class="comment">//实现换行</span></span><br><span class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>字符输出流写出数据后，必须刷新流，或者关闭流，写出去的数据才能生效。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">fw.flush();</span><br><span class="line">fw.close();<span class="comment">//刷新之后还可以用，不刷新的话用不了</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>字节流适合做一切文件数据的拷贝；字节流不适合读取中文内容输出</li>
+<li>字符流适合做文本文件的（读写）</li>
+</ul>
+<h2 id="5-IO的各种流">5. IO的各种流</h2>
+<h3 id="5-1-IO流-缓冲流">5.1 IO流-缓冲流</h3>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241208170020507.png" alt="image-20241208170020507"></p>
+<ul>
+<li>对原始流进行包装，一提高原始流读写数据的性能</li>
+<li>BufferedReader、BufferedWriter自带8K缓冲池，可以提高字符输出流写字符数据的性能。（最好不要用多态写）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line"><span class="type">InputStream</span> <span class="variable">bis</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedInputSystem</span>(is);</span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&#x27;bbb,txt&#x27;</span>);</span><br><span class="line"><span class="type">OnputStream</span> <span class="variable">bos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedOutputSystem</span>(os);</span><br><span class="line"><span class="comment">//BufferedReader</span></span><br><span class="line"><span class="type">Reader</span> <span class="variable">fr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileReader</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line"><span class="type">BufferedReader</span>  <span class="variable">br</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(fr);</span><br><span class="line">String line;</span><br><span class="line"><span class="keyword">while</span>((line = br.readline)!=<span class="literal">null</span>)&#123;</span><br><span class="line">    System.out.println(line);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//BufferedWriter</span></span><br><span class="line">bw.newline();<span class="comment">//自动换行</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-2-IO转换流">5.2 IO转换流</h3>
+<ul>
+<li>
+<p>解决问题：被读取的文本文件会出现乱码</p>
+</li>
+<li>
+<p>字符输入转换流：InputStreamReader</p>
+</li>
+<li>
+<p>字符输出转换流：OutputStreamWrite</p>
+</li>
+<li>
+<p>解决思路：先获取文件的原始字符流，再将其按真实的字符集编码转为字符输入流，这样就不会乱码了</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//1.字符输入转换流</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line"><span class="type">Reader</span> <span class="variable">isr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(is, <span class="string">&quot;GBK&quot;</span>);</span><br><span class="line"><span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(isr);</span><br><span class="line">String line;</span><br><span class="line"><span class="keyword">while</span>((line = br.readline)!=<span class="literal">null</span>)&#123;</span><br><span class="line">    System.out.println(line);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//2.字符输出转换流</span></span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line"><span class="type">Writer</span> <span class="variable">osw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OutputStreamWriter</span>(os,<span class="string">&quot;GBK&quot;</span>);</span><br><span class="line"><span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedWriter</span>(osw);</span><br><span class="line">bw.wirte(<span class="string">&quot;一二三四1234&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="5-3-IO打印流">5.3 IO打印流</h3>
+<ul>
+<li>PrintStream、PrintWriter</li>
+<li>可以实现高效、方便的打印数据出去，能实现打印杀出去就是啥出去</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">PrintStream</span> <span class="variable">ps</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PrintStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);</span><br><span class="line"><span class="type">PrintWriter</span> <span class="variable">ps</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PrintWriter</span>(<span class="string">&quot;aaa.txt&quot;</span>);<span class="comment">//不能追加</span></span><br><span class="line"><span class="type">PrintWriter</span> <span class="variable">ps</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PrintWriter</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>,<span class="literal">true</span>));</span><br><span class="line">ps.println(<span class="number">97</span>);</span><br><span class="line">ps.println(<span class="string">&#x27;a&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>打印流的一种应用：输出语句的重定向：把输出语句的打印位置改到某个文件中。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>(<span class="type">PrintStream</span> <span class="variable">ps</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PrintStream</span>(<span class="string">&quot;aaa.txt&quot;</span>);)&#123;</span><br><span class="line">    System.setOut(ps);</span><br><span class="line">    System.out.println(<span class="string">&quot;一二三四&quot;</span>); </span><br><span class="line">&#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-4-IO数据流">5.4 IO数据流</h3>
+<ul>
+<li>DataOutputStream(数据输出流)：允许把数据和其类型一起写出去。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">DataOutputStream</span> <span class="variable">dos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>));</span><br><span class="line">dos.writeInt(<span class="number">97</span>);</span><br><span class="line">dos.writeDouble(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">dos.writeUTF(<span class="string">&quot;一二三四&quot;</span>);<span class="comment">//记录内容和编码类型</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>DataInputStream(数据输入流)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">DataInputStream</span> <span class="variable">dis</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>));</span><br><span class="line"><span class="type">int</span> <span class="variable">i</span>  <span class="operator">=</span> dis.readInt();</span><br><span class="line"><span class="type">double</span> <span class="variable">d</span> <span class="operator">=</span> dis.readDouble();</span><br><span class="line"><span class="type">boolean</span> <span class="variable">b</span> <span class="operator">=</span> dis.readBoolean();</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> dis.readUTF();</span><br></pre></td></tr></table></figure>
+<h3 id="5-5-IO序列化流">5.5 IO序列化流</h3>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241209160102499.png" alt="image-20241209160102499"></p>
+<ul>
+<li>从文件中读出、取出java对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对象如果需要序列化，必须实现序列化接口implements Serializable</span></span><br><span class="line"><span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>));</span><br><span class="line"><span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;admin&quot;</span>,<span class="string">&quot;张三&quot;</span>, <span class="string">&quot;666888&quot;</span>);</span><br><span class="line">oos.writeObject(u);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;aaa.txt&quot;</span>));</span><br><span class="line"><span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> (User)ois.readObject();</span><br><span class="line"><span class="comment">//如果不想参与序列化</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> String code; </span><br></pre></td></tr></table></figure>
+<h3 id="5-6-IO框架">5.6 IO框架</h3>
+<ul>
+<li>
+<p>框架：</p>
+<ul>
+<li>解决某个问题，编写的一套类、接口等，可以理解为一个半成品</li>
+<li>好处：在框架的基础上开发，可以得到优秀的软件架构，提高开发效率</li>
+<li>框架的形式：一般是把类、接口等编译为class形式，再压缩为一个.jar结尾的文件。</li>
+</ul>
+</li>
+<li>
+<p>IO框架：封装了JAVA提供的文件、数据操作的代码，对外提供更简单的方式对文件操作，对数据读写等。</p>
+</li>
+<li>
+<p>Commons-io</p>
+</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241209160832552.png" alt="image-20241209160832552"></p>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241209161453294.png" alt="image-20241209161453294"></p>
+<h2 id="6-特殊文件与日志技术">6 特殊文件与日志技术</h2>
+<p>**特殊文件：**属性文件（properties）、xml文件</p>
+<p>**日志技术：**程序运行的信息记录到文件中。</p>
+<h3 id="6-1-特殊文件——Properties">6.1 特殊文件——Properties</h3>
+<ul>
+<li>是一个Map集合，但是一般不会当集合用</li>
+<li>核心作用：Properties是用来代表属性文件的，通过Properties可以读写属性文件的诶内容。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//1.创建一个properties</span></span><br><span class="line"><span class="type">Properties</span> <span class="variable">properties</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">System.out.println(properties);</span><br><span class="line">properties.load(<span class="keyword">new</span> <span class="title class_">FileReader</span>(<span class="string">&quot;users.properties&quot;</span>));</span><br><span class="line">System.out.println(properties);</span><br><span class="line">System.out.println(properties.getProperty(<span class="string">&quot;赵敏&quot;</span>));<span class="comment">//根据键取值</span></span><br><span class="line">Set&lt;String&gt; keys = properties.stringPropertyNames();</span><br><span class="line"><span class="keyword">for</span>(String key:keys)&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> properties.getProperty(key);</span><br><span class="line">    System.out.println(key + <span class="string">&quot;----&gt;&quot;</span> + value);</span><br><span class="line">&#125;</span><br><span class="line">porperties.forEach((k,v)--&gt;&#123;System.out.println(key + <span class="string">&quot;----&gt;&quot;</span> + value)&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Properties</span> <span class="variable">properties</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">properties.setProperty(<span class="string">&quot;a&quot;</span>,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">properties.store(<span class="keyword">new</span> <span class="title class_">FileWriter</span>(<span class="string">&quot;users.properties&quot;</span>), <span class="string">&quot;i save&quot;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="6-2-特殊文件——XML文件">6.2 特殊文件——XML文件</h3>
+<ul>
+<li>XML：可扩展标记语言</li>
+<li>XML中写”&gt;“、”&amp;“等会出现冲突导致报错，可用以下字符替代</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp;lt; &lt; 小于</span><br><span class="line">&amp;gt; &gt; 大于</span><br><span class="line">&amp;amp; &amp; 和号</span><br><span class="line">&amp;apos; &#x27; 单引号</span><br><span class="line">&amp;quoot; &quot; 引号</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>XML可以写一个CDATA的数据区：<![CDATA[ ...内容... ]]>，里面的内容可以随便写</p>
+</li>
+<li>
+<p>解析XML数据：Dom4j（官网下载）</p>
+<ul>
+<li>new - lib - Add as Library</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">SAXReader</span> <span class="variable">saxReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SAXReader</span>();</span><br><span class="line"><span class="type">Document</span> <span class="variable">document</span> <span class="operator">=</span> saxReader.read(<span class="string">&quot;aaa.xml&quot;</span>);</span><br><span class="line"><span class="type">Element</span> <span class="variable">root</span> <span class="operator">=</span> document.getRootElement();</span><br><span class="line">System.out.println(root.getName());<span class="comment">//根元素名字</span></span><br><span class="line"><span class="comment">//解析xml的具体数据</span></span><br><span class="line">List&lt;Element&gt; elements = root.elements();</span><br><span class="line"><span class="keyword">for</span>(Element elememt :elements)&#123;</span><br><span class="line">    System.out.println(element.getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>利用StringBuilder添加XML格式的数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">sb.append(<span class="string">&quot;&lt;?xml version = \&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot; ?&gt;\r\n&quot;</span>);</span><br><span class="line">sb.append(<span class="string">&quot;&lt;book&gt;\r\n&quot;</span>);</span><br><span class="line"><span class="keyword">try</span>(</span><br><span class="line">	<span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedWriter</span>(<span class="keyword">new</span> <span class="title class_">FileWriter</span>(<span class="string">&quot;aaa.xml&quot;</span>));</span><br><span class="line">)&#123;</span><br><span class="line">    bw.write(sb.toString());</span><br><span class="line">&#125; <span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="6-3-日志技术">6.3 日志技术</h3>
+<ul>
+<li>
+<p>日志技术体系:</p>
+<ul>
+<li>框架：JUL、log4j、Logback</li>
+<li>日志接口：JCL、SLF4J</li>
+<li>logback是基于slf4j接口实现的</li>
+</ul>
+</li>
+<li>
+<p>logback日志框架有以下几个模块</p>
+<ul>
+<li>logback-core</li>
+<li>logback-classic</li>
+<li>logback-access</li>
+</ul>
+</li>
+<li>
+<p>实现步骤</p>
+<ol>
+<li>
+<p>导入Logback框架到项目中</p>
+</li>
+<li>
+<p>将核心配置文件logback.xml放在src项目下面</p>
+</li>
+<li>
+<p>创建Logger对象，调用其方法即可记录系统日志信息</p>
+</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">LOGGER</span> <span class="operator">=</span> LoggerFactory.getLogger(<span class="string">&quot;LogbackTest&quot;</span>);</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        LOGGER.info(<span class="string">&quot;chu方法执行&quot;</span>);</span><br><span class="line">        chu(<span class="number">10</span>,<span class="number">0</span>);</span><br><span class="line">        LOGGER.info(<span class="string">&quot;chu方法执行成功&quot;</span>);</span><br><span class="line">    &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">        LOGGER.error(<span class="string">&quot;chu出现Bug&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">chu</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span>&#123;</span><br><span class="line">    LOGGER.debug(<span class="string">&quot;a&quot;</span>+a);</span><br><span class="line">    LOGGER.debug(<span class="string">&quot;b&quot;</span>+b);</span><br><span class="line">    <span class="type">int</span> c == a/b;</span><br><span class="line">    LOGGER.info(<span class="string">&quot;结果是&quot;</span> + c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>日志级别
+<ul>
+<li>trace-debug-info-warn-error</li>
+</ul>
+</li>
+</ul>
+<h2 id="7-多线程">7. 多线程</h2>
+<h3 id="7-1-概述">7.1 概述</h3>
+<ul>
+<li>
+<p>线程是一个程序内部的一个执行流程</p>
+</li>
+<li>
+<p>多线程是从软硬件实现多条执行线程的技术</p>
+</li>
+<li>
+<p>多线程的创建</p>
+<ul>
+<li>方式一：继承Thread类（extends）
+<ul>
+<li>缺点：只能继承，单继承</li>
+</ul>
+</li>
+<li>方式二：实现Runnable接口(implements)
+<ul>
+<li>优点：只是实现接口，可以继承其他类、实现其他接口，扩展性强</li>
+</ul>
+</li>
+<li>方式三：实现Callable接口（implements）
+<ul>
+<li>实现Runnable对象</li>
+<li>可以在线程结束之后，用未来任务对象调用get方法获取线程执行完毕的结果</li>
+<li>优点：扩展性强；可以拿到结果</li>
+<li>缺点：编码复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Callable&lt;String&gt; call = <span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">100</span>);</span><br><span class="line">FutureTask&lt;String&gt; f1 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(call);</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(f1).start();</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> f1.get();</span><br><span class="line">System.out.println(rs);</span><br></pre></td></tr></table></figure>
+<h3 id="7-2-Thread常用方法">7.2 Thread常用方法</h3>
+<p>t.sleep(5000);//让t线程休眠5s</p>
+<p>t.join();//让t线程先执行完</p>
+<h3 id="7-3-线程安全与线程同步">7.3 线程安全与线程同步</h3>
+<ul>
+<li>
+<p>**线程安全：**多个线程，同时操作同一个共享资源的时候，可能出现业务安全的情况。</p>
+</li>
+<li>
+<p><strong>线程同步：</strong></p>
+<ul>
+<li>让多个线程先后依次地访问共享资源。</li>
+</ul>
+</li>
+<li>
+<p>方式一：同步代码块</p>
+<ul>
+<li>作用：把访问共享资源的核心代码上锁</li>
+<li>方式：CTRL+ALT+T+synchronized</li>
+<li>用this作为锁：不会干扰他人</li>
+<li>如果是静态方法，可以使用当前类名.class（Account.class）</li>
+</ul>
+</li>
+<li>
+<p>方式二：同步方法</p>
+<ul>
+<li>把访问的核心方法上锁</li>
+<li>public synchronized void drawMoney(double money)</li>
+</ul>
+</li>
+<li>
+<p>方式三：Lock锁</p>
+<ul>
+<li>可以自己创建锁对象，更灵活、方便</li>
+<li>Lock是接口，不能直接实例化，可以采用实现类ReentrantLock来创建锁对象。</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-4-线程池">7.4 线程池</h3>
+<ul>
+<li>概念：线程池是一个可以复用线程的技术</li>
+<li>问题：创建新线程的开销很大</li>
+<li>结构：工作流程、任务队列</li>
+<li>JAVA提供线程池的接口：ExecutorService</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241220201621466.png" alt="image-20241220201621466"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ExecutorService</span> <span class="variable">pool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(<span class="number">3</span>,<span class="number">5</span>,<span class="number">8</span>,TimeUnit.SECONDS,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">4</span>), Executors.defaultThreadFactory(),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.AbortPolicy());</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>注意：</p>
+<ul>
+<li>临时线程什么时间创建：新任务提交发现核心线程在忙，任务队列也满，并且还可以创建临时线程，此时会创建临时线程。</li>
+<li>核心线程和临时线程都在忙。任务队列也满，开始拒绝任务。</li>
+</ul>
+</li>
+<li>
+<p>核心线程数应该配置多少</p>
+<ul>
+<li>计算密集型任务：核心线程数量 = CPU的核数+1；</li>
+<li>IO密集型任务：核心线程数量 = CPU的核数*2；</li>
+<li>高并发场景中使用Executors如果不注意可能会出现风险。最好使用ThreadPoolExecutor</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-5-并发、并行">7.5 并发、并行</h3>
+<ul>
+<li>
+<p>进程：</p>
+<ul>
+<li>进程：正在运行的程序（软件）就是一个独立的进程。</li>
+<li>线程属于进程，一个进程可以同时运行多个线程。</li>
+<li>进程中的多个线程其实是并发和并行的。</li>
+</ul>
+</li>
+<li>
+<p>线程的生命周期</p>
+<ul>
+<li>New</li>
+<li>Runnable</li>
+<li>Terminated</li>
+<li>Blocked</li>
+<li>Waiting</li>
+<li>Timed Waiting</li>
+</ul>
+</li>
+</ul>
+<h2 id="8-网络编程">8. 网络编程</h2>
+<h3 id="8-1-网络编程概述">8.1 网络编程概述</h3>
+<ul>
+<li>
+<p>java.net.包下提供了网络编程的解决方案</p>
+</li>
+<li>
+<p>通信结构：（都依赖于网络编程）</p>
+<ul>
+<li>CS架构：Client客户端/Server服务端
+<ul>
+<li>客户端需要程序员开发、用户安装</li>
+<li>服务端需要程序员开发</li>
+</ul>
+</li>
+<li>BS架构：Browser浏览器/Server服务端
+<ul>
+<li>客户端不需要程序员开发实现</li>
+<li>服务端需要程序员开发实现</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="8-2-网络通信三要素">8.2 网络通信三要素</h3>
+<ul>
+<li>要素
+<ul>
+<li>IP：设备在网络中的地址，是唯一标识</li>
+<li>端口：应用程序在设备中唯一的标识</li>
+<li>协议：连接和数据在网络中传输的规则</li>
+</ul>
+</li>
+</ul>
+<h4 id="8-2-1-IP地址">8.2.1 IP地址</h4>
+<ul>
+<li>
+<p>ip地址</p>
+<ul>
+<li>IP：全称互联网协议地址，是分配上网设备的唯一地址</li>
+<li>IP地址两种形式：IPV4、IPv6
+<ul>
+<li>IPv4：32位</li>
+<li>IPv6：128位</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>IP域名</p>
+<ul>
+<li>域名→dns服务器→ip→访问服务器→返回数据在浏览器上</li>
+</ul>
+</li>
+<li>
+<p>公网、内网IP</p>
+<ul>
+<li>公网IP：是可以连接互联网的IP的地址</li>
+<li>内网IP：也叫局域网IP，只能组织机构内部使用</li>
+<li>192.168开头的就是内网IP</li>
+</ul>
+</li>
+<li>
+<p>常用命令：</p>
+<ul>
+<li>ipconfig:查看本机IP</li>
+<li>ping IP地址：检查网络是否联通</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InetAddress</span> <span class="variable">ip1</span> <span class="operator">=</span> InetAddress.getLocalHost();</span><br><span class="line">System.out.println(ip1.getHostName());</span><br><span class="line">System.out.println(ip1.getHostAddress());</span><br><span class="line"><span class="type">InetAddress</span> <span class="variable">ip2</span> <span class="operator">=</span> InetAddress.getByName(<span class="string">&quot;www.baidu.com&quot;</span>);</span><br><span class="line">System.out.println(ip2.getHostName());</span><br><span class="line">System.out.println(ip2.getHostAddress());</span><br><span class="line">System.out.println(ip2.isReachable(<span class="number">6000</span>));</span><br></pre></td></tr></table></figure>
+<h4 id="8-2-2-端口号">8.2.2 端口号</h4>
+<ul>
+<li>端口：标记在计算机设备上运行的应用程序，被规定为16位的二进制（0~65535）。</li>
+<li>分类：
+<ul>
+<li>周知端口（0~1023）：预先被某些知名应用占用</li>
+<li>注册端口（1024~49151）：分配给用户进程或某些应用程序</li>
+<li>动态端口（49152~65535）：动态分配</li>
+<li>我们自己开发的程序一般选择使用注册端口，一个设备不能出现两个程序的端口号一样</li>
+</ul>
+</li>
+</ul>
+<h4 id="8-2-3-协议">8.2.3 协议</h4>
+<ul>
+<li>协议：网络上的通信设备，事先规定的连接规则，以及传输数据的规则被称为网络通信协议</li>
+<li>开放式网络互联标准：OSI网络参考模型
+<ul>
+<li>OSI网络参考模型：全球网络互联标准</li>
+<li>TCP/IP协议：事实上的国际标准</li>
+<li>程序员主要考虑应用层</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241222201249511.png" alt="image-20241222201249511"></p>
+<ul>
+<li>UDP：用户数据报协议
+<ul>
+<li>特点：无连接、不可靠通信</li>
+<li>不事先建立连接，一般数据包含：自己的IP、程序端口、目的地IP、和数据（64KB内）</li>
+<li>发送方不管对方在不在线，数据在中间丢失也不管，如果接收方收到数据也不返回确认，不可靠</li>
+</ul>
+</li>
+<li>TCP：传输控制协议
+<ul>
+<li>特点：面向连接、可靠通信</li>
+<li>最终目的：保证在不可靠的信道上实现可靠传输</li>
+<li>主要三个步骤实现：三次我手建立连接，传输数据进行确认、四次挥手断开连接</li>
+<li>三次握手：
+<ul>
+<li>可靠链接：确定通信双方，收发消息都是没有问题的</li>
+</ul>
+</li>
+<li>四次挥手：
+<ul>
+<li>目的：确保双方数据收发都已经完成</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="8-3-UDP通信">8.3 UDP通信</h3>
+<ul>
+<li>
+<p>Java提供了一个java.net.DatagramSocket类实现UDP通信</p>
+</li>
+<li>
+<p>客户端</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">DatagramSocket</span> <span class="variable">socket</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DatagramSocket</span>(<span class="number">7777</span>);</span><br><span class="line"><span class="type">byte</span>[] bytes = <span class="string">&quot;xxxx&quot;</span>.getBytes(StandardCharsets.UTF_8);</span><br><span class="line"><span class="type">DatagramPacket</span> <span class="variable">packet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DatagramPacket</span>(bytes,bytes.length</span><br><span class="line">        , InetAddress.getLocalHost(),<span class="number">6666</span>);</span><br><span class="line">socket.send(packet);</span><br><span class="line">System.out.println(<span class="string">&quot;done&quot;</span>);</span><br><span class="line">socket.close();<span class="comment">//释放资源</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>服务端</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">DatagramSocket</span> <span class="variable">socket</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DatagramSocket</span>(<span class="number">6666</span>);</span><br><span class="line"><span class="comment">//2.创建一个数据包对象，用于接收数据</span></span><br><span class="line"><span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>*<span class="number">64</span>];</span><br><span class="line"><span class="type">DatagramPacket</span> <span class="variable">packet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DatagramPacket</span>(buffer,buffer.length);</span><br><span class="line"><span class="comment">//3.使用数据包接收数据</span></span><br><span class="line">socket.receive(packet);</span><br><span class="line"><span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> packet.getLength();</span><br><span class="line"><span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(buffer,<span class="number">0</span>,len);</span><br><span class="line">System.out.println(rs);</span><br><span class="line">System.out.println(packet.getAddress().getHostAddress());</span><br><span class="line">System.out.println(packet.getPort());</span><br><span class="line">socket.close();</span><br></pre></td></tr></table></figure>
+<h3 id="8-4-TCP通信">8.4 TCP通信</h3>
+<ul>
+<li>
+<p>特点：面向连接、可靠通信</p>
+</li>
+<li>
+<p>JAVA提供了一个java.net.Socket类实现TCP通信</p>
+</li>
+<li>
+<p>客户端</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Socket</span> <span class="variable">socket</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Socket</span>(<span class="string">&quot;127.0.0.1&quot;</span>,<span class="number">8888</span>);</span><br><span class="line"><span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> socket.getOutputStream();</span><br><span class="line"><span class="type">DataOutputStream</span> <span class="variable">dos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataOutputStream</span>(os);</span><br><span class="line">Scanner sc= <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;say it&quot;</span>);</span><br><span class="line">    <span class="type">String</span> <span class="variable">msg</span> <span class="operator">=</span> sc.nextLine();</span><br><span class="line">    <span class="keyword">if</span>(<span class="string">&quot;exit&quot;</span>.equals(msg)) &#123;</span><br><span class="line">        dos.close();</span><br><span class="line">        socket.close();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    dos.writeUTF(msg);</span><br><span class="line">    dos.flush();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>服务端</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//1.创建ServerSocket对象，同时为服务器设计端口</span></span><br><span class="line"><span class="type">ServerSocket</span> <span class="variable">serversocket</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerSocket</span>(<span class="number">8888</span>);</span><br><span class="line"><span class="type">Socket</span> <span class="variable">soc</span> <span class="operator">=</span> serversocket.accept();</span><br><span class="line"><span class="comment">//3.从socket通信管道中得到一个字节输入流</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> soc.getInputStream();</span><br><span class="line"><span class="comment">//4.把原始的字节输入流包装为数据输入流</span></span><br><span class="line"><span class="type">DataInputStream</span> <span class="variable">dis</span> <span class="operator">=</span>  <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(is);</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> dis.readUTF();</span><br><span class="line">        System.out.println(rs);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        System.out.println(soc.getRemoteSocketAddress()+<span class="string">&quot;离线了&quot;</span>);</span><br><span class="line">        dis.close();</span><br><span class="line">        soc.close();</span><br><span class="line">        <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="9-JAVA高级">9. JAVA高级</h2>
+<h3 id="9-1-单元测试">9.1 单元测试</h3>
+<p>指对最小的功能单元（方法）,编写测试代码对其进行正确性测试</p>
+<h4 id="9-1-1-Junit单元测试框架">9.1.1 Junit单元测试框架</h4>
+<ul>
+<li>可以用来对方法进行测试，很多开发工具已经集成了Junit框架，如IDEA</li>
+<li>优点：可以灵活的编写测试代码，自动生成测试报告</li>
+</ul>
+<p><img src="/img/JAVA%E9%AB%98%E7%BA%A7%EF%BC%88%E4%BA%8C%EF%BC%89/image-20241230160249700.png" alt="image-20241230160249700"></p>
+<h3 id="9-2-反射">9.2 反射</h3>
+<p>反射就是加载类，允许以编程的方式解析类中的各种成分（成员变量，方法、构造器）</p>
+<ul>
+<li>第一步：加载类，获取类的字节码。</li>
+</ul>
 ]]></content>
       <categories>
         <category>Technique</category>
@@ -1343,6 +1871,7 @@
         <tag>计算机视觉</tag>
         <tag>多模态</tag>
         <tag>视频理解</tag>
+        <tag>LLM</tag>
       </tags>
   </entry>
   <entry>
@@ -1355,6 +1884,182 @@
       </categories>
       <tags>
         <tag>测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MovieChat</title>
+    <url>/2025/01/03/MovieChat-From-Dense-Token-to-Sparse-Memory-for-Long-Video-Understanding/</url>
+    <content><![CDATA[<h1>MovieChat: From Dense Token to Sparse Memory for Long Video  Understanding</h1>
+<p><strong>CVPR 2024</strong></p>
+<h2 id="Abstract">Abstract</h2>
+<p>最近，集成视频基础模型和大语言模型来构建视频理解系统可以克服特定预定义视觉任务的限制。然而，现有系统只能处理帧数很少的视频。对于长视频，计算复杂性、内存成本和长期时间连接带来了额外的挑战。利用AtkinsonShiffrin记忆模型，以transformrer中的token作为记忆的载体，结合我们专门设计的记忆机制，我们提出了MovieChat来克服这些挑战。MovieChat 在长视频理解方面实现了最先进的性能，并发布了具有 1K 长视频和 14K 手动注释的 MovieChat-1K 基准，以验证我们方法的有效性。</p>
+<h2 id="1-Introduction">1. Introduction</h2>
+<p>大型语言模型 (LLM) 的最新进展在自然语言处理 (NLP) 领域取得了巨大成功。将多模态引入LLM并将其转化为能够进行多模态理性化和理解的多模态大语言模型（MLLM）是一个自然的过程。MLLM  在各种多模态任务中表现出了令人难以置信的突发能力，例如感知（例如计数、OCR），常识推理和代码推理，从而产生了一条潜在的途径通向通用人工智能（AGI）。与 LLM 和其他特定于任务的模型相比，MLLM 提供了更人性化的场景解释、用户友好的交互界面以及更广泛的功能。</p>
+<p>现有的以视觉为中心的 MLLM 遵循的范式是利用预先训练的 LLM 和视觉编码器以及附加的可学习模块（Q-former）或简单的投影层。在视频领域，一些先前的工作遵循这种范式来构建视频MLLM，而另一种范式中的工作则通过应用程序编程接口（API）将现有的视觉感知工具和LLM结合起来构建系统无需训练。但此前，还没有针对长视频（超过一分钟）的模型或系统进行探索，也缺乏评估这些系统能力的标准化基准。</p>
+<p>在本文中，我们提出了 MovieChat，这是一种集成视觉模型和 LLM  来执行长视频理解任务的新颖框架。我们认为计算复杂度、内存成本和长期时间连接是长视频理解的主要挑战。 Atkinson-Shiffrin 记忆模型提出短期记忆充当长期记忆的缓冲区，充当将信息编码到长期记忆中的处理器。受此启发，我们提出了一种处理长视频理解任务的记忆机制，其中包括快速更新的短期记忆和紧凑的持续长期记忆。我们使用滑动窗口方法来提取视频特征并以标记形式表示它们，然后将其按顺序逐帧输入到短期记忆中。短期记忆有固定的长度，当达到设定的限制时，最早的标记将被弹出并合并到长期记忆中。经过投影层后，视频表示被输入到大型语言模型中以与用户交互。如图 1 所示，我们提出的 MovieChat 机制在视频随机存取存储器 (VRAM) 成本方面优于其他现有方法。我们还发布了一个新的基准测试 MovieChat-1K，其中包含 1K 长视频和 13K 手动问答对，以验证我们提出的 MovieChat 的有效性。</p>
+<p>![image-20241213155159716](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241213155159716.png)</p>
+<blockquote>
+<p>千兆字节 (GB) 下的 VRAM 成本（y 轴）与帧数（x 轴）比较。我们在 224 × 224 分辨率下测试所有方法的仅视觉推理，无需帧采样。虽然之前的方法只能支持大约 100 帧的推理，但 MovieChat 可以在 24GB 显卡上处理超过 10K 帧的视频。在每帧 VRAM 成本平均增加（每帧 21.3KB 到 ∼ 200MB）方面，MovieChat 比其他方法有 10000 倍的优势。</p>
+</blockquote>
+<p>本文工作的贡献总结如下：</p>
+<ul>
+<li>我们提出了 MovieChat，这是一个集成视觉模型和 LLM 的新颖框架，它是第一个支持长视频（&gt; 10K 帧）理解任务的框架。</li>
+<li>我们提出了一种有效的内存管理机制，以降低计算复杂度和内存成本，同时增强长期连接。</li>
+<li>我们发布了第一个带有手动注释的长视频理解基准MovieChat-1K，并进行了广泛的定量评估和案例研究，以评估理解能力和推理成本的可比性能。</li>
+</ul>
+<h2 id="2-Related-Works">2. Related Works</h2>
+<h3 id="2-1-MLLM">2.1 MLLM</h3>
+<p>LLM最近在自然语言处理（NLP）任务中取得了巨大成功。许多工作尝试通过结合其他模态的模型来构建 MLLM 。Flamingo连接了强大的预训练纯视觉模型和纯语言模型，并通过少量学习实现了最先进的性能。MiniGPT-4将冻结的视觉编码器与冻结的 LLM、Vicuna对齐，仅使用一个投影层来实现该系统。VideoChat通过可学习的神经接口集成了视频基础模型和LLM，在时空推理、事件定位和因果关系推理方面表现出色。Video-LLaMA进一步利用预训练模型 ImageBind和 LLaMA，在 BLIP-2 之后的视频中引导跨模态训练。然而，由于计算复杂度高、内存成本大和长期时间连接弱，这些方法无法处理长视频理解。因此，我们的主要努力是引入有效的记忆机制来克服这些挑战。</p>
+<h3 id="2-2-长视频理解">2.2 长视频理解</h3>
+<p>理解长视频是计算机视觉中的一项具有挑战性的任务。现有技术使用 3D CNN 进行长期特征库 、以物体/人类为中心的运动或其他形式作为视频表示。构建长格式视频理解数据集具有挑战性，而且很少被探索。[54]从 Kinetics-400 [14] 捕获大规模数据，但仅适用于通用事件边界检测任务。[55]从电影的音频描述中创建了语言基础基准，但缺乏长期的理解评估。</p>
+<p>然而，这些数据集缺乏针对长视频的多样化且细粒度的密集字幕。</p>
+<h3 id="2-3-视觉任务中的记忆模型">2.3 视觉任务中的记忆模型</h3>
+<p>一些先前的工作在视频中的各种视觉任务中探索记忆模型，例如视频对象分割（VOS），多对象跟踪（MOT）、视觉对象跟踪（VOT）和动作理解。MeMOT 构建了一个大型时空存储器，用于存储跟踪对象的过去观察结果。 XMem开发了一种架构，该架构结合了多个独立但深度连接的特征内存存储来处理具有数千帧的长视频。我们借鉴了现有技术的经验，并结合大模型进一步采用了有效的记忆机制。</p>
+<p>我们的方法侧重于减少视频中视觉标记的冗余，并构建一种记忆机制来在大时间范围内传递信息。</p>
+<h2 id="3-MovieChat">3. MovieChat</h2>
+<p>![image-20241213164745508](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241213164745508.png)</p>
+<blockquote>
+<p>图 2.<strong>MovieChat 插图。</strong> MovieChat 使用滑动窗口提取视频特征，并以token形式表示它们，然后将其按顺序逐帧输入短期记忆。当固定长度的短期记忆达到其预设限制时，最早的令牌将被弹出并合并到长期记忆中。MovieChat 包含两种不同的推理模式：全局模式（专门利用长期记忆）和断点模式（另外将当前短期记忆作为视频表示的一部分）。断点模式允许理解特定时刻的视频。经过投影层后，视频表示被输入到大型语言模型中以与用户交互。</p>
+</blockquote>
+<h3 id="3-1-Overview">3.1 Overview</h3>
+<p>我们提出的方法 MovieChat 包含几个关键组件，包括逐帧视觉特征提取器、短期和长期记忆模块、视频投影层和大语言模型（LLM），如图 2所示。MovieChat 旨在通过与用户的交互式对话来理解超长视频（&gt;10K 帧）。为了解决在 GPU 内存和 RAM 中同时存储大量帧的不切实际的存储需求，我们采用滑动窗口方法来有效处理视频。短期记忆模块通过滑动窗口嵌入密集token，长期记忆模块定期更新。MovieChat 支持两种推理模式：断点模式用于理解视频中的特定时刻，根据该特定帧或场景提供见解和答案；另一方面，全局模式用于从整体上理解整个视频，从而能够全面理解整体内容和上下文。</p>
+<h3 id="3-2-Visual-Feature-Extraction">3.2 Visual Feature Extraction</h3>
+<p>对于视觉特征提取，我们不使用基于视频的基础模型（例如 ViViT或 VideoSwin），而是简单地使用基于图像的模型来获取token形式的逐帧特征。具体来说，我们利用预先训练的模型作为我们的视觉特征提取器，包括 EVA-CLIP [23] 中的 ViT-G/14 和 BLIP-2 [35]  中的 Q-former。这主要是因为：1）很少有视频基础模型能够与文本很好地对齐，2）我们提出的记忆机制可以有效地捕获时间特征。</p>
+<p>给定一个原始视频 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi><mo>∈</mo><msup><mi mathvariant="double-struck">Z</mi><mrow><mi>T</mi><mo>×</mo><mn>3</mn><mo>×</mo><mi>H</mi><mo>×</mo><mi>W</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\mathbf{v} \in \mathbb{Z}^{T \times 3 \times H \times W}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathbb">Z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="mbin mtight">×</span><span class="mord mtight">3</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">W</span></span></span></span></span></span></span></span></span></span></span></span>，其包含<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> 帧 RGB 图像，每帧的分辨率为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>×</mo><mi>W</mi></mrow><annotation encoding="application/x-tex">H×W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span>。特征提取是通过滑动窗口的方式进行的，具体公式如下：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">B</mi><mi>n</mi></msub><mo>=</mo><mo stretchy="false">{</mo><msub><mi mathvariant="bold">x</mi><mi>i</mi></msub><mo>=</mo><mi mathvariant="script">V</mi><mo stretchy="false">(</mo><msub><mi mathvariant="bold">v</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>∣</mo><mi mathvariant="normal">∀</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>C</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="1em"/><mi>n</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mo stretchy="false">⌈</mo><mfrac><mi>T</mi><mi>C</mi></mfrac><mo stretchy="false">⌉</mo></mrow><annotation encoding="application/x-tex">\mathbf{B}_n = \{ \mathbf{x}_i = \mathcal{V}(\mathbf{v}_i) \mid \forall i = 1, \dots, C \}, \quad n = 1, \dots, \lceil \frac{T}{C} \rceil</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.08222em;">V</span><span class="mopen">(</span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.016em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">∀</span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">}</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2173em;vertical-align:-0.345em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">⌈</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8723em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">⌉</span></span></span></span></p>
+<p>其中：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">B</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{B}_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个滑动窗口的视频片段特征。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>表示滑动窗口的帧数。</li>
+<li>$\mathcal{V}(\cdot) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>是视觉特征提取函数，输入单帧</mtext></mrow><annotation encoding="application/x-tex">是视觉特征提取函数，输入单帧</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">是视觉特征提取函数，输入单帧</span></span></span></span> \mathbf{v}_i \in \mathbb{Z}^{3 \times H \times W}$，输出对应的特征。</li>
+<li>$\mathbf{x}_i \in \mathbb{R}^{N \times D} $是每帧提取的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span>个视觉 token，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi></mrow><annotation encoding="application/x-tex">D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span> 表示每个 token 的维度。</li>
+</ul>
+<p>滑动窗口将视频分割成多个片段，每个片段包含 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>帧，特征提取器对每一帧进行处理并生成视觉 tokens。</p>
+<h3 id="3-3-Short-term-Memory">3.3 Short-term Memory</h3>
+<p>短期存储器将帧token存储在临时固定长度缓冲区中。先前通过滑动窗口 G 次提取的视觉特征无需进一步处理，用于构造短期记忆。</p>
+<ol>
+<li><strong>短期记忆的构建</strong>： 假设在第 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个滑动窗口中，视频片段的特征为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">B</mi><mi>n</mi></msub><mo>=</mo><mo stretchy="false">{</mo><msub><mi mathvariant="bold">x</mi><mi>i</mi></msub><mo>∣</mo><mi mathvariant="normal">∀</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>C</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathbf{B}_n = \{ \mathbf{x}_i \mid \forall i = 1, \dots, C \}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">∀</span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">}</span></span></span></span>，那么短期记忆<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> 的内容为所有视频片段的视觉特征，具体表达为：</li>
+</ol>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><msub><mo>⋃</mo><mi>n</mi></msub><msub><mi mathvariant="bold">B</mi><mi>n</mi></msub><mo>=</mo><mo stretchy="false">{</mo><msub><mi mathvariant="bold">x</mi><mi>i</mi></msub><mo>∣</mo><mi mathvariant="normal">∀</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>K</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="1em"/><mi>n</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>G</mi></mrow><annotation encoding="application/x-tex">S = \bigcup_n \mathbf{B}_n = \{ \mathbf{x}_i \mid \forall i = 1, \dots, K \}, \quad n = 1, \dots, G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0497em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋃</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.0017em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">∀</span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mclose">}</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">G</span></span></span></span></p>
+<p>其中：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> 表示短期记忆中的所有视觉特征。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 表示短期记忆中的帧数，等于每个滑动窗口的帧数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> 和滑动窗口次数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> 的乘积。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> 表示每个视频片段的帧数，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> 表示滑动窗口的数量。</li>
+</ul>
+<ol start="2">
+<li><strong>FIFO更新策略</strong>： 当新的视觉特征批次进入时，如果短期记忆已达到其预定容量，最早的特征将被移除并合并到长期记忆中。短期记忆的更新过程如下：</li>
+</ol>
+<ul>
+<li>新的视频片段特征进入短期记忆 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>。</li>
+<li>当短期记忆的容量满时，最早的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 帧特征被弹出并通过合并操作传递到长期记忆中。</li>
+<li>更新后的短期记忆 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> 被重新初始化，并继续处理后续的帧。</li>
+</ul>
+<p>该更新机制保证了短期记忆始终保持一个固定的容量，并通过FIFO策略保持视频特征的时序性。这种机制有效地避免了冗余信息的积累，同时为长期记忆的更新提供了必要的支持。</p>
+<h3 id="3-4-Long-term-Memory">3.4 Long-term Memory</h3>
+<p>长时记忆可以有效避免灾难性知识遗忘问题，这对于处理长视频理解任务至关重要。短期记忆中存储的特征是密集的token，但由于GPU内存和计算成本的限制，将所有从短期记忆中掉落的token按顺序存储到长期记忆缓冲区中是不可行的。此外，我们在视频中观察到显着的时间冗余，其中活动跨越多个帧，视觉变化最小。为此，我们提出了一种合并相邻相似帧的方法，以简化视频特征表示并加速视频编码。该方法将密集标记转换为稀疏记忆，存储在长期记忆中。</p>
+<p>对于短期记忆中的每个帧特征 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{x}_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，我们计算它与相邻帧 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">x</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{x}_{i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6528em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> 的相似度，并选择具有最大相似度的相邻帧对进行合并。计算相似度的方式是通过计算transformer embedding中token 的余弦相似度：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mrow><mo fence="true">[</mo><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi mathvariant="bold">x</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo separator="true">,</mo><msub><mi mathvariant="bold">x</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">s = \frac{1}{N} \sum_{j=1}^{N} \left[ \cos(\mathbf{x}_{i,j}, \mathbf{x}_{i+1,j}) \right]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.417em;vertical-align:-0.4358em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9812em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4358em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">[</span><span class="mop">cos</span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">]</span></span></span></span></span></p>
+<p>其中：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> 是两帧之间的余弦相似度。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 是每帧中 token 的数量。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi mathvariant="bold">x</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo separator="true">,</mo><msub><mi mathvariant="bold">x</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\cos(\mathbf{x}_{i,j}, \mathbf{x}_{i+1,j})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mop">cos</span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 是帧 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{x}_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">x</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{x}_{i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6528em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> 之间 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>o</mi><mi>k</mi><mi>e</mi><mi>n</mi><mi>j</mi></mrow><annotation encoding="application/x-tex">tokenj</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.05724em;">nj</span></span></span></span> 的余弦相似度。</li>
+</ul>
+<p>合并操作是通过加权平均来实现的，合并后的特征成为代表这两帧的一个新特征。为了保持长期记忆的有效性，经过合并的特征会被存储在长期记忆中。</p>
+<p>![image-20241213203326928](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241213203326928.png)</p>
+<p>我们的目标是在每次合并操作后保留强化学习帧，这也将存储在长期记忆中的丰富信息嵌入其中。 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>L</mi></msub></mrow><annotation encoding="application/x-tex">R_L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是控制性能和效率之间权衡的超参数。因此，我们通过加权平均贪婪地合并每组具有最高相似度的相邻帧。迭代地进行合并操作，直到每个合并操作的标记计数达到预定义的值集<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>L</mi></msub></mrow><annotation encoding="application/x-tex">R_L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，从而得到输出视频特征 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>∈</mo><msup><mi mathvariant="double-struck">Z</mi><mrow><msub><mi>R</mi><mi>L</mi></msub><mo>×</mo><mn>3</mn><mo>×</mo><mi>H</mi><mo>×</mo><mi>W</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\mathbf{v}&#x27; \in \mathbb{Z}^{R_L \times 3 \times H \times W}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.791em;vertical-align:-0.0391em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathbb">Z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567em;margin-left:-0.0077em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1433em;"><span></span></span></span></span></span></span><span class="mbin mtight">×</span><span class="mord mtight">3</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">W</span></span></span></span></span></span></span></span></span></span></span></span>。上述算法是无参数的，并且可以轻松插入基于帧的视频编码器中。虽然帧相似度计算带来了额外的计算开销，但与减少存储帧所获得的效率相比，可以忽略不计。</p>
+<h4 id="Extend-positional-encoding">Extend positional encoding</h4>
+<p>由于长期记忆中存储的 token 数量可能超过预训练模型的最大长度位置编码，因此需要对位置编码进行扩展。在MovieChat中，采用了BERT的扩展位置编码方法，使得位置编码能够适应更长的长期记忆。</p>
+<p><a href="https://kexue.fm/archives/7947/comment-page-1#comments">https://kexue.fm/archives/7947/comment-page-1#comments</a></p>
+<h3 id="3-5-Inference">3.5 Inference</h3>
+<p>以前的方法总是使用整个视频的表示来进行理解和问答，这可能无法定位特定时刻，尤其是在长视频中。为此，我们针对长视频理解任务提出了两种推理模式：全局推理和断点推理，如下所示。</p>
+<h4 id="Global-mode">Global mode</h4>
+<p>全局模式定义为对整个视频的理解和问答。在这种情况下，我们仅使用长期记忆 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 作为视频表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>。</p>
+<h4 id="Breakpoint-mode">Breakpoint mode</h4>
+<p>断点模式被明确定义为理解视频中的特定时刻。由于事件本质上具有连续性，因此我们不仅需要考虑与短期记忆<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>中存储的时刻直接相关的信息，而且还需要考虑与长期记忆<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span>中存储的间接相关的信息。基于此，我们假设当查询特定时刻<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span>的电影时，视频表示<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>应该是<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>和当前视频帧特征<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">x_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>的聚合。我们发现，简单地连接这些项目可以产生出色的性能，并为未来的工作留下对其他聚合选择的进一步探索。</p>
+<p>随后，视频表示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 在被馈送到 LLM <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi></mrow><annotation encoding="application/x-tex">O</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span></span></span></span> 之前经过 Q-former 和线性投影层，可以表示为：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><mi>O</mi><mo stretchy="false">(</mo><mi>Q</mi><mo separator="true">,</mo><mi>P</mi><mo stretchy="false">(</mo><mi>V</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">A = O(Q, P(V))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">Q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">))</span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> 是从视觉空间到文本空间的投影。 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>代表答案或指令，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>代表问题。</p>
+<h2 id="4-A-New-Benchmark-MovieChat-1k">4. A New Benchmark: MovieChat-1k</h2>
+<p>以前建立长视频理解基准的工作要么专注于非问答任务（例如，语言基础、通用事件边界检测、用户参与度和电影元数据预测等），要么缺乏长视频理解基准。为了更好地评估MovieChat的性能，我们收集了一个新的长视频理解任务基准MovieChat-1K，它包含来自各种电影和电视剧的1K高质量视频片段，并带有14K手动注释。</p>
+<p>如图3a所示，我们收集了15个不同分布的热门类别的视频，包括纪录片、侦探片、动画片等。其中，每个视频都包含多个交替场景，在集合的背景下促成了多样化和动态的视觉叙事。图 3b 中的视觉表示展示了 MovieChat-1K 的剪辑持续时间分布。超过 90% 的视频时长在 10K 到 12K 帧之间，而 14.6% 的视频超出 12K 帧。只有 8.6% 的视频时长低于 10k 帧。</p>
+<p>![image-20241214172710325](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241214172710325.png)</p>
+<blockquote>
+<p>图 3.MovieChat-1K 中的视频文本统计数据。它包含一组不同的类别，从多种问题类型中收集，并包含剪辑持续时间的不同分布。我们对占总数超过 4.5% 的视频类别进行了注释（视频类别的完整列表及其百分比见附录 B）。 “frm”表示视频帧数。</p>
+</blockquote>
+<p>对于每个视频，我们手动设置并为整个视频提供 1 个密集字幕，为全局模式提供 3 个问答对，为断点模式提供 10 个带时间戳的问答对。图3c说明了MovieChat-1K中问题类型的分布。请注意，MovieChat-1K  是专门为长视频理解任务而设计的，大多数问题都是开放式的，只有四分之一被归类为多项选择题，以“Do”、“Does”、“Is”等开头词标记。  ”或“是”。我们还计算所提供的问答对的单词分布。如图4所示，包括常见的物体（人、衣服等）、时间（白天、夜晚等）、场景（室内、室外等）等。更多统计信息可以在附录中找到。</p>
+<p>![image-20241214173011196](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241214173011196.png)</p>
+<blockquote>
+<p>MovieChat-1K 中答案集的词云。</p>
+</blockquote>
+<h2 id="5-Experiments">5. Experiments</h2>
+<p>我们对 MovieChat 和以前的方法进行定量和定性评估。此外，我们还进行消融研究来调查 MovieChat。实验设置和分析可以在附录中找到。</p>
+<h3 id="5-1-Quantitative-Evalution">5.1 Quantitative Evalution</h3>
+<h4 id="Shot-video-question-answering">Shot video question-answering</h4>
+<p>我们使用几个广泛使用的开放式数据集：MSVD-QA 、MSRVTTQA 和 ActivityNet-QA 用于短视频问答任务。评估过程是在LLM的帮助下，使用默认的超参数设置。报告准确度和相对分数（范围为 0 到 5）。与之前的方法相比，MovieChat即使不是专门为短视频问答任务设计的，也取得了相当的性能，如表1所示。</p>
+<p>![image-20241214173741827](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241214173741827.png)</p>
+<blockquote>
+<p>表1. GPT-3.5对短视频问答的定量评估。即使 MovieChat 不是专门为短视频问答任务设计的，但它也能实现相当的性能。最好的结果以粗体突出显示，次好的结果用下划线突出显示。</p>
+</blockquote>
+<h4 id="Short-video-generative-performance">Short video generative performance</h4>
+<p>继Video-chatgpt之后，我们采用GPT辅助评估在处理后的ActivityNet-QA上对MovieChat和之前的方法之间的文本生成性能进行更全面的比较。评估流程涵盖关键指标（包括信息的正确性、详细方向、上下文理解、时间理解和一致性），并以 1-5 的范围为生成的预测分配相对分数。我们在表2中展示了发电性能评估的结果。 结果揭示了与以前的方法相比，其在所有关键方面的竞争表现。</p>
+<p>![image-20241214174111949](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241214174111949.png)</p>
+<blockquote>
+<p>表 2. GPT-3.5 短视频生成性能的定量评估[46]。 CI代表信息的正确性，DO代表细节导向，CU代表上下文理解，TU代表时间理解，CO代表一致性。最好的结果以粗体突出显示，次好的结果用下划线突出显示。</p>
+</blockquote>
+<h4 id="Long-Video-question-answering">Long Video question-answering</h4>
+<p>我们使用我们提出的 MovieChat-1K 评估 MovieChat 的长视频问答性能。我们将 1,000 个视频分为训练集  (800)、测试集 (100)、验证集 (100)，并且仅使用测试集进行最终性能评估。我们选择三个最新的基于 LLM 的视频理解模型（例如  Video Chat 、Video LLaMA  和 VideoChatGPT）作为基线。然而，这些方法都无法支持这么长的视频（&gt;10K 帧）。因此，为了适应全局问题中的长度限制，我们从原始视频中统一采样，直到每个模型可以正式支持的最大帧数。对于断点问题，我们在断点前后延长最大帧数的一半（即将断点放置在中心帧）。</p>
+<p>为了增强结果的稳健性，我们同时采用 GPT-3.5 和 Claude 作为 LLM 助手，并辅以人类盲评的额外支持。我们观察到以前的LLM辅助评估方法针对视频问答任务生成的准确性和相对分数之间存在差异。然而，仅仅调整LLM的提示并不能有效解决这个问题。因此，在获得LLM辅助评估方法的准确性和分数后，我们进行手动过滤以去除数值不一致的结果，从而提高结果的可靠性。</p>
+<p>如表3所示。 与之前的方法相比，MovieChat读取了更多的视频帧。在全局模式和断点模式下，我们的方法在 LLM  助理和人类盲评提供的平均准确度和分数方面保持了性能增益。与基线相比，我们全面评估了 MovieChat  在不同问题类型上的问答性能。结果表明，我们的方法在开放式问题和真假问题上都优于基线。</p>
+<p>![image-20241214175051093](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241214175051093.png)</p>
+<blockquote>
+<p>表 3. 在全局模式下的 MovieChat-1K 测试集上对长视频问答的定量评估，平均值为 GPT-3.5 [46]、Claude [3] 和人类 bling 评分。 HBR 代表人类盲评。最好的结果以粗体突出显示，次好的结果用下划线突出显示。</p>
+</blockquote>
+<h4 id="Long-video-generative-performance">Long video generative performance</h4>
+<p>我们比较了 MovieChat 和以前的方法在 MovieChat-1K  上的长视频问答中生成的答案的质量。如表所示。如图 4 所示，根据 GPT-3.5 、Claude和人类评分提供的平均分数，即使视频内容变得更加广泛，我们的方法也能继续生成更高质量的答案。</p>
+<p>![image-20241214175256869](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241214175256869.png)</p>
+<blockquote>
+<p>表 4. 使用 GPT-3.5 [46]、Claude [3] 和人类盲评的平均值对全局模式下的长视频生成性能进行定量评估。  CI代表信息的正确性，DO代表细节导向，CU代表上下文理解，TU代表时间理解，CO代表一致性。最好的结果以粗体显示，次好的结果以下划线显示。</p>
+</blockquote>
+<h3 id="5-2-Ablation-Study">5.2 Ablation Study</h3>
+<h4 id="Short-term-and-long-term-memory-buffers">Short-term and long-term memory buffers</h4>
+<p>由于 MovieChat 结合了包括短期记忆和长期记忆的记忆机制，因此有必要评估所提出的记忆机制如何影响性能。表5和表6 提供了 MovieChat 对于长视频问答和生成任务的依赖于记忆的性能，以及 GPT-3.5  [46]、Claude [3] 和人类盲评的平均结果。具有记忆机制的MovieChat明显优于记忆无关的变体，这表明了记忆机制的重要性。</p>
+<p>![image-20241215143324744](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241215143324744.png)</p>
+<blockquote>
+<p>表5.记忆机制（MM）如何影响长视频问答的消融研究。最好的结果以粗体显示。</p>
+</blockquote>
+<p>![image-20241215143420834](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241215143420834.png)</p>
+<blockquote>
+<p>表 6. 关于记忆机制 (MM) 如何影响长视频生成性能的消融研究。 CI代表信息的正确性，DO代表细节导向，CU代表上下文理解，TU代表时间理解，CO代表一致性。最好的结果以粗体显示。</p>
+</blockquote>
+<h4 id="Hyper-parameter-ablations">Hyper-parameter ablations</h4>
+<p>我们基于 MovieChat-1K 数据集执行一系列超参数消融，以更好地理解 MovieChat。图 5 显示了使用 GPT-3.5  [46]、Claude [3]  和人类盲评的平均结果消除内存缓冲区长度、合并长度和短期初始化时的性能。当所有四个都发生显着变化时，MovieChat  的性能会下降，这显示了我们凭经验选择的超参数的有效性。图 5 表明，从视频中获得的信息随着内存缓冲区长度的增加而扩展，而更精细细节的丢失则随着固定长度的合并而加剧。</p>
+<p>此外，使用合并token进行短期初始化优于最后几个token和均匀采样。此外，合并token的长度和内存缓冲区大小对 MovieChat 的性能有综合影响。</p>
+<p>![image-20241215144700490](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241215144700490.png)</p>
+<blockquote>
+<p>图 5. 超参数消融研究长期内存缓冲区 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>l</mi><mi>e</mi><mi>n</mi><mi>g</mi><mi>t</mi><mi>h</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{length}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">h</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>、短期内存缓冲区 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>s</mi><mi>h</mi><mi>o</mi><mi>r</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{short}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">h</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">or</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>、合并长度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>m</mi><mi>e</mi><mi>r</mi><mi>g</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{merge}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 和短期初始化的长度如何影响 MovieChat 在长视频理解上的性能。我们在长期记忆的消融研究中设置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>s</mi><mi>h</mi><mi>o</mi><mi>r</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{short}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">h</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">or</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> = 16，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>m</mi><mi>e</mi><mi>r</mi><mi>g</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{merge}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> = 2，在短期记忆的消融研究中设置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>l</mi><mi>o</mi><mi>n</mi><mi>g</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{long}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> = 256，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>m</mi><mi>e</mi><mi>r</mi><mi>g</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{merge}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> = 2，在巩固长度和短期初始化的消融研究中设置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>l</mi><mrow><mi>s</mi><mi>h</mi><mi>o</mi><mi>r</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">l_{short}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">h</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">or</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> = 16。</p>
+</blockquote>
+<h3 id="5-3-Case-Study">5.3 Case Study</h3>
+<p>我们对MovieChat对各种开放式长视频（例如卡通电影和电视剧）进行长视频问答进行了广泛的案例研究，包括断点模式（Q#1）和全局模式（Q#2） ）。如图6所示，在MovieChat和之前的方法[37,43,83]之间进行评估。对于断点模式下的 Q#1，我们标记提问时的时间戳。对于超过 10K 帧的长视频，MovieChat 仍然能够对有关当前时刻和整个视频内容的问题提供出色的回答，同时减少幻觉。</p>
+<p>![image-20241216101549960](/img/MovieChat From Dense Token to Sparse Memory for Long Video  Understanding/image-20241216101549960.png)</p>
+<blockquote>
+<p>图 6. 有关 YouTube 剪辑的问答，该剪辑是有关如何烹饪牛排的教程。整个教学过程从腌制牛排开始，然后用平底锅煎，准备配菜，最后装盘。绿色（红色）突出显示正确（错误）答案，黄色表示模型出现幻觉。</p>
+</blockquote>
+<h2 id="6-Limitation">6. Limitation</h2>
+<p>尽管MovieChat在长视频理解方面表现出了令人印象深刻的能力，但它仍处于早期原型并存在一些局限性，包括：1）感知能力有限。  MovieChat 的性能受到预训练的短视频理解模型的阻碍。 2）处理时间不足。 MovieChat  仅提供长视频中事件的持续时间比例的粗略估计，缺乏时间细节的精确性。</p>
+<h2 id="7-Conclusion">7. Conclusion</h2>
+<p>最后，我们提出了一种集成视频基础模型和大语言模型的创新视频理解系统。通过在我们提出的系统 Transformers  中结合以token为代表的记忆机制，MovieChat 克服了与分析长视频相关的挑战。 MovieChat  在长视频理解方面实现了最先进的性能，超越了仅限于处理少帧视频的现有系统。</p>
+]]></content>
+      <categories>
+        <category>Research</category>
+      </categories>
+      <tags>
+        <tag>CVPR</tag>
+        <tag>计算机视觉</tag>
+        <tag>多模态</tag>
+        <tag>视频理解</tag>
+        <tag>LLM</tag>
       </tags>
   </entry>
   <entry>
